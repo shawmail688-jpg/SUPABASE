@@ -1,0 +1,17 @@
+# secrets — 永不入库（方案 v1.3 §7 凭证纪律）
+.env
+.env.*
+*.key
+secrets/
+service_key*
+*supabase*service*
+
+# deps / build
+node_modules/
+dist/
+build/
+
+# local outputs
+output/
+*.local
+*.log

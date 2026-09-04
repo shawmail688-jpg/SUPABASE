@@ -237,7 +237,7 @@ D3 SQL 用例验证（sql_cases.sql，不通过不进 D4）：
    ① 三角色×操作矩阵（R4）② 状态机合法/非法转换（R2，含 manager 直改 status 被拒——H3 回归用例）
    ③ 触发器断言：首条 submit log、audit old→new（R8）④ 跨项目隔离（R17）⑤ 匿名零权限（N1）
 D4 存量数据导入（service key，本机；**专用账号 svc_migration**（app_user，role=surveyor 级但仅 service 持有）：
-   会话 SET app.migration='on' →
+   会话 SET app.migration='on' + SET app.actor_uuid=<svc_migration uuid>（实现补充 09-04：service 会话 auth.uid()=null，触发器写 log 的 actor 兜底取此 GUC）→
    site（含 archived 退役点，触发器放行）+ survey_result(source='migration') + fengshui_eval
    + 历史 log 回填：action='migration'、at=Sheet Added 日期、from=null→to=实际 status（评审 M7 时间线不失真）
    回滚=迁移窗口内按归属清理（评审 M6）：仅 service key、仅 D4 窗口，删除顺序

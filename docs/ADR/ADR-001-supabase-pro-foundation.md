@@ -13,7 +13,7 @@ Date：2026-09-03
 
 # 二、决策（Decision）
 
-Supabase Pro（$25/月）起步即用；区域 Frankfurt/新加坡择低延迟（开放问题，架构阶段出对比推荐后用户拍板）。Postgres(+PostGIS)+Auth+RLS+Storage+Realtime 一体。
+Supabase Pro（$25/月）起步即用；**区域已定 Frankfurt（09-04 用户拍板，地理就近原则）**。Postgres(+PostGIS)+Auth+RLS+Storage+Realtime 一体。
 
 # 三、候选方案与取舍（Alternatives）
 
@@ -42,3 +42,4 @@ Supabase Pro（$25/月）起步即用；区域 Frankfurt/新加坡择低延迟�
 | 日期 | 变更 | 原因 |
 |------|------|------|
 | 2026-09-03 | 建档（追溯 v1.2 定案） | ADR 归档补课 |
+| 2026-09-04 | 区域定案 **Frankfurt**（不经两区域 RTT 对比，用户按地理就近直接拍板；TASK-001 证据步豁免） | 用户裁量；day-1（TASK-002）实测仍顺手留 RTT 记录存档，若不可接受走 C2 重开 |

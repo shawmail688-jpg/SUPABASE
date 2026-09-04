@@ -35,7 +35,7 @@ Last Update：2026-09-03
 
 ## 2.2 表单提交（M2b 换靶核心契约）
 
-> 前置：表单持用户 JWT（M-Form auth 模块）；调查员经 `GET /rest/v1/site?code=eq.<code>&status=neq.archived` 解析存量点的 site_id（评审 H1 处置：读=非 archived 全量）；本机新建点直接用预生成 uuid。code 解析为空时**先查 archived**（`status=eq.archived`）：命中 → 提示「该店已隐藏，联系管理员恢复」，**禁止落入新建路径**（复审 R3：否则 upsert 撞唯一约束转 UPDATE 被 RLS 拒，提交无可读地永久失败）。
+> 前置：表单持用户 JWT（M-Form auth 模块）；调查员经 `GET /rest/v1/site?code=eq.<code>&status=neq.archived` 解析存量点的 site_id（评审 H1 处置：读=非 archived 全量）；本机新建点直接用预生成 uuid。code 解析为空时**先查 archived**（`status=eq.archived`）：命中 → 提示「该店已隐藏，联系管理员恢复」，**禁止落入新建路径**（复审 R3：否则 upsert 撞唯一约束转 UPDATE 被 RLS 拒，提交无可读地永久失败）。**补充（09-04 预写 SQL 时发现）**：surveyor 经 RLS 本就看不到 archived 行，其侧该查询同样为空——故 adapter 对 site upsert 的 **42501 错误统一映射为「该店已隐藏或无权操作」**提示（manager/admin 侧则能直接命中 archived 行）；SQL 用例 T22 固化此行为。
 
 三步顺序调用（任一步失败整体可重试——幂等）：
 

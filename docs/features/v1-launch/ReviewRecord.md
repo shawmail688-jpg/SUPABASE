@@ -1,0 +1,32 @@
+# 评审记录（ReviewRecord）— L2 闸门评审留痕
+
+Last Update：2026-09-03
+
+## 记录 1：PRD-V1 L2 评审
+
+| 项 | 内容 |
+|----|------|
+| 评审对象 | docs/PRD/PRD-V1.md v1.0 |
+| 评审者 | 独立评审子代理（multi-agent 机制，L2 必须；未参与撰写，全新视角） |
+| 评审输入 | PRD-V1 + Proposal v1.3 + Requirement v1.1 + Scope v1.0（四文件逐节交叉核对） |
+| 评审维度 | 忠实性/需求覆盖/验收可自动化(C6)/开放问题/迁移策略/内部一致性/实现缺口 |
+| **结论** | **PASS-with-comments**：总体忠实、R1-R18/N1-N5 全覆盖、无高严重度阻断项；6 中 9 低共 15 条 |
+| 处置 | 15 条逐条证据核验**全部属实**，全部采纳修订（PRD §十二 逐条落点留痕）；无否决、无冲突上交 |
+| 关键修正 | #1 区域=建项目固定参数须开户前拍板；#3 恢复权限=仅 admin 落定（Requirement R4 勘误 v1.2）；#4 调查提交 Realtime 恢复为阶段一基线；#5 atlas_bridge 改「验收通过后退役」；#6 补表单分发渠道 |
+| 评审者原话（给闸门） | 「先修 #1（开户前把区域一起拍板）和 #3（恢复权限问号落定），其余可随 PRD v1.1 一并处理；M1 编码开工无其他文档级阻断」 |
+| 复核 | PRD v1.1 已按处置表修订；Requirement v1.2 勘误同步；校验器 sections 通过 |
+
+## 记录 2：架构四件 L2 评审（第一轮）
+
+| 项 | 内容 |
+|----|------|
+| 评审对象 | docs/Design/01-Architecture.md v1.0 + 02-Database.md v1.0 + 03-API.md v1.0 + 04-Module.md v1.0 |
+| 评审者 | 独立评审子代理（同一机制，未参与撰写） |
+| 评审输入 | 架构四件 + PRD v1.1（Lock）+ ADR-001..006 + 02/03/04 逐节交叉核对 |
+| 评审维度 | 一致性/可行性/安全/幂等/迁移回滚/与 PRD 承诺对齐 |
+| **结论** | **FAIL**：4 高 / 9 中 / 7 低，共 20 条 |
+| 关键发现 | H1 调查员 SELECT own-only 死锁（无法解析存量点 site_id）；H2 「merge-duplicates 不覆盖 null」为事实错误；H3 manager 可 PATCH 直改 status 绕过 RPC；H4 无托管决策（领导手机访问无实现路径） |
+| 处置 | 20 条逐条证据核验**全部属实**，全部采纳 → 四文档修订 v1.1：H1 读权限放宽至非 archived 全量；H2 COALESCE 触发器闸；H3 GUC 强制闸（app.via_rpc/app.migration）；H4 Cloudflare Pages+ADR-007；其余 M/L 逐条落 02/03/04/01 对应节 |
+| 评审者原话（给闸门） | 「02/03（含 01 补托管决策）出修订版后复审即可，属局部修订」 |
+| 复审 | **PASS-with-comments**（同一评审者，四份 v1.1 全文重读+20 条逐一原文核验，非只看处置表）：19/20 处置通过（M8 处置表漏列但实际已修，核验通过）；新发现 **R1 中 + R2-R8 低**。评审者明示「R1 修正后无需整篇复审」。R1-R8 已全部处置（01/02/03 → v1.2）：R1 双写对账过滤改 `source='form' ∧ added_date≥S4 起始`（v1.1 的 source='appscript' 恒空集会使退役闸门假阴性）+pin 链接行跳坐标比；R2 COALESCE 收窄文本列、lat/lon 显式 null=清空；R3 code 命中 archived 提示恢复、禁入新建路径；R4 Storage INSERT 前缀校验放弃原因记档+C2 升级路径；R5 domain_config 归 append-only；R6 详情查询补 project_id；R7 svc_migration 无 auth.users 行例外+D2 种子建号；R8 01 §三 M-Form 边界同步豁免注 |
+

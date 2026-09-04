@@ -15,6 +15,36 @@
 
 ## 看板
 
+> 阶段一=M1 建库→M2b 表单换靶（TASK-001~010）；阶段二=M3a 领导视图→M3b 工作视图（TASK-011~015）；运维/退役（TASK-016~018）
+
 | 编号 | 任务 | 状态 |
 |------|------|------|
-| （任务规划阶段填充——Large 流程 ⑦，前置：PRD/架构闸门） | | |
+| TASK-001 | Supabase 区域拍板实测（RTT 证据）【需用户注册账号】 | TODO |
+| TASK-002 | Supabase Pro 开户 + day-1 最小闭环验证【用户付款】 | TODO |
+| TASK-003 | 建库迁移 SQL（D1 表结构+D2 RLS/触发器/RPC/种子） | TODO |
+| TASK-004 | D3 SQL 用例全绿（sql_cases.sql） | TODO |
+| TASK-005 | 存量数据导入 D4 + 对账 | TODO |
+| TASK-006 | 存量照片迁移 D5 | TODO |
+| TASK-007 | 照片压缩参数定档（开放问题 #7） | TODO |
+| TASK-008 | 表单换靶 M2b（adapter+auth+离线队列） | TODO |
+| TASK-009 | 表单 E2E 自检 | TODO |
+| TASK-010 | 双写对账脚本（S4 闸门材料） | TODO |
+| TASK-011 | 看板骨架移植+登录墙 | TODO |
+| TASK-012 | 领导视图+Realtime | TODO |
+| TASK-013 | Cloudflare Pages 部署+域名+领导实开【域名】 | TODO |
+| TASK-014 | 工作视图（编辑/时间线/恢复/CSV） | TODO |
+| TASK-015 | 看板 selftest 全量+N5 视觉走查 | TODO |
+| TASK-016 | 冷备计划任务+恢复演练 | TODO |
+| TASK-017 | S5 GAS 通道退役 | TODO |
+| TASK-018 | S6 atlas_bridge 退役+Feature 收尾 | TODO |
+
+## 依赖链
+
+```text
+001 → 002 → 003 → 004 → 005 → 006
+              │      └── 011 ──→ 012 → 013 → 017 → 018
+              │      └── 014 ──────────────────┘│
+              │             015（012+014 后）────┘
+              └── 008 → 009 → 010 → 017
+002 → 007（并行）；002 → 016（并行）
+```

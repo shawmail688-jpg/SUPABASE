@@ -1,0 +1,282 @@
+<title>选址调查平台费用明细</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F6F2; --card:#FFFFFF;
+    --ink:#1D2721; --ink2:#49544D; --mute:#79847C;
+    --line:#DDE2DB; --line-strong:#B9C2BA;
+    --accent:#0B7A5B; --accent-deep:#0A5D46; --accent-soft:#E9F2ED; --accent-line:#C4DCD1;
+    --amber:#8F6208; --amber-bg:#F9EFD8;
+    --blue:#1E5FA8; --blue-bg:#E5EEF9;
+    --stone:#5D675F; --stone-bg:#ECEFE9;
+    --warn-bg:#FBF6E8; --warn-line:#E2D6B0;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font:15px/1.75 "Noto Sans SC","Microsoft YaHei","PingFang SC",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{max-width:780px; margin:0 auto; padding:42px 24px 72px}
+
+  /* ---------- header ---------- */
+  .doc-meta{display:flex; flex-wrap:wrap; gap:4px 22px; justify-content:space-between;
+    font-size:12.5px; color:var(--mute); letter-spacing:.06em}
+  .eyebrow{margin-top:26px; color:var(--accent-deep); font-weight:700; font-size:13px; letter-spacing:.22em}
+  h1{font:700 36px/1.25 "Noto Serif SC","Songti SC",serif; margin:8px 0 10px; text-wrap:balance}
+  .lede{color:var(--ink2); max-width:62ch; margin:0}
+  .rule{border-bottom:3px double var(--line-strong); margin:24px 0 26px}
+
+  /* ---------- summary tiles ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .tile{background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px 14px}
+  .tile .k{font-size:12.5px; color:var(--mute); letter-spacing:.08em}
+  .tile .v{font:700 25px/1.35 "Noto Serif SC","Songti SC",serif; color:var(--accent-deep); margin-top:5px;
+    font-variant-numeric:tabular-nums}
+  .tile .s{font-size:12px; color:var(--ink2); margin-top:4px; line-height:1.55}
+  .toolnote{font-size:13px; color:var(--ink2); margin:14px 0 0}
+  .toolnote b{color:var(--ink)}
+
+  /* ---------- sections ---------- */
+  section{margin-top:44px}
+  h2{font:700 20px/1.4 "Noto Serif SC","Songti SC",serif; margin:0 0 6px;
+    border-bottom:1px solid var(--line-strong); padding-bottom:9px}
+  h2 .no{color:var(--accent); margin-right:8px}
+  .sec-lede{font-size:13px; color:var(--mute); margin:8px 0 0}
+
+  /* ---------- features ---------- */
+  .feats{display:grid; grid-template-columns:1fr 1fr; gap:0 30px; margin-top:6px}
+  .feat{padding:13px 0 11px; border-bottom:1px solid var(--line)}
+  .feat h3{font-size:14.5px; font-weight:700; margin:0 0 3px; line-height:1.5}
+  .feat h3 .idx{color:var(--accent); margin-right:7px; font-variant-numeric:tabular-nums}
+  .feat p{margin:0; font-size:13.5px; color:var(--ink2); line-height:1.7}
+  .chip{display:inline-block; font-size:11.5px; font-weight:700; line-height:1.6;
+    padding:0 8px; border-radius:999px; margin:0 3px 0 1px; white-space:nowrap}
+  .c-amber{color:var(--amber); background:var(--amber-bg)}
+  .c-blue{color:var(--blue); background:var(--blue-bg)}
+  .c-green{color:var(--accent-deep); background:var(--accent-soft)}
+  .c-stone{color:var(--stone); background:var(--stone-bg)}
+  .excl{margin-top:18px; background:var(--warn-bg); border:1px dashed var(--warn-line);
+    border-radius:10px; padding:12px 16px; font-size:13px; color:var(--ink2); line-height:1.7}
+  .excl b{color:var(--ink)}
+
+  /* ---------- cost tables ---------- */
+  .grp{margin-top:20px}
+  .grp h3{font-size:15px; font-weight:700; margin:0 0 2px}
+  .grp h3 .tag{color:var(--accent-deep)}
+  .grp .desc{font-size:12.5px; color:var(--mute); margin:0 0 8px}
+  .tbl-wrap{overflow-x:auto}
+  table{width:100%; border-collapse:collapse; font-size:13.5px; min-width:560px}
+  th{font-size:12px; color:var(--mute); font-weight:500; letter-spacing:.05em; text-align:left;
+    padding:7px 10px; border-bottom:1px solid var(--line-strong); white-space:nowrap}
+  td{padding:10px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.65}
+  td.item{font-weight:700; white-space:nowrap}
+  td.calc{color:var(--ink2); white-space:nowrap; font-variant-numeric:tabular-nums}
+  td.num{text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; font-weight:700}
+  td.note{color:var(--mute); font-size:12.5px}
+  tr.subtotal td{background:var(--accent-soft); font-weight:700; color:var(--accent-deep);
+    border-bottom:1px solid var(--accent-soft)}
+  tr.subtotal td.num{font-size:14.5px}
+  .grand{margin-top:22px; background:var(--card); border:1px solid var(--line);
+    border-left:4px solid var(--accent); border-radius:10px; padding:16px 20px;
+    display:flex; flex-wrap:wrap; gap:6px 30px; justify-content:space-between; align-items:baseline}
+  .grand .g1{font-size:13px; color:var(--ink2)}
+  .grand .g1 b{color:var(--ink)}
+  .grand .g2{font:700 26px/1.3 "Noto Serif SC","Songti SC",serif; color:var(--accent-deep);
+    font-variant-numeric:tabular-nums}
+  .upgrade{margin-top:16px; background:var(--accent-soft); border:1px solid var(--accent-line);
+    border-radius:10px; padding:12px 16px; font-size:13px; color:var(--ink2); line-height:1.7}
+  .upgrade b{color:var(--accent-deep)}
+
+  /* ---------- footnotes ---------- */
+  ol.fn{font-size:13px; color:var(--ink2); padding-left:20px; margin:10px 0 0}
+  ol.fn li{margin:7px 0; line-height:1.7}
+
+  /* ---------- signature ---------- */
+  .sign{display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:48px;
+    padding-top:20px; border-top:1px solid var(--line-strong)}
+  .sign .lab{color:var(--mute); letter-spacing:.28em; font-size:12.5px}
+  .sign .blank{margin-top:40px; border-bottom:1px solid var(--line-strong)}
+  .sign .dt{margin-top:6px; font-size:12px; color:var(--mute)}
+  .foot{margin-top:26px; font-size:12px; color:var(--mute)}
+
+  /* ---------- print button ---------- */
+  .printbtn{position:fixed; top:16px; right:16px; background:var(--accent-deep); color:#fff;
+    border:none; border-radius:8px; padding:9px 18px; font:500 13.5px/1 "Noto Sans SC",sans-serif;
+    cursor:pointer; letter-spacing:.04em}
+  .printbtn:hover{background:#0B4E3B}
+  .printbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  @media (max-width:720px){
+    .tiles{grid-template-columns:1fr}
+    .feats{grid-template-columns:1fr}
+    h1{font-size:29px}
+    .sign{grid-template-columns:1fr; gap:18px}
+    .printbtn{top:auto; bottom:16px; box-shadow:0 4px 14px rgba(20,40,30,.25)}
+  }
+  @media print{
+    @page{size:A4; margin:12mm}
+    body{background:#fff}
+    .sheet{max-width:none; padding:0}
+    .printbtn{display:none}
+    .tile,.grand,.excl,.upgrade,.sign{break-inside:avoid}
+    .grp{break-inside:avoid; margin-top:14px}
+    section{margin-top:24px}
+    .feat{padding:10px 0 8px}
+    td{padding:8px}
+    .upgrade{margin-top:12px; padding:10px 14px}
+    .excl{margin-top:12px; padding:10px 14px}
+    ol.fn li{margin:5px 0}
+    .sign{margin-top:26px; padding-top:14px}
+    .sign .blank{margin-top:26px}
+  }
+</style>
+
+<button class="printbtn" onclick="window.print()">打印 / 存 PDF</button>
+
+<div class="sheet">
+  <header>
+    <div class="doc-meta">
+      <span>编号 QSP-2026-001 · r5</span>
+      <span>编制日期 2026-09-04</span>
+      <span>有效期 30 天</span>
+    </div>
+    <p class="eyebrow">乌干达分部 · 选址调查数据平台</p>
+    <h1>费用明细</h1>
+    <p class="lede">给乌干达分部选店面用的一套小系统：调查照片存云端，领导和同事随时能调能看，审批在手机上就能做。本单列建这套系统要花的钱，含选址系统接入云端的部分。开发全部由内部人员加 AI 工具完成，没有外包，也没有人力现金支出。</p>
+    <div class="rule"></div>
+  </header>
+
+  <section aria-label="费用总览">
+    <div class="tiles">
+      <div class="tile">
+        <div class="k">首年合计</div>
+        <div class="v">≈ ¥2,631</div>
+        <div class="s">云底座首月免费、次月起 Pro；含开发期工具 ≈¥691；选址系统云端接入已计入</div>
+      </div>
+      <div class="tile">
+        <div class="k">次年起 · 每年</div>
+        <div class="v">≈ ¥2,110</div>
+        <div class="s">Supabase Pro + 域名；开发工具用完不续</div>
+      </div>
+      <div class="tile">
+        <div class="k">开发人力现金</div>
+        <div class="v">¥ 0</div>
+        <div class="s">内部 + AI 完成，合计约 11–15 个工作日，无外包</div>
+      </div>
+    </div>
+    <p class="toolnote">其中 AI 开发工具首年 <b>≈¥691</b>：GLM-5.3 Lite 一季（¥283.2）+ Codex 三个月（¥408），同为开发期一季、用完即停，非长期订阅。</p>
+  </section>
+
+  <section>
+    <h2><span class="no">一、</span>系统功能（本单所含）</h2>
+    <div class="feats">
+      <div class="feat">
+        <h3><span class="idx">1</span>照片存云端，哪台设备都能看</h3>
+        <p>调查照片统一放在云端私有库，手机、电脑连上网就能调出任何店面的历史照片。上传时按内容指纹（sha1）查重，同一张照片传两次只留一次，不白占存储。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">2</span>照片质量，看得清为准</h3>
+        <p>压缩是为了传得快，不是为了省事。默认档 1600–2000 像素、质量 80，单张 300KB 到 1MB，门头招牌肉眼看得清。合同小字、车牌这类细节照走高质量档开关，不往狠里压。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">3</span>断网也能填表</h3>
+        <p>野外没信号照常填表拍照，回到有网的地方自动同步，传失败了自动重试。这是调查表单的硬要求，这次上云不动它。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">4</span>领导手机看板</h3>
+        <p>打开先看到三个数：调查中、候选、已选，点哪个数就筛哪类店。坎帕拉地图按状态给店面上色，点开店面卡能看照片、面积租金和调查时间线。习惯看列表的同事可以切到列表模式。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">5</span>审批：领导批了才算数</h3>
+        <p><span class="chip c-amber">调查中</span><span class="chip c-blue">候选</span><span class="chip c-green">已选</span><span class="chip c-stone">隐藏归档</span>状态只有四个。调查员一提交就是「调查中」；升到「候选」「已选」必须管理层批；「隐藏」等于否决，数据不删、管理员可以恢复。谁批的、什么时候批的，系统里都有记录。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">6</span>管理工作台</h3>
+        <p>店面表格查询、改字段、导出 CSV、恢复被隐藏的店面，管理层日常操作都在这一个页面。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">7</span>权限：各人只动各人的数据</h3>
+        <p>一人一个账号，分两类角色。管理层全权；调查员只能改自己提交的数据，碰不到审批。照片走签名短链，外人拿到链接也打不开。员工离开，收回账号就断了访问。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">8</span>数据丢不了</h3>
+        <p>每次调查的记录都留着，后一次不覆盖前一次。云端自动备份（次月起 Pro）加本地每天冷备，双保险。历史 Google Sheets 数据迁完会逐行核对，一致了才切换。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">9</span>提交立刻能看见，换电站接着用</h3>
+        <p>调查员一提交，看板实时更新。整套底座换一份配置就能给换电站项目用，不用重新开发。</p>
+      </div>
+      <div class="feat">
+        <h3><span class="idx">10</span>选址系统云端接入（增量）</h3>
+        <p>选址分析的数据和地图前端也放上云，领导同事用自己的浏览器就能看锚点、优化结果和评分。重计算还在办公室电脑上跑，算完自动入库。</p>
+      </div>
+    </div>
+    <div class="excl"><b>范围外（方案已备，另行立项）：</b>实时监控影像嵌入页面（约 ¥3–10/路/月，待厂商核实）；总部经营数据接入（接口方案已归档备用）；选址计算的网页端发起（需加云服务器，见下方升级项）。此三项不在本单内。</div>
+  </section>
+
+  <section>
+    <h2><span class="no">二、</span>费用明细</h2>
+
+    <div class="grp">
+      <h3><span class="tag">A</span> · 调查数据平台（本项目主体）</h3>
+      <p class="desc">云底座首月免费验证、次月起 Pro；工具费均为开发期一次性</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>项目</th><th>计算方式</th><th style="text-align:right">金额</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td class="item">云底座 Supabase</td><td class="calc">$0×1月 + $25×11月</td><td class="num">≈¥1,870</td><td class="note">首月 ≈100 张照片（30–100MB）免费档验证；次月起 Pro（8GB 库/100GB 存储/250GB 出网/自动备份/不停机）</td></tr>
+            <tr><td>2</td><td class="item">域名</td><td class="calc">1 枚/年</td><td class="num">¥70</td><td class="note">公司若有现成域名则 ¥0</td></tr>
+            <tr><td>3</td><td class="item">AI 工具 GLM-5.3 Lite</td><td class="calc">¥283.2 × 1 季</td><td class="num">¥283</td><td class="note">主力编码工具，只买开发期一季，用完不续</td></tr>
+            <tr><td>4</td><td class="item">AI 工具 Codex（ChatGPT Plus）</td><td class="calc">$20/月 × 3 个月</td><td class="num">¥408</td><td class="note">开发期设计外审用，三个月后停订，一次性</td></tr>
+            <tr class="subtotal"><td></td><td>A 小计</td><td></td><td class="num">≈¥2,631</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grp">
+      <h3><span class="tag">B</span> · 选址系统云端接入（数据库方案，增量）</h3>
+      <p class="desc">数据与地图前端上云，领导/同事用自己设备浏览器在线查看；不新增任何服务器订阅</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>#</th><th>项目</th><th>计算方式</th><th style="text-align:right">金额/年</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>5</td><td class="item">迁移开发（数据入库 + 前端上线）</td><td class="calc">内部 + AI</td><td class="num">¥0</td><td class="note">约 2–4 个工作日：锚点与优化结果迁入共库、前端托管 Cloudflare Pages、登录鉴权</td></tr>
+            <tr><td>6</td><td class="item">服务器/托管订阅</td><td class="calc">Pages 免费档 + 共用云底座</td><td class="num">¥0</td><td class="note">看图看结果零月费；重计算在办公室本机跑，结果存库上云</td></tr>
+            <tr class="subtotal"><td></td><td>B 小计</td><td></td><td class="num">¥0</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grand">
+      <div class="g1"><b>首年合计</b>（A + B）<br>次年起 ≈¥2,110/年（Supabase Pro + 域名；开发工具不续）</div>
+      <div class="g2">≈ ¥2,631</div>
+    </div>
+
+    <div class="upgrade"><b>为什么次月就升 Pro（备询）：</b>按每月约 100 张、单张 300KB 到 1MB 算，免费档 1GB 存储光看容量能撑 10 个月以上。次月就升 Pro，买的是三样：自动备份（调查照片丢了就没了，免费档不给自动备份）、不停机（免费档 7 天没动静就休眠，野外调查的节奏说不准）、出网余量（免费档每月 5GB，十几个人天天翻照片会先撞这条）。这是保数据安全、不误工的保守预留，不是容量装不下了。</div>
+
+    <div class="upgrade"><b>升级项（可选，不计入上述合计）：</b>如果以后要领导同事在网页上直接发起选址优化和仿真（7×24 都能用），要加一台轻量云服务器（2核4G，约 ¥60–100/月），首年合计变成 <b>≈¥3,350–3,830</b>。过渡期可以先用办公室电脑加隧道，不花钱，但依赖电脑开机。</div>
+  </section>
+
+  <section>
+    <h2><span class="no">三、</span>口径与说明</h2>
+    <ol class="fn">
+      <li>汇率按 $1 ≈ ¥6.8 折算（2026-09 实价），美元项以付款当月账单为准。</li>
+      <li>工具价按实付算：GLM-5.3 Lite 季付 ¥283.2（约 ¥94.4/月）；Codex 含在 ChatGPT Plus 订阅里（$20/月，约 ¥136/月），不单独花钱，买三个月和 GLM 对齐。两个都是开发期支出，用完不续。</li>
+      <li>工期：调查平台约 9–11 个工作日，选址系统云端接入约 2–4 个工作日。全部内部加 AI 完成，没有外包，不另计人力现金。</li>
+      <li>不含项：监控影像嵌入和总部经营数据接入是后续项目，需要时另行立项测算。</li>
+      <li>照片治理（09-04 定）：压缩不过度，以看得清为准，默认档之外设细节照高质量档；上传按 sha1 强制去重，重复照片不入库；Pro 自动备份加本地每天冷备。</li>
+      <li>云底座按「首月免费、次月起 Pro」计；早先方案里的 Fable 备胎没有启用，不计入。</li>
+    </ol>
+  </section>
+
+  <div class="sign">
+    <div><div class="lab">编 制</div><div class="blank"></div><div class="dt">日期</div></div>
+    <div><div class="lab">审 核</div><div class="blank"></div><div class="dt">日期</div></div>
+    <div><div class="lab">批 准</div><div class="blank"></div><div class="dt">日期</div></div>
+  </div>
+  <p class="foot">依据文件：《选址调查数据平台方案 v1.3》§6 · 编号 QSP-2026-001 · r5</p>
+</div>

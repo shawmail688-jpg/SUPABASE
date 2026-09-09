@@ -4,7 +4,7 @@
 
 ## 技术栈
 
-- 底座：Supabase Pro（Postgres+PostGIS / Auth / RLS / Storage / Edge Functions），区域 Frankfurt/新加坡择低延迟
+- 底座：Supabase（Postgres+PostGIS / Auth / RLS / Storage / Edge Functions），区域 Frankfurt（TASK-001 已拍板）；09-04 起**首月免费档验证、次月起 Pro**（费用明细 QSP-2026-001）
 - 前端：复用 `E:\uganda-house-finder` 的调查表单（离线+压缩直传）与 Atlas 看板骨架
 - Google Sheets = **历史数据存档**（迁移后冻结），不是工作台、不是第二事实源
 

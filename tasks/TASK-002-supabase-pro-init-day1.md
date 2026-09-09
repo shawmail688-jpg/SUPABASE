@@ -1,5 +1,5 @@
 # TASK-002：Supabase Pro 开户 + day-1 最小闭环原型验证
-状态：TODO（阻塞：TASK-001 拍板 + 用户付款 $25/月）
+状态：TODO（阻塞：部门身份三件套 runbook 执行=用户动作，见 docs/features/v1-launch/runbook-dept-identity.md；09-04 修订首月免费档验证、次月起 Pro $25/月，付款不再阻塞开户）
 目标：Pro 项目落地，day-1 验证清单全链实测（TD-001 消解：Supabase 无原型，任何踩坑在此暴露后才铺开）
 输入：docs/Design/01-Architecture.md §6.1；docs/ADR/ADR-001；TECH_DEBT.md TD-001
 验收条件：

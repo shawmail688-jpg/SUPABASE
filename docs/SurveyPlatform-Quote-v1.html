@@ -116,20 +116,27 @@
     .printbtn{top:auto; bottom:16px; box-shadow:0 4px 14px rgba(20,40,30,.25)}
   }
   @media print{
-    @page{size:A4; margin:12mm}
+    @page{size:A4; margin:10mm}
     body{background:#fff}
     .sheet{max-width:none; padding:0}
     .printbtn{display:none}
     .tile,.grand,.excl,.upgrade,.sign{break-inside:avoid}
-    .grp{break-inside:avoid; margin-top:14px}
-    section{margin-top:24px}
-    .feat{padding:10px 0 8px}
-    td{padding:8px}
-    .upgrade{margin-top:12px; padding:10px 14px}
-    .excl{margin-top:12px; padding:10px 14px}
-    ol.fn li{margin:5px 0}
-    .sign{margin-top:26px; padding-top:14px}
-    .sign .blank{margin-top:26px}
+    .grp{break-inside:avoid; margin-top:8px}
+    h2{break-after:avoid}
+    .eyebrow{margin-top:12px}
+    h1{font-size:30px; margin:6px 0 8px}
+    .rule{margin:14px 0 16px}
+    .tile{padding:12px 14px 10px}
+    section{margin-top:15px}
+    .feat{padding:8px 0 6px}
+    td{padding:6px}
+    th{padding:5px 8px}
+    .grand{margin-top:14px; padding:12px 16px}
+    .upgrade{margin-top:8px; padding:8px 11px}
+    .excl{margin-top:8px; padding:8px 11px}
+    ol.fn li{margin:3px 0}
+    .sign{margin-top:14px; padding-top:10px}
+    .sign .blank{margin-top:18px}
   }
 </style>
 
@@ -144,7 +151,7 @@
     </div>
     <p class="eyebrow">乌干达分部 · 选址调查数据平台</p>
     <h1>费用明细</h1>
-    <p class="lede">给乌干达分部选店面用的一套小系统：调查照片存云端，领导和同事随时能调能看，审批在手机上就能做。本单列建这套系统要花的钱，含选址系统接入云端的部分。开发全部由内部人员加 AI 工具完成，没有外包，也没有人力现金支出。</p>
+    <p class="lede">给乌干达分部选店面用的小系统：照片存云端随时调看，审批手机上做。本单列全部建设费用，含选址系统上云；开发由内部人员加 AI 完成，无外包。</p>
     <div class="rule"></div>
   </header>
 
@@ -174,49 +181,49 @@
     <div class="feats">
       <div class="feat">
         <h3><span class="idx">1</span>照片存云端，哪台设备都能看</h3>
-        <p>调查照片统一放在云端私有库，手机、电脑连上网就能调出任何店面的历史照片。上传时按内容指纹（sha1）查重，同一张照片传两次只留一次，不白占存储。</p>
+        <p>照片统一存云端，手机电脑联网即可调看；重复上传自动去重。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">2</span>照片质量，看得清为准</h3>
-        <p>压缩是为了传得快，不是为了省事。默认档 1600–2000 像素、质量 80，单张 300KB 到 1MB，门头招牌肉眼看得清。合同小字、车牌这类细节照走高质量档开关，不往狠里压。</p>
+        <p>默认档压缩后门头招牌看得清；合同小字、车牌这类细节照走高质量档。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">3</span>断网也能填表</h3>
-        <p>野外没信号照常填表拍照，回到有网的地方自动同步，传失败了自动重试。这是调查表单的硬要求，这次上云不动它。</p>
+        <p>野外断网照常填表拍照，回网自动同步、失败重试。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">4</span>领导手机看板</h3>
-        <p>打开先看到三个数：调查中、候选、已选，点哪个数就筛哪类店。坎帕拉地图按状态给店面上色，点开店面卡能看照片、面积租金和调查时间线。习惯看列表的同事可以切到列表模式。</p>
+        <p>打开先见三个数：调查中、候选、已选，点击即筛选；地图按状态着色，可切列表。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">5</span>审批：领导批了才算数</h3>
-        <p><span class="chip c-amber">调查中</span><span class="chip c-blue">候选</span><span class="chip c-green">已选</span><span class="chip c-stone">隐藏归档</span>状态只有四个。调查员一提交就是「调查中」；升到「候选」「已选」必须管理层批；「隐藏」等于否决，数据不删、管理员可以恢复。谁批的、什么时候批的，系统里都有记录。</p>
+        <p><span class="chip c-amber">调查中</span><span class="chip c-blue">候选</span><span class="chip c-green">已选</span><span class="chip c-stone">隐藏归档</span>候选、已选须管理层批准；隐藏等于否决、可恢复；每次审批都有记录。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">6</span>管理工作台</h3>
-        <p>店面表格查询、改字段、导出 CSV、恢复被隐藏的店面，管理层日常操作都在这一个页面。</p>
+        <p>店面查询、改字段、导出 CSV、恢复隐藏店面，集中一个页面。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">7</span>权限：各人只动各人的数据</h3>
-        <p>一人一个账号，分两类角色。管理层全权；调查员只能改自己提交的数据，碰不到审批。照片走签名短链，外人拿到链接也打不开。员工离开，收回账号就断了访问。</p>
+        <p>一人一号：管理层全权，调查员只能改自己提交的数据；照片走签名短链。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">8</span>数据丢不了</h3>
-        <p>每次调查的记录都留着，后一次不覆盖前一次。云端自动备份（次月起 Pro）加本地每天冷备，双保险。历史 Google Sheets 数据迁完会逐行核对，一致了才切换。</p>
+        <p>记录只增不覆盖；云端自动备份（次月起 Pro）加本地每日冷备。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">9</span>提交立刻能看见，换电站接着用</h3>
-        <p>调查员一提交，看板实时更新。整套底座换一份配置就能给换电站项目用，不用重新开发。</p>
+        <p>提交即上屏；换一份配置即可复用到换电站项目。</p>
       </div>
       <div class="feat">
         <h3><span class="idx">10</span>选址系统云端接入（增量）</h3>
-        <p>选址分析的数据和地图前端也放上云，领导同事用自己的浏览器就能看锚点、优化结果和评分。重计算还在办公室电脑上跑，算完自动入库。</p>
+        <p>选址数据与地图前端上云，浏览器直接查看；重计算仍在办公室电脑跑。</p>
       </div>
     </div>
-    <div class="excl"><b>范围外（方案已备，另行立项）：</b>实时监控影像嵌入页面（约 ¥3–10/路/月，待厂商核实）；总部经营数据接入（接口方案已归档备用）；选址计算的网页端发起（需加云服务器，见下方升级项）。此三项不在本单内。</div>
+    <div class="excl"><b>范围外（另行立项）：</b>监控影像嵌入页面（约 ¥3–10/路/月，待厂商核实）、总部经营数据接入、选址计算网页端发起（见下方升级项），均不在本单内。</div>
   </section>
 
-  <section>
+  <section class="sec-cost">
     <h2><span class="no">二、</span>费用明细</h2>
 
     <div class="grp">
@@ -238,13 +245,12 @@
 
     <div class="grp">
       <h3><span class="tag">B</span> · 选址系统云端接入（数据库方案，增量）</h3>
-      <p class="desc">数据与地图前端上云，领导/同事用自己设备浏览器在线查看；不新增任何服务器订阅</p>
+      <p class="desc">数据与地图前端上云，浏览器在线查看；不新增任何服务器订阅</p>
       <div class="tbl-wrap">
         <table>
           <thead><tr><th>#</th><th>项目</th><th>计算方式</th><th style="text-align:right">金额/年</th><th>说明</th></tr></thead>
           <tbody>
-            <tr><td>5</td><td class="item">迁移开发（数据入库 + 前端上线）</td><td class="calc">内部 + AI</td><td class="num">¥0</td><td class="note">约 2–4 个工作日：锚点与优化结果迁入共库、前端托管 Cloudflare Pages、登录鉴权</td></tr>
-            <tr><td>6</td><td class="item">服务器/托管订阅</td><td class="calc">Pages 免费档 + 共用云底座</td><td class="num">¥0</td><td class="note">看图看结果零月费；重计算在办公室本机跑，结果存库上云</td></tr>
+            <tr><td>5</td><td class="item">迁移开发 + 托管订阅</td><td class="calc">内部 + AI；Pages 免费档 + 共用云底座</td><td class="num">¥0</td><td class="note">约 2–4 个工作日：数据迁入共库、前端上 Cloudflare Pages、登录鉴权</td></tr>
             <tr class="subtotal"><td></td><td>B 小计</td><td></td><td class="num">¥0</td><td></td></tr>
           </tbody>
         </table>
@@ -256,20 +262,16 @@
       <div class="g2">≈ ¥2,631</div>
     </div>
 
-    <div class="upgrade"><b>为什么次月就升 Pro（备询）：</b>按每月约 100 张、单张 300KB 到 1MB 算，免费档 1GB 存储光看容量能撑 10 个月以上。次月就升 Pro，买的是三样：自动备份（调查照片丢了就没了，免费档不给自动备份）、不停机（免费档 7 天没动静就休眠，野外调查的节奏说不准）、出网余量（免费档每月 5GB，十几个人天天翻照片会先撞这条）。这是保数据安全、不误工的保守预留，不是容量装不下了。</div>
-
-    <div class="upgrade"><b>升级项（可选，不计入上述合计）：</b>如果以后要领导同事在网页上直接发起选址优化和仿真（7×24 都能用），要加一台轻量云服务器（2核4G，约 ¥60–100/月），首年合计变成 <b>≈¥3,350–3,830</b>。过渡期可以先用办公室电脑加隧道，不花钱，但依赖电脑开机。</div>
+    <div class="upgrade"><b>升级项（可选，不计入上述合计）：</b>如需网页端直接发起选址优化和仿真（7×24），加一台轻量云服务器（2核4G，约 ¥60–100/月），首年合计变为 <b>≈¥3,350–3,830</b>；过渡期办公室电脑加隧道（¥0，依赖开机）。</div>
   </section>
 
   <section>
     <h2><span class="no">三、</span>口径与说明</h2>
     <ol class="fn">
-      <li>汇率按 $1 ≈ ¥6.8 折算（2026-09 实价），美元项以付款当月账单为准。</li>
-      <li>工具价按实付算：GLM-5.3 Lite 季付 ¥283.2（约 ¥94.4/月）；Codex 含在 ChatGPT Plus 订阅里（$20/月，约 ¥136/月），不单独花钱，买三个月和 GLM 对齐。两个都是开发期支出，用完不续。</li>
-      <li>工期：调查平台约 9–11 个工作日，选址系统云端接入约 2–4 个工作日。全部内部加 AI 完成，没有外包，不另计人力现金。</li>
-      <li>不含项：监控影像嵌入和总部经营数据接入是后续项目，需要时另行立项测算。</li>
-      <li>照片治理（09-04 定）：压缩不过度，以看得清为准，默认档之外设细节照高质量档；上传按 sha1 强制去重，重复照片不入库；Pro 自动备份加本地每天冷备。</li>
-      <li>云底座按「首月免费、次月起 Pro」计；早先方案里的 Fable 备胎没有启用，不计入。</li>
+      <li>汇率：美元项按 $1 ≈ ¥6.8 折算（2026-09 实价），以付款当月账单为准。</li>
+      <li>工具按实付算：GLM-5.3 Lite 季付 ¥283.2；Codex 含在 ChatGPT Plus 订阅（$20/月），购三个月与 GLM 对齐；均为开发期支出，用完不续。</li>
+      <li>工期：调查平台约 9–11 个工作日，选址系统上云约 2–4 个工作日；内部加 AI 完成，无外包。</li>
+      <li>照片上传按 sha1 去重；云底座按「首月免费、次月起 Pro」计；Fable 备胎未启用，不计入。</li>
     </ol>
   </section>
 

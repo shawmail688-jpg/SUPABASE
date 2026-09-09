@@ -5,27 +5,29 @@
 # 1. Current Status（当前开发状态）
 
 - Current Feature：v1-launch（阶段一+阶段二首次上线，M1→M3b）
-- Current Stage：规划链全部收官（Requirement→Scope→PRD→ADR→架构→任务规划，ApprovalRecord #1-#5）→ **M1 执行阶段**；TASK-001 阻塞=用户注册 Supabase 账号
+- Current Stage：规划链全部收官（ApprovalRecord #1-#5）→ **M1 执行阶段**；TASK-001 已 DONE（09-04 用户拍板 Frankfurt，RTT 步裁量豁免）；TASK-002 阻塞=用户注册 Supabase **免费档**账号（09-04 修订：首月免费验证，次月起 Pro）
 - Progress：
   - 🟢 M0 立项（13f692d）
   - 🟢 ②Requirement v1.2 / ③Scope v1.0（L1 已批）/ ④PRD-V1 v1.1（L2 已批 Lock，评审 15 条全处置）/ ⑤ADR-001~007 归档
   - 🟢 ⑥架构四件 v1.2（L2 已批 Lock 09-04：两轮评审闭环 FAIL→v1.1→PASS-with-comments→R1-R8 全修复→v1.2；ApprovalRecord #4）
-  - 🟡 ⑦任务规划：tasks/TASK-001~018 + 看板/依赖链 + docs/TODO.md 镜像（L1 待批）
+  - 🟢 ⑦任务规划 TASK-001~018（L1 已批；TASK-001 DONE 1e1a623：Frankfurt 拍板 + D1/D2 迁移 SQL 预编写入库）
+  - 🟡 09-04 收尾未提交：CLAUDE.md/Proposal §5-§6/TODO 修订（首月免费口径）+ 费用明细 QSP-2026-001 r4 + scripts/（sql_cases.sql、rollback_d1_d2.sql）
 
 # 2. Working Set（当前工作区）
 
-- 文档：docs/SurveyPlatform-Proposal-v1.3.md（权威方案）、docs/Assessment.md（Large 定级）
+- 文档：docs/SurveyPlatform-Proposal-v1.3.md（权威方案）、docs/Assessment.md（Large 定级）、docs/SurveyPlatform-Quote-v1.md/.html/.pdf（费用明细 QSP-2026-001 r5，未提交）
 - 计划产出：docs/features/v1-launch/、docs/PRD/、docs/Design/、docs/ADR/、tasks/TASK-*
-- 代码：尚无（M1 起建 `supabase/migrations/` + `scripts/`）
+- 代码：`supabase/migrations/0001_d1_schema.sql` + `0002_d2_rls_functions_rpcs.sql`（预编写已入库）；`scripts/sql_cases.sql`、`scripts/sql/rollback_d1_d2.sql`（未提交）
 
 # 3. Next Step（下一步）
 
-- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；当前=⑦ L1 批准 → M1 编码（TASK-001 起，编码走分支→PR→审后合）
+- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；TASK-001 DONE（Frankfurt）；当前=**TASK-002**（用户执行部门身份三件套 runbook → 开户 + day-1 验证 + 顺手留 Frankfurt RTT 存档），编码走分支→PR→审后合
 - 待决决策项（用户动作，阻塞点）：
-  - [ ] **Supabase 账号注册**（TASK-001 前置）→ TASK-001 交付两区域 RTT 证据 → **区域拍板**（建项目固定参数，开户前必须定）
-  - [ ] **Pro 订阅付款 $25/月**（TASK-002）
+  - [ ] **部门身份三件套**（买域名→Cloudflare 转发→Supabase 开户；runbook：docs/features/v1-launch/runbook-dept-identity.md，09-09 定案路径 A，TASK-002 前置，当前唯一阻塞）
+  - [ ] **次月起 Pro 订阅付款 $25/月**（首月免费验证后）
+  - [ ] 费用明细 QSP-2026-001 上报领导；IT 监控盘点四问（提案阶段遗留，不阻塞本仓）
   - [ ] 域名有无（公司现成 or 买 ≈¥70/年）——仅 TASK-013 上线前需要，不阻塞建库
-- 首个实现任务：TASK-001（区域 RTT 实测）；我方可先行零阻塞任务：无（TASK-003 前置 002）
+- 首个实现任务：TASK-002（Supabase 开户+day-1）；我方可零阻塞预做的：无（TASK-003 前置 002；D1/D2 SQL 已预编写）
 
 # 4. Important Decisions（重要设计决策）
 

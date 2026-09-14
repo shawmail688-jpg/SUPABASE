@@ -1,0 +1,46 @@
+{
+ "verdict": "8/8",
+ "results": [
+  {
+   "name": "① svy1 登录",
+   "ok": true,
+   "detail": "HTTP 200"
+  },
+  {
+   "name": "② project 解析",
+   "ok": true,
+   "detail": "pid=51270c6d-8a8e-412a-b223-b7fb4aef9af9"
+  },
+  {
+   "name": "③ site upsert（RLS 写自己）",
+   "ok": true,
+   "detail": "HTTP 200 created_by=b2f7c2d2-0d31-4ef8-ba2f-c36c722fa3aa"
+  },
+  {
+   "name": "④ SR 插入（RLS 写自己）",
+   "ok": true,
+   "detail": "HTTP 409"
+  },
+  {
+   "name": "⑤ SR 重放幂等（仍 1 行）",
+   "ok": true,
+   "detail": "rows=1"
+  },
+  {
+   "name": "⑥ svy2 冒名 created_by 被拒",
+   "ok": true,
+   "detail": "HTTP 403"
+  },
+  {
+   "name": "⑦ anon 读 site = 0 行",
+   "ok": true,
+   "detail": "rows=0"
+  },
+  {
+   "name": "⑧ manager 读 SR（svy1 行）",
+   "ok": true,
+   "detail": "rows=1"
+  }
+ ],
+ "cleanup_note": "E2E SR+site 已删"
+}

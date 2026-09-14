@@ -1,0 +1,21 @@
+{
+ "users": [
+  {
+   "email": "svy1-test@survey.local",
+   "role": "surveyor",
+   "uid": "b2f7c2d2-0d31-4ef8-ba2f-c36c722fa3aa"
+  },
+  {
+   "email": "svy2-test@survey.local",
+   "role": "surveyor",
+   "uid": "27f58097-3487-4216-b55e-01e65cb940c6"
+  },
+  {
+   "email": "mgr-test@survey.local",
+   "role": "manager",
+   "uid": "19a31780-5add-4c3a-be5e-425ec87be445"
+  }
+ ],
+ "dev_password": "D3-e2e-2026!",
+ "note": "E2E 一次性测试号，上线前删除"
+}

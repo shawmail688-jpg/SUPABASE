@@ -1,5 +1,5 @@
 # TASK-005：存量导入 D4 + 对账（外审重构版）
-状态：READY（前置全清 09-15：CR-003=B 单项目语义；依赖 postgres+csv-parse 已批已装，package.json 入库）
+状态：DONE（2026-09-15：D4 导入执行完毕，六组机器证据 evidence-task005/ 全齐——dry-run 映射/首次导入/二次零新增/负向差异/回滚重跑/rows_match:true；用户圈定 7 家入 site，其余 8 家待谷歌表格隐藏〔GAS 部署后执行〕；移交：SR raw 全量富化在 TASK-008 前补）
 目标：存量数据（Showroom 15 行 / Survey Results 12 行无表头 / survey_points 13 SP + 2 retired / fengshui 7）迁入 PG，幂等可重放，对账零差异
 
 ## 外审十条硬性验收（Codex 2026-09-15）

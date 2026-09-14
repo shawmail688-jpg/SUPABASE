@@ -1,0 +1,15 @@
+{
+  "name": "survey-platform",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Survey platform data-layer scripts (D4 migration / dual-write reconcile). Deps approved 2026-09-15 (minimal set per external review).",
+  "scripts": {
+    "migrate:dry-run": "node scripts/migrate_data.mjs --dry-run",
+    "reconcile": "node scripts/reconcile_dualwrite.mjs"
+  },
+  "dependencies": {
+    "postgres": "^3.4.5",
+    "csv-parse": "^5.5.6"
+  }
+}

@@ -1,5 +1,5 @@
 # TASK-005：存量导入 D4 + 对账（外审重构版）
-状态：HOLD（前置 A：CR-003 用户决策；前置 B：依赖审批〔postgres、csv-parse 最小集，批准后建 package.json〕）
+状态：READY（前置全清 09-15：CR-003=B 单项目语义；依赖 postgres+csv-parse 已批已装，package.json 入库）
 目标：存量数据（Showroom 15 行 / Survey Results 12 行无表头 / survey_points 13 SP + 2 retired / fengshui 7）迁入 PG，幂等可重放，对账零差异
 
 ## 外审十条硬性验收（Codex 2026-09-15）

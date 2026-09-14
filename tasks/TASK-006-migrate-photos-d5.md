@@ -1,5 +1,5 @@
 # TASK-006：存量照片迁移 D5（migrate_photos.mjs）
-状态：TODO（前置：TASK-005；**照片源目录已预锁定 09-04**：`E:\uganda-house-finder\data\survey\photos`——来自 `build_showroom_atlas.py` L66 `PHOTOS_DIR = ROOT / "data" / "survey" / photos`，锁定后不漂移）
+状态：TODO（前置：TASK-005；**照片源目录已预锁定 09-04**：`E:\项目\uganda-house-finder\data\survey\photos`（09-15 外审修正：原锁路径 `E:\uganda-house-finder` 不存在，正确路径已实证含照片）——来自 `build_showroom_atlas.py` L66 `PHOTOS_DIR = ROOT / "data" / "survey" / photos`，锁定后不漂移）
 目标：本地照片目录 → sha1 去重 → Storage 上传（private 桶，路径 {project_code}/{site_code}/{sha1}.jpg）→ photo 表登记，计数对账闭合
 输入：docs/Design/02-Database.md §3.6 photo、§七 Storage、§八 D5；docs/Design/04-Module.md M-Mig；build_showroom_atlas.py 配置（源目录）
 验收条件：

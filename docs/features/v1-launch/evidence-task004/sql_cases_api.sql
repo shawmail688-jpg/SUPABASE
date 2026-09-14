@@ -1,7 +1,8 @@
 -- sql_cases.sql — D3 acceptance suite (TASK-004; 02-Database v1.2 §八 D3)
 -- Run after migrations:
 --   psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f scripts/sql_cases.sql
--- Green = exit 0 + final line "D3 ALL TESTS PASSED (22/22)".
+-- Green = verdict 无异常 + 批内 count 行 total==passed（psql exit 0 同义；API 适配版同）。
+-- 外审后扩充：T23-T27（site/fengshui 冒名、迁移 audit actor、domain_config v2）；判分行动态计数。
 -- Runs as service role; simulates users via SET ROLE + request.jwt.claims.
 -- One transaction; all fixtures rolled back at the end.
 -- NOTE: GUCs are set session-scoped (is_local=false) and explicitly reset,
@@ -359,6 +360,65 @@ do $$ declare v_act text; v_at timestamptz; begin
   exception when others then
     perform pg_temp.record('T19b 无 GUC 建 archived 拒', true, sqlerrm);
   end;
+end $$;
+
+-- ===== 外审扩充（CHANGES REQUIRED 处置：0003 收紧后的归属/审计/配置断言） =====
+
+-- T23 site 冒名 created_by（S2 以 S1 名义建点）-> 0003 with check 拒
+do $$ begin
+  perform pg_temp.become('aaaaaaaa-0000-0000-0000-000000000004');
+  insert into public.site (id, project_id, code, name, created_by)
+  values ('cccccccc-0000-0000-0000-000000000008',
+          'bbbbbbbb-0000-0000-0000-000000000001', 'SP-TEST-FORGE', 'X8',
+          'aaaaaaaa-0000-0000-0000-000000000003');
+  perform pg_temp.record('T23 site 冒名 created_by 拒', false, 'no exception');
+exception when others then
+  perform pg_temp.record('T23 site 冒名 created_by 拒', true, sqlerrm);
+end $$;
+
+-- T24 fengshui 冒名+越站点（S2 在 S1 的点上挂他人 created_by）-> 拒
+do $$ begin
+  perform pg_temp.become('aaaaaaaa-0000-0000-0000-000000000004');
+  insert into public.fengshui_eval (id, site_id, raw, created_by)
+  values ('eeeeeeee-0000-0000-0000-000000000001',
+          'cccccccc-0000-0000-0000-000000000003', '{}'::jsonb,
+          'aaaaaaaa-0000-0000-0000-000000000003');
+  perform pg_temp.record('T24 fengshui 冒名+越站点 拒', false, 'no exception');
+exception when others then
+  perform pg_temp.record('T24 fengshui 冒名+越站点 拒', true, sqlerrm);
+end $$;
+
+-- T25 fengshui 正路径（S1 在自己的点上挂自己的评估）-> 允许
+do $$ declare n int; begin
+  perform pg_temp.become('aaaaaaaa-0000-0000-0000-000000000003');
+  insert into public.fengshui_eval (id, site_id, raw, created_by)
+  values ('eeeeeeee-0000-0000-0000-000000000002',
+          'cccccccc-0000-0000-0000-000000000003', '{"note":"self ok"}'::jsonb,
+          'aaaaaaaa-0000-0000-0000-000000000003');
+  select count(*) into n from public.fengshui_eval
+  where id = 'eeeeeeee-0000-0000-0000-000000000002';
+  perform pg_temp.record('T25 fengshui 正路径可写', n = 1, 'rows=' || n);
+end $$;
+
+-- T26 迁移会话 audit actor 回落 app.actor_uuid（0003 口径对齐）
+do $$ declare v_actor uuid; begin
+  perform pg_temp.clear();
+  select actor into v_actor from public.audit_log
+  where table_name = 'site' and row_id = 'cccccccc-0000-0000-0000-000000000006'
+  order by at desc limit 1;
+  perform pg_temp.record('T26 迁移 audit actor 回落 svc',
+                         v_actor = '11111111-1111-1111-1111-111111111111',
+                         'actor=' || coalesce(v_actor::text, '∅'));
+end $$;
+
+-- T27 domain_config v2 存在且非占位（外审账实不一致回归）
+do $$ declare n int; v_todo text; begin
+  perform pg_temp.clear();
+  select count(*) into n from public.domain_config dc where dc.version = 2;
+  select coalesce(dc.config->>'_todo', '') into v_todo
+    from public.domain_config dc where dc.version = 2;
+  perform pg_temp.record('T27 domain_config v2 非占位', n = 1 and v_todo = '',
+                         'rows=' || n || ',_todo=' || coalesce(v_todo, '∅'));
 end $$;
 
 -- ===== verdict =====

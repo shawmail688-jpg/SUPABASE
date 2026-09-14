@@ -15,7 +15,6 @@
   - 🟢 CR-001 凭证切新式 key（#6，31 处文档同步 + .env.example）+ CR-002 地图瓦片韧性 ADR-008（#7）均 09-14 批准 Lock
   - 🟢 TASK-002 day-1 五项验证全 PASS（RLS anon 零/401、签名 URL 过期 400、浏览器直传 200、Realtime INSERT 3.9s、file:// CORS 200；踩坑 4 条留档 day1/ 日志）
   - 🟡 待用户确认：2FA 与备份管理员状态（邮箱仍缺，M2b 前需要）；backup admin 兼 dept@ 转发第二收件人
-  - 🟡 TASK-002 凭证接入：`.env.example` 已建（新式命名）；待用户从 Dashboard 填入真实 key 至本地 `.env`；day-1 五项尚未执行
 
 # 2. Working Set（当前工作区）
 

@@ -25,7 +25,7 @@
 
 # 3. Next Step（下一步）
 
-- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；TASK-001/002/003/004 DONE；当前=**TASK-005 存量导入 D4+对账**（migrate_data.mjs 按 04-Module 设计新建；D4 设 app.migration GUC+actor_uuid），编码走分支→PR→审后合
+- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；TASK-001/002/003/004 DONE；**TASK-005 挂起等 Codex 外审 D1-D3**（评审包 docs/features/v1-launch/review/，结论回来过证据核验后放行）
 - 待决决策项（用户动作，阻塞点）：
   - [x] 域名已配置（2026-09-14 用户同步；具体域名不写入快照）
   - [x] Supabase 账号已注册（2026-09-14 用户同步）

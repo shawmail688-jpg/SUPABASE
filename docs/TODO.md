@@ -18,9 +18,9 @@
 
 ## 进行中 / 下一步
 
-- [ ] TASK-005 存量导入 D4+对账
+- [ ] TASK-005 存量导入 D4+对账（**挂起等 Codex 外审 D1-D3**，评审包 review/CodexReview-Request-D1D2D3.md）
 - [ ] TASK-004 D3 用例全绿
-- [ ] TASK-005 存量导入 D4+对账
+- [ ] TASK-005 存量导入 D4+对账（**挂起等 Codex 外审 D1-D3**，评审包 review/CodexReview-Request-D1D2D3.md）
 - [ ] TASK-006 照片迁移 D5
 - [ ] TASK-007 压缩定档（并行）
 - [ ] TASK-008 表单换靶 M2b

@@ -20,8 +20,9 @@
 
 - [x] TASK-005 存量导入 D4+对账（09-15 **DONE 六组证据全齐**：7 site/6 fengshui/5 SR 单事务导入，幂等重放零新增，回滚重跑 rows_match:true；05abc57）
 - [x] TASK-006 照片上云挂载（09-15 **DONE**：45 张两遍幂等，per-site 5/8/6/4/18/4 与源一致；管线复用为活水通道）
-- [ ] 谷歌表格 8 行隐藏（GAS v2.7 已写好，**待用户重部署**后 AI 批量执行）
-- [ ] 雷蒙新照片挂载（管线已就绪；**待用户定邮箱路由** A 网页半自动 / B IMAP 全自动）
+- [x] 谷歌表格 8 行隐藏（09-15 完成：浏览器直接在 A2:A9 标 HIDDEN，无代码方案，gviz 验证 8/8；GAS v2.7 动作留档备用）
+- [x] 雷蒙照片挂载——Silent Night 已挂（09-15：Gmail API 抓取→目验→入库）
+- [ ] **Aga Khan hospital space（Kampala Rd 对面 Cham Towers）——雷蒙报的新第 8 家候选，待用户决策是否入库**；照片已下载存档 sources/raymond/
 - [ ] TASK-006 照片迁移 D5
 - [ ] TASK-007 压缩定档（并行）
 - [ ] TASK-008 表单换靶 M2b

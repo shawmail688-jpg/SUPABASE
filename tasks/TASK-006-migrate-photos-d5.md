@@ -1,5 +1,5 @@
 # TASK-006：存量照片迁移 D5（migrate_photos.mjs）
-状态：DONE（2026-09-15：45 张存量照片上云 Storage 私有桶 + photo 表挂载，两遍幂等零新增，per-site 计数与源一致 5/8/6/4/18/4；管线 scripts/migrate_photos.mjs 复用为雷蒙新照片活水通道——邮箱路由待用户选定 A 网页半自动 / B IMAP 全自动；另有 8 行谷歌表格隐藏待 GAS v2.7 重部署后执行）
+状态：DONE（2026-09-15：45 张存量照片上云 Storage 私有桶 + photo 表挂载，两遍幂等零新增，per-site 计数与源一致 5/8/6/4/18/4；管线 scripts/migrate_photos.mjs 复用为雷蒙新照片活水通道——邮箱路由待用户选定 A 网页半自动 / B IMAP 全自动；谷歌表格 8 行隐藏已用无代码方案完成（A2:A9 标 HIDDEN，gviz 验证 8/8，GAS v2.7 动作留档备用）；雷蒙新照片活水首例已挂载（Silent Night），Aga Khan 新地点待用户决策）
 目标：本地照片目录 → sha1 去重 → Storage 上传（private 桶，路径 {project_code}/{site_code}/{sha1}.jpg）→ photo 表登记，计数对账闭合
 输入：docs/Design/02-Database.md §3.6 photo、§七 Storage、§八 D5；docs/Design/04-Module.md M-Mig；build_showroom_atlas.py 配置（源目录）
 验收条件：

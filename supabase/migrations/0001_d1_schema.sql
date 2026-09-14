@@ -104,7 +104,8 @@ create index if not exists photo_site_idx on public.photo (site_id);
 -- 3.7 site_status_log (single source of truth for state transitions)
 create table if not exists public.site_status_log (
   id          bigint generated always as identity primary key,
-  site_id     uuid        not null references public.site(id) on delete restrict,
+  site_id     uuid        not null references public.site(id) on delete restrict
+                          deferrable initially deferred,  -- BEFORE trigger writes first log; FK checked at commit
   from_status public.site_status,                   -- NULL = first creation
   to_status   public.site_status not null,
   action      text        not null check (action in

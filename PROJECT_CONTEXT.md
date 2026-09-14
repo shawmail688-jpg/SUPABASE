@@ -5,7 +5,7 @@
 # 1. Current Status（当前开发状态）
 
 - Current Feature：v1-launch（阶段一+阶段二首次上线，M1→M3b）
-- Current Stage：规划链全部收官（ApprovalRecord #1-#7）→ **M1 执行阶段**；TASK-001 DONE（Frankfurt）；**TASK-002 DONE（09-14 day-1 五项全 PASS，证据 day1/）**；**TASK-003 DONE（09-14 四项验收全 PASS：两遍幂等重放/geog IMMUTABLE/断言 12/12/回滚演练，证据 evidence-task003/）**；当前=**TASK-004 D3 用例**（前置：domain_config 回填真实字段）
+- Current Stage：规划链全部收官（ApprovalRecord #1-#7）→ **M1 执行阶段**；TASK-001 DONE（Frankfurt）；**TASK-002 DONE（09-14 day-1 五项全 PASS，证据 day1/）**；**TASK-003 DONE（09-14 四项验收全 PASS，证据 evidence-task003/）**；**TASK-004 DONE（09-14 两遍 28/28，证据 evidence-task004/；domain_config v2 已回填，用户复核待补）**；当前=**TASK-005 存量导入 D4+对账**
 - Progress：
   - 🟢 M0 立项（13f692d）
   - 🟢 ②Requirement v1.2 / ③Scope v1.0（L1 已批）/ ④PRD-V1 v1.1（L2 已批 Lock，评审 15 条全处置）/ ⑤ADR-001~007 归档
@@ -25,7 +25,7 @@
 
 # 3. Next Step（下一步）
 
-- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；TASK-001/002/003 DONE；当前=**TASK-004 D3 用例**（前置：domain_config 回填真实字段并经用户确认），编码走分支→PR→审后合
+- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；TASK-001/002/003/004 DONE；当前=**TASK-005 存量导入 D4+对账**（migrate_data.mjs 按 04-Module 设计新建；D4 设 app.migration GUC+actor_uuid），编码走分支→PR→审后合
 - 待决决策项（用户动作，阻塞点）：
   - [x] 域名已配置（2026-09-14 用户同步；具体域名不写入快照）
   - [x] Supabase 账号已注册（2026-09-14 用户同步）
@@ -34,10 +34,10 @@
   - [ ] 2FA 与备份管理员状态确认（30 秒核对：Account→Security 开 2FA；组织 Members 邀第二管理员）
   - [x] CR-001 已批准（09-14，#6）；CR-002 已批准 Lock（09-14，#7）
   - [x] `.env` 用户已填（publishable/secret key + Access Token；密钥不进对话、不进 git）
-  - [ ] ⚠ domain_config v1 回填真实表单字段并经用户确认（TASK-004 D3 闸门前置）
+  - [ ] domain_config v2 用户复核（追加制；如有出入以 v3 修订，不阻塞 TASK-005）
   - [ ] **次月起 Pro 订阅付款 $25/月**（首月免费验证后）
-  - [ ] 费用明细 QSP-2026-001 上报领导；IT 监控盘点四问（提案阶段遗留，不阻塞本仓）
-- 首个实现任务：**TASK-004 D3 用例**（库已建好；先回填 domain_config 再跑 sql_cases.sql 22 用例）；密钥不进对话、不进 git
+  - [x] 费用明细 QSP-2026-001 已上报领导（2026-09-14 用户确认）；IT 监控盘点四问（提案阶段遗留，不阻塞本仓）
+- 首个实现任务：**TASK-005 存量导入**（D4：Sheet 双表+JSON→PG，migrate_data.mjs 需按 04-Module 设计新建并走分支→PR）；密钥不进对话、不进 git
 
 # 4. Important Decisions（重要设计决策）
 

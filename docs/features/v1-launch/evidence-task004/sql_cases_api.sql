@@ -7,8 +7,6 @@
 -- NOTE: GUCs are set session-scoped (is_local=false) and explicitly reset,
 -- because transaction-local GUCs survive plpgsql subtransaction exits.
 
-\set ON_ERROR_STOP on
-\set svc_uuid '11111111-1111-1111-1111-111111111111'
 
 begin;
 
@@ -373,5 +371,3 @@ end $$;
 select count(*) as total, count(*) filter (where pass) as passed from t_result;
 
 rollback;
-
-select 'D3 ALL TESTS PASSED (' || (select count(*) from t_result) || '/22)' as result;

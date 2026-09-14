@@ -21,7 +21,7 @@
 |------|------|------|
 | TASK-001 | Supabase 区域拍板实测（Frankfurt；RTT 步经用户裁量豁免） | DONE |
 | TASK-002 | Supabase 项目 + day-1 最小闭环验证（首月 Free，次月 Pro） | DONE（09-14 五项全 PASS，证据 docs/features/v1-launch/day1/） |
-| TASK-003 | 建库迁移 SQL（D1 表结构+D2 RLS/触发器/RPC/种子） | TODO |
+| TASK-003 | 建库迁移 SQL（D1 表结构+D2 RLS/触发器/RPC/种子） | DONE（09-14 四项验收全 PASS，证据 evidence-task003/；domain_config 回填移交 TASK-004 前） |
 | TASK-004 | D3 SQL 用例全绿（sql_cases.sql） | TODO |
 | TASK-005 | 存量数据导入 D4 + 对账 | TODO |
 | TASK-006 | 存量照片迁移 D5 | TODO |

@@ -6,11 +6,15 @@
 
 create extension if not exists postgis;
 
-create type public.site_status as enum ('surveying','candidate','selected','archived','operating');
-create type public.app_role    as enum ('manager','surveyor','admin');
+do $$ begin
+  create type public.site_status as enum ('surveying','candidate','selected','archived','operating');
+exception when duplicate_object then null; end $$;
+do $$ begin
+  create type public.app_role as enum ('manager','surveyor','admin');
+exception when duplicate_object then null; end $$;
 
 -- 3.1 project (replication axis)
-create table public.project (
+create table if not exists public.project (
   id          uuid primary key default gen_random_uuid(),
   code        text        not null unique,
   name        text        not null,
@@ -21,7 +25,7 @@ create table public.project (
 
 -- 3.3 app_user (id = auth.users.id; exception R7: svc_migration machine account
 --      has NO auth.users row — seeded with fixed uuid in 0002)
-create table public.app_user (
+create table if not exists public.app_user (
   id           uuid        primary key,
   display_name text        not null,
   role         public.app_role not null default 'surveyor',
@@ -31,7 +35,7 @@ create table public.app_user (
 );
 
 -- 3.2 domain_config (append-only, R5: version increments; old rows never updated)
-create table public.domain_config (
+create table if not exists public.domain_config (
   id         uuid        primary key default gen_random_uuid(),
   project_id uuid        not null references public.project(id) on delete restrict,
   version    int         not null,
@@ -42,7 +46,7 @@ create table public.domain_config (
 );
 
 -- 3.4 site (one row = one real storefront / candidate location)
-create table public.site (
+create table if not exists public.site (
   id         uuid        primary key default gen_random_uuid(),
   project_id uuid        not null references public.project(id) on delete restrict,
   code       text        not null,
@@ -63,11 +67,11 @@ create table public.site (
   updated_at timestamptz not null default now(),
   unique (project_id, code)
 );
-create index site_geog_idx           on public.site using gist (geog);
-create index site_project_status_idx on public.site (project_id, status);
+create index if not exists site_geog_idx           on public.site using gist (geog);
+create index if not exists site_project_status_idx on public.site (project_id, status);
 
 -- 3.5 survey_result (append-only survey history)
-create table public.survey_result (
+create table if not exists public.survey_result (
   id            uuid        primary key,          -- client-pregenerated (offline idempotency, M3)
   site_id       uuid        not null references public.site(id) on delete restrict,
   rent          numeric,
@@ -81,10 +85,10 @@ create table public.survey_result (
   created_by    uuid        not null references public.app_user(id) default auth.uid(),
   created_at    timestamptz not null default now()
 );
-create index survey_result_site_created_idx on public.survey_result (site_id, created_at desc);
+create index if not exists survey_result_site_created_idx on public.survey_result (site_id, created_at desc);
 
 -- 3.6 photo (metadata only; object lives in Storage private bucket)
-create table public.photo (
+create table if not exists public.photo (
   id               uuid        primary key,      -- client-pregenerated (M3)
   site_id          uuid        not null references public.site(id) on delete restrict,
   survey_result_id uuid        references public.survey_result(id) on delete set null,
@@ -95,10 +99,10 @@ create table public.photo (
   uploaded_by      uuid        not null references public.app_user(id) default auth.uid(),
   created_at       timestamptz not null default now()
 );
-create index photo_site_idx on public.photo (site_id);
+create index if not exists photo_site_idx on public.photo (site_id);
 
 -- 3.7 site_status_log (single source of truth for state transitions)
-create table public.site_status_log (
+create table if not exists public.site_status_log (
   id          bigint generated always as identity primary key,
   site_id     uuid        not null references public.site(id) on delete restrict,
   from_status public.site_status,                   -- NULL = first creation
@@ -109,10 +113,10 @@ create table public.site_status_log (
   at          timestamptz not null default now(),
   note        text
 );
-create index site_status_log_site_at_idx on public.site_status_log (site_id, at);
+create index if not exists site_status_log_site_at_idx on public.site_status_log (site_id, at);
 
 -- 3.8 external_ids (mapping-table landing; v1 = structure only)
-create table public.external_ids (
+create table if not exists public.external_ids (
   id              uuid        primary key default gen_random_uuid(),
   entity_type     text        not null check (entity_type in ('store','survey_point','device')),
   entity_id       uuid        not null,
@@ -124,7 +128,7 @@ create table public.external_ids (
 );
 
 -- 3.9 fengshui_eval (migrated from fengshui_evals.json)
-create table public.fengshui_eval (
+create table if not exists public.fengshui_eval (
   id         uuid        primary key default gen_random_uuid(),
   site_id    uuid        not null references public.site(id) on delete restrict,
   raw        jsonb       not null,
@@ -133,7 +137,7 @@ create table public.fengshui_eval (
 );
 
 -- 3.10 audit_log (trigger-written, client read-only for admin; append-only)
-create table public.audit_log (
+create table if not exists public.audit_log (
   id        bigint generated always as identity primary key,
   table_name text       not null,
   op         text       not null check (op in ('INSERT','UPDATE')),
@@ -143,4 +147,4 @@ create table public.audit_log (
   actor      uuid,                                     -- null = service session
   at         timestamptz not null default now()
 );
-create index audit_log_table_row_idx on public.audit_log (table_name, row_id);
+create index if not exists audit_log_table_row_idx on public.audit_log (table_name, row_id);

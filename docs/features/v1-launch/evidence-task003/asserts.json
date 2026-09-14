@@ -1,0 +1,32 @@
+{
+ "expect": {
+  "tables10": 10,
+  "rls_enabled": 10,
+  "idx6": 6,
+  "triggers12": 12,
+  "functions8": 8,
+  "geog_always": 1,
+  "geog_immutable": true,
+  "revoke_delete_anon": true,
+  "revoke_delete_auth": true,
+  "seed_project": 1,
+  "seed_svc_migration": 1,
+  "seed_domain_config": 1
+ },
+ "got": {
+  "tables10": 10,
+  "rls_enabled": 10,
+  "idx6": 6,
+  "triggers12": 12,
+  "functions8": 8,
+  "geog_always": 1,
+  "geog_immutable": true,
+  "revoke_delete_anon": true,
+  "revoke_delete_auth": true,
+  "seed_project": 1,
+  "seed_svc_migration": 1,
+  "seed_domain_config": 1
+ },
+ "fails": [],
+ "verdict": "PASS (12/12)"
+}

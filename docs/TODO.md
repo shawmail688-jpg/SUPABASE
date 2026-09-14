@@ -13,10 +13,11 @@
 - [x] TASK-001 区域拍板（09-04 用户直接拍板 Frankfurt，RTT 步经用户裁量豁免；1e1a623 含 D1/D2 迁移 SQL 预编写）
 - [x] CR-001 凭证切新式 key（09-14 批准 Lock，#6；31 处文档同步 + .env.example 建档）+ CR-002 地图瓦片韧性（09-14 批准 Lock，#7，ADR-008）
 - [x] TASK-002 Supabase 项目+day-1 验证（09-14 **DONE 五项全 PASS**：Region=eu-central-1 实证、RLS anon 零/401、签名 URL 过期 400、浏览器直传 200、Realtime INSERT 3.9s、file:// CORS 200；证据 docs/features/v1-launch/day1/；测试残留已清理）
+- [x] TASK-003 建库 SQL（09-14 **DONE 四项全 PASS**：两遍幂等重放、geog IMMUTABLE、断言 12/12、回滚演练；证据 evidence-task003/；⚠ domain_config 真实字段回填移交 TASK-004 前完成）
 
 ## 进行中 / 下一步
 
-- [ ] TASK-003 建库 SQL（D1+D2 迁移 0001/0002 已预编写入库，经 PAT→Management API 执行）
+- [ ] TASK-004 D3 用例全绿（前置：domain_config 从在用表单回填真实字段结构）
 - [ ] TASK-004 D3 用例全绿
 - [ ] TASK-005 存量导入 D4+对账
 - [ ] TASK-006 照片迁移 D5

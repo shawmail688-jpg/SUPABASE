@@ -38,9 +38,13 @@ begin
   return new;
 end $$;
 
+drop trigger if exists trg_project_updated_at on public.project;
 create trigger trg_project_updated_at       before update on public.project       for each row execute function public.set_updated_at();
+drop trigger if exists trg_app_user_updated_at on public.app_user;
 create trigger trg_app_user_updated_at      before update on public.app_user      for each row execute function public.set_updated_at();
+drop trigger if exists trg_site_updated_at on public.site;
 create trigger trg_site_updated_at          before update on public.site          for each row execute function public.set_updated_at();
+drop trigger if exists trg_survey_result_updated_at on public.survey_result;
 create trigger trg_survey_result_updated_at before update on public.survey_result for each row execute function public.set_updated_at();
 
 -- ===== audit trail (R8: old->new on UPDATE; 6 tables) =====
@@ -59,11 +63,17 @@ begin
   return coalesce(new, old);
 end $$;
 
+drop trigger if exists trg_project_audit on public.project;
 create trigger trg_project_audit       after insert or update on public.project       for each row execute function public.audit_fn();
+drop trigger if exists trg_app_user_audit on public.app_user;
 create trigger trg_app_user_audit      after insert or update on public.app_user      for each row execute function public.audit_fn();
+drop trigger if exists trg_site_audit on public.site;
 create trigger trg_site_audit          after insert or update on public.site          for each row execute function public.audit_fn();
+drop trigger if exists trg_survey_result_audit on public.survey_result;
 create trigger trg_survey_result_audit after insert or update on public.survey_result for each row execute function public.audit_fn();
+drop trigger if exists trg_photo_audit on public.photo;
 create trigger trg_photo_audit         after insert or update on public.photo         for each row execute function public.audit_fn();
+drop trigger if exists trg_domain_config_audit on public.domain_config;
 create trigger trg_domain_config_audit after insert or update on public.domain_config for each row execute function public.audit_fn();
 
 -- ===== app_user column guard: role/is_active admin-only =====
@@ -80,6 +90,7 @@ begin
   return new;
 end $$;
 
+drop trigger if exists trg_app_user_guard on public.app_user;
 create trigger trg_app_user_guard before update on public.app_user
   for each row execute function public.app_user_guard();
 
@@ -123,6 +134,7 @@ begin
   return new;
 end $$;
 
+drop trigger if exists trg_site_before_change on public.site;
 create trigger trg_site_before_change before insert or update on public.site
   for each row execute function public.site_before_change();
 
@@ -213,76 +225,100 @@ alter table public.audit_log       enable row level security;
 
 -- project / domain_config: read all authenticated; project update admin.
 -- domain_config: no client insert/update (append-only R5; new versions via SQL seeds).
+drop policy if exists project_select on public.project;
 create policy project_select on public.project for select to authenticated using (true);
+drop policy if exists project_update on public.project;
 create policy project_update on public.project for update to authenticated
   using (public.is_admin()) with check (public.is_admin());
+drop policy if exists domain_config_select on public.domain_config;
 create policy domain_config_select on public.domain_config for select to authenticated using (true);
 
 -- app_user: read all authenticated; update self (display_name, via guard trigger) / admin
+drop policy if exists app_user_select on public.app_user;
 create policy app_user_select on public.app_user for select to authenticated using (true);
+drop policy if exists app_user_update on public.app_user;
 create policy app_user_update on public.app_user for update to authenticated
   using (id = auth.uid() or public.is_admin())
   with check (id = auth.uid() or public.is_admin());
 
 -- site: H1 read = all non-archived for authenticated (manager/admin incl. archived);
 --       insert authenticated (status forced surveying by trigger); update manager or own rows
+drop policy if exists site_select on public.site;
 create policy site_select on public.site for select to authenticated
   using (status <> 'archived' or public.is_manager());
+drop policy if exists site_insert on public.site;
 create policy site_insert on public.site for insert to authenticated
   with check (auth.uid() is not null);
+drop policy if exists site_update_mgr on public.site;
 create policy site_update_mgr on public.site for update to authenticated
   using (public.is_manager()) with check (public.is_manager());
+drop policy if exists site_update_own on public.site;
 create policy site_update_own on public.site for update to authenticated
   using (created_by = auth.uid()) with check (created_by = auth.uid());
 
 -- survey_result: manager all; surveyor own (contacts of others are management视野, H1)
+drop policy if exists sr_select_mgr on public.survey_result;
 create policy sr_select_mgr on public.survey_result for select to authenticated
   using (public.is_manager());
+drop policy if exists sr_select_own on public.survey_result;
 create policy sr_select_own on public.survey_result for select to authenticated
   using (created_by = auth.uid());
+drop policy if exists sr_insert on public.survey_result;
 create policy sr_insert on public.survey_result for insert to authenticated
   with check (created_by = auth.uid());
+drop policy if exists sr_update_own on public.survey_result;
 create policy sr_update_own on public.survey_result for update to authenticated
   using (created_by = auth.uid() and source = 'form')
   with check (created_by = auth.uid() and source = 'form');
 
 -- photo: visibility follows site (non-archived; manager incl. archived); insert own
+drop policy if exists photo_select on public.photo;
 create policy photo_select on public.photo for select to authenticated
   using (exists (
     select 1 from public.site s
     where s.id = site_id and (s.status <> 'archived' or public.is_manager())
   ));
+drop policy if exists photo_insert on public.photo;
 create policy photo_insert on public.photo for insert to authenticated
   with check (uploaded_by = auth.uid());
 
 -- site_status_log: read manager all / surveyor own-created sites;
 -- writes ONLY inside triggers/RPC (security definer = the single RLS exemption, M2)
+drop policy if exists ssl_select_mgr on public.site_status_log;
 create policy ssl_select_mgr on public.site_status_log for select to authenticated
   using (public.is_manager());
+drop policy if exists ssl_select_own on public.site_status_log;
 create policy ssl_select_own on public.site_status_log for select to authenticated
   using (exists (
     select 1 from public.site s where s.id = site_id and s.created_by = auth.uid()
   ));
 
 -- fengshui_eval: manager all; surveyor own-created sites; insert authenticated
+drop policy if exists fe_select_mgr on public.fengshui_eval;
 create policy fe_select_mgr on public.fengshui_eval for select to authenticated
   using (public.is_manager());
+drop policy if exists fe_select_own on public.fengshui_eval;
 create policy fe_select_own on public.fengshui_eval for select to authenticated
   using (exists (
     select 1 from public.site s where s.id = site_id and s.created_by = auth.uid()
   ));
+drop policy if exists fe_insert on public.fengshui_eval;
 create policy fe_insert on public.fengshui_eval for insert to authenticated
   with check (auth.uid() is not null);
 
 -- external_ids: manager only (L3)
+drop policy if exists ext_select on public.external_ids;
 create policy ext_select on public.external_ids for select to authenticated
   using (public.is_manager());
+drop policy if exists ext_insert on public.external_ids;
 create policy ext_insert on public.external_ids for insert to authenticated
   with check (public.is_manager());
+drop policy if exists ext_update on public.external_ids;
 create policy ext_update on public.external_ids for update to authenticated
   using (public.is_manager()) with check (public.is_manager());
 
 -- audit_log: admin read-only
+drop policy if exists audit_select on public.audit_log;
 create policy audit_select on public.audit_log for select to authenticated
   using (public.is_admin());
 
@@ -292,8 +328,10 @@ insert into storage.buckets (id, name, public)
 values ('photos', 'photos', false)
 on conflict (id) do nothing;
 
+drop policy if exists "photos_select_authenticated" on storage.objects;
 create policy "photos_select_authenticated" on storage.objects for select to authenticated
   using (bucket_id = 'photos');
+drop policy if exists "photos_insert_authenticated" on storage.objects;
 create policy "photos_insert_authenticated" on storage.objects for insert to authenticated
   with check (bucket_id = 'photos');
 

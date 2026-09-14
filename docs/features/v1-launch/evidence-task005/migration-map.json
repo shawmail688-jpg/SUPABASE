@@ -1,0 +1,390 @@
+{
+ "generated_at": "2026-09-14T18:54:28.078Z",
+ "mode": "dry-run",
+ "project": {
+  "code": "uganda-showroom"
+ },
+ "sites": {
+  "count": 15,
+  "rows": [
+   {
+    "id": "7e76cbbc-c4c4-5f39-9c55-53954a304bcb",
+    "code": "SR-PLUMBING-MALL",
+    "name": "Plumbing Mall",
+    "slug": "plumbing-mall",
+    "address": "6th Street Industrial area",
+    "status": "surveying"
+   },
+   {
+    "id": "65fb7418-1536-50eb-93f2-6adef6767c1e",
+    "code": "SR-KHARECHA-BUILDING",
+    "name": "Kharecha Building",
+    "slug": "kharecha-building",
+    "address": "Jinja road Opp Lugogo cricket oval",
+    "status": "surveying"
+   },
+   {
+    "id": "14236b9c-45f7-5b0c-b5e1-0475ff91c76b",
+    "code": "SR-GLOBAL-HEALTH-KAWEMPE-TC",
+    "name": "Global Health Kawempe TC",
+    "slug": "global-health-kawempe-tc",
+    "address": "Bombo road opp Maganjo",
+    "status": "surveying"
+   },
+   {
+    "id": "8c3ad7b6-adee-5d70-88e1-2c51b27f95a9",
+    "code": "SR-MADHIVANI-BUILDING",
+    "name": "Madhivani Building",
+    "slug": "madhivani-building",
+    "address": "Jinja road Opp Bank of India",
+    "status": "surveying"
+   },
+   {
+    "id": "658976d9-338e-563e-95ff-393ab5ce64e0",
+    "code": "SR-PIONEER-HOUSE",
+    "name": "Pioneer House",
+    "slug": "pioneer-house",
+    "address": "Jinja road opp Bank of Africa",
+    "status": "surveying"
+   },
+   {
+    "id": "ef2c2f90-8c9d-5dca-b912-5e6c738e4c11",
+    "code": "SR-QUALITY-CHEMICALS-KATWE",
+    "name": "Quality Chemicals- Katwe",
+    "slug": "quality-chemicals-katwe",
+    "address": "Quality Chemicals Limited, Plot 64/65,, Katwe Road, Kampala",
+    "status": "surveying"
+   },
+   {
+    "id": "1ec88f1a-4757-5644-82a7-20df31798e94",
+    "code": "SR-GR-PLAZA",
+    "name": "GR Plaza",
+    "slug": "gr-plaza",
+    "address": "Top Bread, 22-26, GR Plaza, Industrial Area Sixth Street, Near National Water, Opp Tip, Kampala",
+    "status": "surveying"
+   },
+   {
+    "id": "21d8c440-3454-5342-a8bc-c1e2f76ef482",
+    "code": "SR-MUGANZIRWAZZA-COMMERCIAL",
+    "name": "Muganzirwazza Commercial Complex",
+    "slug": "muganzirwazza-commercial-complex",
+    "address": "Katwe, Kampala, on Plot 14446/1446",
+    "status": "surveying"
+   },
+   {
+    "id": "5d255ce7-e779-5a96-8468-2c0593468375",
+    "code": "SR-HERNELY-BUSINESS-PARK",
+    "name": "Hernely business park",
+    "slug": "hernely-business-park",
+    "address": "Mulwana road",
+    "status": "surveying"
+   },
+   {
+    "id": "2f3718b5-e121-5a8f-af08-0cd1bb49e6b7",
+    "code": "SR-FORMER-HISENCE-SHOWROOM-",
+    "name": "Former hisence showroom Plot 7 AK",
+    "slug": "former-hisence-showroom-plot-7-ak",
+    "address": "Old portbell road",
+    "status": "surveying"
+   },
+   {
+    "id": "4aaba04f-8ddd-5d04-a51f-17ecede5d5e6",
+    "code": "SR-FORMER-NEXA-SOLAR",
+    "name": "Former Nexa solar",
+    "slug": "former-nexa-solar",
+    "address": "Old portbell road",
+    "status": "surveying"
+   },
+   {
+    "id": "97a85e3e-e7e3-5687-be5c-6090e5572ca9",
+    "code": "SR-AFFAYO-BUILDING",
+    "name": "Affayo building",
+    "slug": "affayo-building",
+    "address": "Ndeeba, masaka road",
+    "status": "surveying"
+   },
+   {
+    "id": "2c02198f-2de8-5f1c-8ea2-a5389b3ce8ff",
+    "code": "SR-BE-FORWARD-MEIK-CAR-HUB",
+    "name": "BE FORWARD-MEIK CAR HUB",
+    "slug": "be-forward-meik-car-hub",
+    "address": "Old Portbell Road Industrial area, Wankoko (Bugolobi)",
+    "status": "surveying"
+   },
+   {
+    "id": "558d5051-7704-5086-b69b-c51709774e7b",
+    "code": "SR-KAINIU-MOTORS-WAHAB",
+    "name": "KAINIU MOTORS WAHAB",
+    "slug": "kainiu-motors-wahab",
+    "address": "Ndeeba, masaka road",
+    "status": "surveying"
+   },
+   {
+    "id": "43e2e6db-9be5-5d87-a23a-d608ef371173",
+    "code": "SR-SILENT-NIGHT",
+    "name": "Silent night",
+    "slug": "silent-night",
+    "address": "Parliamentary avenue slightly off kampala road",
+    "status": "surveying"
+   }
+  ],
+  "duplicates_in_source": []
+ },
+ "survey_results": {
+  "lead_rows_total": 11,
+  "leads_unique": 5,
+  "mapped_to_site": [
+   {
+    "sr_id": "dd39ec82-ce96-5958-8879-5f742e3acc7f",
+    "date": "2026-09-01",
+    "point": "Hernely business park",
+    "site": "5d255ce7-e779-5a96-8468-2c0593468375",
+    "match": "exact"
+   },
+   {
+    "sr_id": "538325a2-a7ba-55ae-a798-49cd3fece329",
+    "date": "2026-09-01",
+    "point": "Former hisence showroom Plot 7 AK",
+    "site": "2f3718b5-e121-5a8f-af08-0cd1bb49e6b7",
+    "match": "exact"
+   },
+   {
+    "sr_id": "03a36bfb-23a5-59e2-b47c-a5eb5c62cfa2",
+    "date": "2026-09-01",
+    "point": "Former hisence showroom Plot 7 AK",
+    "site": "2f3718b5-e121-5a8f-af08-0cd1bb49e6b7",
+    "match": "exact"
+   },
+   {
+    "sr_id": "a41fc59d-1ded-54ee-8294-25b944f1831b",
+    "date": "2026-09-01",
+    "point": "Affayo building",
+    "site": "97a85e3e-e7e3-5687-be5c-6090e5572ca9",
+    "match": "exact"
+   },
+   {
+    "sr_id": "760b90a4-2b4b-506c-ae2a-611843f79e0f",
+    "date": "2026-09-14",
+    "point": "Hernely business park",
+    "site": "5d255ce7-e779-5a96-8468-2c0593468375",
+    "match": "exact"
+   }
+  ],
+  "unmatched": [],
+  "duplicates_dropped": [
+   {
+    "spId": "FL-02",
+    "marker": "Lead",
+    "hash": "554fb0d3"
+   },
+   {
+    "spId": "FL-02",
+    "marker": "Lead",
+    "hash": "ecd5254f"
+   },
+   {
+    "spId": "SP-05",
+    "marker": "Lead",
+    "hash": "c3423726"
+   },
+   {
+    "spId": "FL-01",
+    "marker": "Lead",
+    "hash": "6ad785fb"
+   },
+   {
+    "spId": "FL-01",
+    "marker": "Lead",
+    "hash": "6ad785fb"
+   },
+   {
+    "spId": "FL-01",
+    "marker": "Lead",
+    "hash": "6ad785fb"
+   }
+  ],
+  "unknown_marker_rows": []
+ },
+ "fengshui": {
+  "mapped": [
+   {
+    "fe_slug": "muganzirwazza-commercial-complex",
+    "site_id": "21d8c440-3454-5342-a8bc-c1e2f76ef482",
+    "site_name": "Muganzirwazza Commercial Complex",
+    "how": "exact",
+    "verdict": "pass"
+   },
+   {
+    "fe_slug": "hernely-business-park",
+    "site_id": "5d255ce7-e779-5a96-8468-2c0593468375",
+    "site_name": "Hernely business park",
+    "how": "exact",
+    "verdict": "pass"
+   },
+   {
+    "fe_slug": "former-hisence-showroom-plot-7-ak",
+    "site_id": "2f3718b5-e121-5a8f-af08-0cd1bb49e6b7",
+    "site_name": "Former hisence showroom Plot 7 AK",
+    "how": "exact",
+    "verdict": "pass"
+   },
+   {
+    "fe_slug": "former-nexa-solar",
+    "site_id": "4aaba04f-8ddd-5d04-a51f-17ecede5d5e6",
+    "site_name": "Former Nexa solar",
+    "how": "exact",
+    "verdict": "pass"
+   },
+   {
+    "fe_slug": "affayo-building",
+    "site_id": "97a85e3e-e7e3-5687-be5c-6090e5572ca9",
+    "site_name": "Affayo building",
+    "how": "exact",
+    "verdict": "caution"
+   },
+   {
+    "fe_slug": "be-forward-meik-car-hub",
+    "site_id": "2c02198f-2de8-5f1c-8ea2-a5389b3ce8ff",
+    "site_name": "BE FORWARD-MEIK CAR HUB",
+    "how": "exact",
+    "verdict": "caution"
+   },
+   {
+    "fe_slug": "kainiu-motors-wahab",
+    "site_id": "558d5051-7704-5086-b69b-c51709774e7b",
+    "site_name": "KAINIU MOTORS WAHAB",
+    "how": "exact",
+    "verdict": "caution"
+   }
+  ],
+  "unmatched": []
+ },
+ "sp_cluster_anchors": {
+  "note": "扫街簇锚点≠现实店面，按外审禁止直写 site；v1 不导入，留台账",
+  "count": 13,
+  "rows": [
+   {
+    "sp_id": "SP-01",
+    "name": "Kamwokya Motorcycle Dealer Cluster",
+    "origin": [
+     "investigator"
+    ],
+    "lat": 0.3385983,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-02",
+    "name": "Kampala Central Motorcycle Dealer Cluster",
+    "origin": [
+     "investigator"
+    ],
+    "lat": 0.3205851,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-03",
+    "name": "Jinja Road Dealer Corridor",
+    "origin": [
+     "investigator"
+    ],
+    "lat": 0.3221346,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-04",
+    "name": "Bugolobi Electric Motorcycle Cluster",
+    "origin": [
+     "investigator"
+    ],
+    "lat": 0.3131639,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-05",
+    "name": "Ndeeba Motorcycle Dealer Cluster",
+    "origin": [
+     "investigator"
+    ],
+    "lat": 0.2938291,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-07",
+    "name": "Double Q / GWM Landmark Survey Point",
+    "origin": [
+     "leader"
+    ],
+    "lat": 0.310942,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-08",
+    "name": "Haandi Restaurant Kampala Branch Landmark Survey Point",
+    "origin": [
+     "leader"
+    ],
+    "lat": 0.312748,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-10",
+    "name": "Club Guvnor Landmark Survey Point",
+    "origin": [
+     "leader"
+    ],
+    "lat": 0.321162,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-11",
+    "name": "Plumbing Mall",
+    "origin": [
+     "google-sheet"
+    ],
+    "lat": null,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-12",
+    "name": "Kharecha Building (Former Bajaj Showroom)",
+    "origin": [
+     "google-sheet"
+    ],
+    "lat": null,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-13",
+    "name": "Global Health Kawempe TC",
+    "origin": [
+     "google-sheet"
+    ],
+    "lat": null,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-14",
+    "name": "Quality Chemicals – Katwe",
+    "origin": [
+     "google-sheet"
+    ],
+    "lat": 0.3029834,
+    "lon": null
+   },
+   {
+    "sp_id": "SP-15",
+    "name": "GR Plaza",
+    "origin": [
+     "google-sheet"
+    ],
+    "lat": 0.3165303,
+    "lon": null
+   }
+  ]
+ },
+ "retired_points": {
+  "count": 2,
+  "note": "退役点不导入"
+ },
+ "points_without_site": []
+}

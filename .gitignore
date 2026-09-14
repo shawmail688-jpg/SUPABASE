@@ -16,3 +16,4 @@ output/
 *.local
 *.log
 !.env.example
+sources/

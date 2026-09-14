@@ -1,0 +1,78 @@
+{
+ "generated_at": "2026-09-14T18:53:59+00:00",
+ "project_ref": "jfggeudssomocwcnpawk",
+ "note": "外审指令#4：路径含「项目」层级；快照为 gviz link-shared 拉取；源文件不改（负向对账只动临时副本）",
+ "sources": [
+  {
+   "id": "survey_points",
+   "path": "E:\\项目\\uganda-house-finder\\data\\survey\\survey_points.json",
+   "sha256": "cee346d3346316c2b9da2f5d1c41695d7305a14b0c61ddcd26d362804471fb38",
+   "captured_at": "2026-09-14T18:53:59+00:00",
+   "rows": 13,
+   "retired_points": 2
+  },
+  {
+   "id": "fengshui_evals",
+   "path": "E:\\项目\\uganda-house-finder\\data\\survey\\fengshui_evals.json",
+   "sha256": "925360ec0731aa6436281be7128c35942b87945227c3f1afd6f3ff277ba8481b",
+   "captured_at": "2026-09-14T18:53:59+00:00",
+   "rows": 7
+  },
+  {
+   "id": "showroom_sites",
+   "path": "E:\\apps\\survey-platform\\sources\\showroom_sites_snapshot.csv",
+   "sha256": "17f7961b4f78b7c44b5935d8c0d1f18a8bb95f37fc554d033921a3b8667f8e66",
+   "captured_at": "2026-09-14T18:53:59+00:00",
+   "data_rows": 15,
+   "header": [
+    "",
+    " Name of Building",
+    "Area/Street Name",
+    "Location Pin",
+    "Rent per square meter",
+    "Space Available",
+    "Area Code",
+    "Contact person ",
+    "Added",
+    "Surveyor",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
+  {
+   "id": "survey_results",
+   "path": "E:\\apps\\survey-platform\\sources\\survey_results_snapshot.csv",
+   "sha256": "17ac3bdbb7663b80e5d5d06039e9bed4df9449603b8ce7a73b9dc854594f3fbb",
+   "captured_at": "2026-09-14T18:53:59+00:00",
+   "data_rows": 19,
+   "header": [
+    "2026-09-01",
+    "FL-01",
+    "Mulwana road ",
+    "Hernely business park ",
+    "NEW-POINT",
+    "survey",
+    "https://maps.app.goo.gl/bvgXePrjgJ4QK1ym7",
+    "",
+    "",
+    "",
+    "Huge clean , has great view "
+   ]
+  }
+ ]
+}

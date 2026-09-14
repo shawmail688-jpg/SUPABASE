@@ -7,4 +7,5 @@
 2. 登录后 leader/work 按 app_user.role 放行：surveyor 无看板入口（03 §2.3 RLS 兜底断言）
 3. 骨架 pin/灯箱渲染以 TASK-006 迁入照片+迁入点位跑通一次（数据源已换 api.js）
 4. `#/selftest` 无头 Edge 出 dump 证据：登录墙拦截/登录放行/权限分流
+5. `config.js` 定义统一 `window.MAP_TILE_CONFIG`（streetUrl/satelliteUrl/errorThreshold）；产物不得出现 `tile.openstreetmap.org`，地图连续 3 个主瓦片失败后无需刷新自动切卫星图（ADR-008）
 审查结论：（完工时填）

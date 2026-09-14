@@ -17,8 +17,8 @@ Last Update：2026-09-03
 |------|------|
 | Base URL | `https://<project-ref>.supabase.co`（区域开户前拍板，PRD 开放问题 #1/#2） |
 | Style | REST（PostgREST 自动生成）；JSON over HTTPS |
-| Auth | `apikey: <anon key>` + `Authorization: Bearer <用户 JWT>`（登录后）；service key 仅本机脚本 |
-| 凭证注入 | URL + anon key 经 `config.js` 随 Pages 部署注入——**anon key 非密钥**（设计上公开，RLS 才是闸），service key 永不进 config（ADR-007） |
+| Auth | `apikey: <publishable key>` + `Authorization: Bearer <用户 JWT>`（登录后）；secret key 仅本机脚本 |
+| 凭证注入 | URL + publishable key 经 `config.js` 随 Pages 部署注入——**publishable key 非密钥**（设计上公开，RLS 才是闸），secret key 永不进 config（ADR-007） |
 | CORS | Supabase 端点默认放行所有 origin（托管域/file:// 均可调）；`file://` 场景可达性列入 **day-1 最小闭环实测清单**（评审 M9②） |
 | 时间 | ISO 8601 UTC |
 | 统一错误 | HTTP 4xx/5xx + `{code, message, details, hint}`；RLS 拒绝=空集（读）或 42501（写）；状态机违规=P0001（触发器/RPC raise，中文可读） |

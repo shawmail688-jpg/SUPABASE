@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>DAY1_CORS_PASS</title></head><body><pre id="out">fileCors=PASS(200, rows=0)</pre>
+<script>
+const CFG = {url: 'https://jfggeudssomocwcnpawk.supabase.co', pub: 'sb_publishable_husmcs8YVuXUXIPvrW1pxg_mDP1ha7E'};
+(async () => {
+  try {
+    const r = await fetch(CFG.url + '/rest/v1/day1_events?select=id&limit=1',
+      {headers:{'apikey': CFG.pub, 'Authorization': 'Bearer ' + CFG.pub}});
+    const ok = r.ok;
+    const rows = await r.json();
+    document.title = ok ? 'DAY1_CORS_PASS' : 'DAY1_CORS_FAIL(' + r.status + ')';
+    document.getElementById('out').textContent = 'fileCors=PASS(' + r.status + ', rows=' + rows.length + ')';
+  } catch(e) {
+    document.title = 'DAY1_CORS_FAIL';
+    document.getElementById('out').textContent = 'fileCors=FAIL(' + e + ')';
+  }
+})();
+</script></body></html>

@@ -16,7 +16,7 @@ Date：2026-09-03
 看板（`web/dashboard/`）及未来表单 URL 形态托管 **Cloudflare Pages**：
 
 - 免费档足够（静态站、无限带宽量级）；自定义域名绑定（开放问题 #3 的域名落点）；全球边缘节点（乌干达直连无障碍、领导国内可达性以实开验收为准，cloudflared 命名隧道兜底保留）
-- 环境注入：`config.js` 随部署写入 Supabase URL + anon key（**anon key 设计上公开非密钥，RLS 才是闸**）；service key 永不进 Pages
+- 环境注入：`config.js` 随部署写入 Supabase URL + publishable key（**publishable key 设计上公开非密钥，RLS 才是闸**）；secret key 永不进 Pages
 - 部署：git push 触发（或 wrangler 直传），零服务器
 
 # 三、候选方案与取舍（Alternatives）

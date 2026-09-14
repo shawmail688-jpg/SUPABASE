@@ -1,0 +1,51 @@
+<html><head><meta charset="utf-8"><title>DAY1_BROWSER_ALL_PASS</title></head><body><pre id="out">browserUpload=PASS(200)
+realtimeInsert=PASS</pre>
+<script>
+const CFG = {url: 'https://jfggeudssomocwcnpawk.supabase.co', pub: 'sb_publishable_husmcs8YVuXUXIPvrW1pxg_mDP1ha7E'};
+const PNG_B64 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+function note(s){ document.getElementById('out').textContent = s; }
+async function restUpload(){
+  const bytes = Uint8Array.from(atob(PNG_B64), c => c.charCodeAt(0));
+  const path = CFG.url + '/storage/v1/object/day1-private/browser-upload-' + Date.now() + '.png';
+  const r = await fetch(path, {method:'POST',
+    headers:{'apikey': CFG.pub, 'Authorization': 'Bearer ' + CFG.pub, 'Content-Type':'image/png'},
+    body: bytes});
+  let t = await r.text(); return 'browserUpload=' + (r.ok ? 'PASS(' + r.status + ')' : 'FAIL(' + r.status + '): ' + t.slice(0,120));
+}
+function realtimeTest(){
+  return new Promise(resolve => {
+    let done = false;
+    const finish = (s) => { if(!done){ done = true; resolve(s); try{ws.close();}catch(e){} } };
+    const wsUrl = CFG.url.replace('https','wss') + '/realtime/v1/websocket?apikey=' + encodeURIComponent(CFG.pub) + '&vsn=1.0.0';
+    const ws = new WebSocket(wsUrl);
+    let ref = 0, joined = false;
+    ws.onopen = () => {
+      ws.send(JSON.stringify({topic:'phoenix', event:'heartbeat', payload:{}, ref: String(++ref)}));
+      ws.send(JSON.stringify({topic:'realtime:day1_events', event:'phx_join', ref: String(++ref),
+        payload:{ config:{ postgres_changes:[{event:'INSERT', schema:'public', table:'day1_events'}] } }}));
+    };
+    ws.onmessage = async (m) => {
+      const d = JSON.parse(m.data);
+      if (d.event === 'phx_reply' && d.payload && d.payload.status === 'ok' && !joined && d.topic === 'realtime:day1_events'){
+        joined = true;
+        await fetch(CFG.url + '/rest/v1/day1_events', {method:'POST',
+          headers:{'apikey': CFG.pub, 'Authorization': 'Bearer ' + CFG.pub, 'Content-Type':'application/json'},
+          body: JSON.stringify({note: 'rt-' + Date.now()})});
+      }
+      if (d.event === 'postgres_changes'){ finish('realtimeInsert=PASS'); }
+    };
+    ws.onerror = () => finish('realtimeInsert=FAIL(ws error)');
+    setTimeout(() => { if(!joined) finish('realtimeInsert=FAIL(no join 12s)'); }, 12000);
+    setTimeout(() => finish('realtimeInsert=FAIL(timeout 20s)'), 20000);
+  });
+}
+(async () => {
+  const out = [];
+  try { out.push(await restUpload()); } catch(e) { out.push('browserUpload=FAIL(' + e + ')'); }
+  note(out.join(' | ') + ' | realtime running...');
+  try { out.push(await realtimeTest()); } catch(e) { out.push('realtimeInsert=FAIL(' + e + ')'); }
+  const pass = out.every(s => s.indexOf('PASS') >= 0);
+  document.title = pass ? 'DAY1_BROWSER_ALL_PASS' : 'DAY1_BROWSER_FAIL';
+  document.getElementById('out').textContent = out.join('\n');
+})();
+</script></body></html>

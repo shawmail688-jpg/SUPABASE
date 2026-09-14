@@ -5,5 +5,5 @@
 验收条件：
 1. pg_dump_backup.ps1 计划任务注册（每日），连续 3 日产出 dump 文件（任务计划器历史留痕）
 2. restore_drill.ps1：dump→临时库恢复→行数对拍（site/survey_result/photo 三表 count 一致）全绿
-3. runbook 成文：dump 位置/保留策略/恢复步骤/负责人（仅 service key 走 .env，不入 git）
+3. runbook 成文：dump 位置/保留策略/恢复步骤/负责人（仅 secret key 走 .env，不入 git）
 审查结论：（完工时填）

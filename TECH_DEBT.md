@@ -2,7 +2,7 @@
 
 > 技术债单一登记处（C4）。状态：open / planned / accepted / resolved / triggered；严重度：blocker / major / minor
 
-Last Update：2026-09-03
+Last Update：2026-09-14
 
 ---
 
@@ -10,7 +10,7 @@ Last Update：2026-09-03
 
 | 编号 | 描述 | 来源 | 影响 | 严重度 | 计划处理版本 | 状态 |
 |------|------|------|------|--------|--------------|------|
-| TD-001 | Supabase 选型已论证但**无原型验证**——团队首个云 DB 依赖，RLS/Storage/迁移实操坑未知 | ADR-001 §四；Assessment 硬触发 1 | M1 期可能踩坑返工 | major | M1 | open |
+| TD-001 | Supabase 选型已论证但**无原型验证**——团队首个云 DB 依赖，RLS/Storage/迁移实操坑未知 | ADR-001 §四；Assessment 硬触发 1 | M1 期可能踩坑返工 | major | M1 | **resolved**（09-14 TASK-002 day-1 五项全 PASS，证据 docs/features/v1-launch/day1/，踩坑 4 条留档） |
 | TD-002 | 照片压缩参数（1600-2000px/80%）为行业经验值非实测（Theoretical） | ADR-004 §四 | 细节照可能细节丢失 | minor | M2a（样本断言+用户实拍复核） | open |
 | TD-003 | 监控开放平台月费（¥3-10/路/月）与国际区可用性未核实 | ADR-006 §四 | M5 立项估价不准 | minor | M5 立项前置 | accepted（后续项目） |
 | TD-004 | cloudflared 快速隧道 URL 每次重启必变（救急桥现状） | D 盘记忆 headless/atlas_bridge；Proposal §10 | 收藏夹失效，领导访问不稳 | minor | M3a（域名+命名隧道） | planned |
@@ -29,6 +29,7 @@ Last Update：2026-09-03
 | 日期 | Feature | 新增 | 解决 | open 总数 |
 |------|---------|------|------|-----------|
 | 2026-09-03 | v1-launch（文档链阶段） | 5 | 0 | 5 |
+| 2026-09-14 | v1-launch TASK-002 day-1 | 0 | 1（TD-001） | 4 |
 
 # 四、维护规则
 

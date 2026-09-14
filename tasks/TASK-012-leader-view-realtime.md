@@ -8,4 +8,5 @@
 3. 批准/隐藏走 RPC：成功→site_status_log 出行→汇总条数字变化（闭环断言）；非 manager 按钮不渲染且 RPC 越权拒
 4. Realtime：另端提交→leader 视图 ≤3s 冒 pin（本地实测记录）
 5. 375px 视口 selftest 全绿（N3）+out dump 证据
+6. 瓦片故障注入：拦截 streetUrl，断言 3 次失败后卫星瓦片实际加载且 pin/卡片仍可操作
 审查结论：（完工时填）

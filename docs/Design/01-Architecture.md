@@ -1,9 +1,9 @@
 # 选址调查数据平台 架构设计（Architecture）
 
-Version：1.2（1.1→1.2：复审 R8 同步 M-Form 边界注；1.0→1.1：首轮评审 H4/M9/L6 处置——托管定案 Cloudflare Pages、三项定档落判、影响清单补全）
-Status：Approved（L2 闸门 2026-09-04 用户批准，Lock；变更走 C2）
+Version：1.3（1.2→1.3：C2 地图瓦片长期可用性变更，见 ADR-008）
+Status：v1.2 Approved/Lock；v1.3 C2 CR-002 In Review
 Author：Claude
-Last Update：2026-09-03
+Last Update：2026-09-14
 PRD 依据：`docs/PRD/PRD-V1.md` v1.1（Approved/Lock）
 
 ---
@@ -18,6 +18,7 @@ PRD 依据：`docs/PRD/PRD-V1.md` v1.1（Approved/Lock）
 4. **离线灵魂**：表单侧离线能力是硬约束，架构只换「上传靶」，不动离线机制
 5. **配置驱动复现**：project + domain_config 双轴预留，换电站=第二份配置
 6. **安全内建**：RLS 两类角色 + 私有桶 + 服务端密钥纪律（本版无第三方凭证，纪律随 ADR-006 预置）
+7. **地图可降级**：禁止前端直连 OpenStreetMap 公共标准瓦片；底图 URL/署名由 `config.js` 注入，主底图失败自动切备用底图（ADR-008）
 
 # 二、总体架构
 
@@ -30,7 +31,7 @@ PRD 依据：`docs/PRD/PRD-V1.md` v1.1（Approved/Lock）
 │  └ 照片：本地压缩→Storage 直传         ├ 工作视图（桌面）       │
 │         │                             └ Realtime 订阅新提交    │
 └─────────┼───────────────────────────────────┼────────────────┘
-          │  HTTPS（anon key + 用户 JWT）      │
+          │  HTTPS（publishable key + 用户 JWT）      │
           ▼                                   ▼
 ┌─ Supabase Pro（区域：Frankfurt/新加坡，开户前拍板）─────────────┐
 │  PostgREST 自动 API（表直读直写，RLS 裁决）                    │
@@ -50,8 +51,9 @@ PRD 依据：`docs/PRD/PRD-V1.md` v1.1（Approved/Lock）
 
 **要点**：
 - **无自有后端**：本版无 Edge Function（无第三方凭证可管）；状态机用 Postgres RPC（security definer + GUC 闸）而非应用层——权限判定与状态转换同点收口，且**强制层**杜绝绕过（02 §6.1）
-- **托管定案（评审 H4）**：看板（及未来表单 URL 形态）托管 **Cloudflare Pages**（免费、静态、自定义域名、与 anon key 公开设计兼容）——决策记录 ADR-007；域名（开放问题 #3）绑定 Pages，cloudflared 命名隧道仅兜底；`config.js` 注入 URL+anon key（anon key 非密钥，RLS 才是闸）
-- **客户端拿到的只有 anon key + 用户 JWT**；service key 只存在于本机迁移/备份脚本（.env，永不入 git）
+- **托管定案（评审 H4）**：看板（及未来表单 URL 形态）托管 **Cloudflare Pages**（免费、静态、自定义域名、与 publishable key 公开设计兼容）——决策记录 ADR-007；域名（开放问题 #3）绑定 Pages，cloudflared 命名隧道仅兜底；`config.js` 注入 URL+publishable key（publishable key 非密钥，RLS 才是闸）
+- **客户端拿到的只有 publishable key + 用户 JWT**；secret key 只存在于本机迁移/备份脚本（.env，永不入 git）
+- **地图瓦片（ADR-008）**：首发默认使用 Esri World Street Map，World Imagery 为自动及手动备用；统一读取 `window.MAP_TILE_CONFIG`，后续采购带 SLA/域名鉴权的供应商时只改部署配置，不改地图业务代码
 - 三层可用性递减：云上（权威、永不暂停）> Sheet 存档（只读快照）> 本地冷备（灾难恢复）
 
 # 三、模块划分与职责
@@ -108,7 +110,7 @@ RPC 内部（security definer，一个事务）：
 
 ```
 Sheet 导出 CSV + survey_points.json + fengshui_evals.json
-  → M-Mig 脚本（service key，本机）→ PG 落库
+  → M-Mig 脚本（secret key，本机）→ PG 落库
   → 对账脚本：行数+逐行 sha1 vs 源 → 零差异报告存档
 本地照片目录 → sha1 去重 → Storage 上传 → photo 表登记 → 计数对账
 ```
@@ -133,6 +135,7 @@ Sheet 导出 CSV + survey_points.json + fengshui_evals.json
 - **区域延迟对比**（开放问题 #2）：开户前用免费档两区域临时项目各测 RTT（分部侧+领导侧），证据填 ADR-001 变更记录后拍板
 - **geog 生成列 IMMUTABLE 验证**（评审 L5）：`::geography` cast 若拒建→降级触发器维护列
 - **file:// 场景 CORS 实测**（评审 M9②）：单文件表单从 file:// 调 Supabase 端点
+- **瓦片故障注入**：拦截主街道瓦片，断言 3 次失败后自动切到卫星底图；分别从 file://、localhost、Pages 域名实测（ADR-008）
 - 压缩参数（开放问题 #7）：M2a 样本断言定档
 
 ## 6.2 定档结论（PRD 指派架构阶段定档的三项，评审 M9 关账）

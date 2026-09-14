@@ -1,9 +1,9 @@
 # 模块设计（Module）
 
-Version：1.1（1.0→1.1：架构评审 M4/M6/M7/M8/L6 处置，见 ReviewRecord）
-Status：Approved（L2 闸门 2026-09-04 用户批准，Lock；变更走 C2）
+Version：1.2（1.1→1.2：C2 地图瓦片配置与降级约束，见 ADR-008）
+Status：v1.1 Approved/Lock；v1.2 C2 CR-002 In Review
 Author：Claude
-Last Update：2026-09-03
+Last Update：2026-09-14
 
 > 只详设三个复杂模块：M-Form 换靶、M-Dash 看板、M-Mig 迁移工具。状态机已收口在 DB 层（02-Database §六），不另设模块。
 
@@ -54,7 +54,7 @@ upload-adapter（新增）
 
 ## 职责
 
-- 做什么：Atlas T22 骨架**复制改造**——登录、双视图、审批操作、Realtime、CSV 导出、selftest；**部署 Cloudflare Pages**（评审 H4：git push 触发，`config.js` 注入 URL+anon key——ADR-007）
+- 做什么：Atlas T22 骨架**复制改造**——登录、双视图、审批操作、Realtime、CSV 导出、selftest；**部署 Cloudflare Pages**（评审 H4：git push 触发，`config.js` 注入 URL+publishable key——ADR-007）
 - 不做什么：不做表单；不做监控区块（M5 后续项目）
 
 ## 内部结构（`web/dashboard/`）
@@ -66,7 +66,7 @@ dashboard/
   ├ work.html             工作视图（桌面：表格/详情编辑/恢复入口/CSV）
   ├ lib/                  Atlas 骨架复用件：map(pins/弹窗)、lightbox、卡片渲染
   ├ api.js                supabase-js 封装（03-API 契约）
-  ├ config.js             Supabase URL+anon key（部署注入，ADR-007；anon key 非密钥，RLS 才是闸）
+  ├ config.js             Supabase URL+publishable key + MAP_TILE_CONFIG（部署注入，ADR-007/008）
   ├ tokens.css            设计 token（N5：色彩/状态色/字体/间距——先落 token 再写 UI）
   └ selftest              #/selftest 无头自检（沿用主线 headless Edge 模式）
 ```
@@ -82,10 +82,12 @@ dashboard/
 ## 关键设计
 
 - **骨架复用映射**：pin 渲染/弹窗卡/照片灯箱/去重/destack 逻辑零改；只把「数据源（静态 JSON/Sheet 拉取）」换成 api.js；风水卡渲染保留（fengshui_eval 迁移后数据源同换）
+- **底图韧性**：不得复制 Atlas 旧有 `tile.openstreetmap.org` 地址；`map` 模块从 `window.MAP_TILE_CONFIG` 读取街道/卫星 URL 与失败阈值，默认街道图连续 3 个瓦片失败即自动切卫星图，并在控制台留可诊断事件（ADR-008）
 - **权限可见性矩阵**（PRD §4.4）：按钮渲染查 app_user.role；RLS/RPC 兜底——两层一致由 selftest 断言（manager 见批准/隐藏不见恢复；admin 见恢复；surveyor 无看板入口）
 - **状态色**：surveying/candidate/selected/archived 四色 token，汇总条与 pin 同源（PRD §4.1）
 - **手机视口**：领导视图 E2E 以 375px 宽跑 selftest（N3）
 - **selftest 证据**：无头 Edge dump-dom 出机器证据（既有 pattern），覆盖：登录墙、汇总条筛选、pin→卡片、按钮可见性、恢复入口、CSV 行数
+- **瓦片故障注入证据**：selftest 拦截街道瓦片请求，断言地图无需刷新即出现卫星瓦片；静态扫描断言构建产物不含 `tile.openstreetmap.org`
 
 ## 测试要点
 
@@ -106,7 +108,7 @@ dashboard/
 
 ```text
 scripts/
-  ├ migrate_data.mjs       三源→PG（service key，.env 读密钥；幂等 upsert by code/uuid）
+  ├ migrate_data.mjs       三源→PG（secret key，.env 读密钥；幂等 upsert by code/uuid）
   ├ migrate_photos.mjs     本地照片目录→sha1 去重→Storage 上传→photo 登记（幂等重跑）
   ├ reconcile.mjs          对账：DB vs 源，行数+逐行 sha1 → rows_match:true 报告存档
   ├ reconcile_dualwrite.mjs S4 双写对账（评审 M4）：PG(source='appscript') ↔ Sheet 列 B..J；口径见 03-API §三
@@ -117,11 +119,11 @@ scripts/
 
 ## 关键设计
 
-- **映射规则**：Sheet 点位 ID→site.code；照片按目录名/Sheet 关联挂 site；surveyor 名字保留原文（surveyor_name）+ 归属署名 **svc_migration 专用账号**（评审 M6：app_user 内建号，service key 唯一持有者，role=surveyor 级）
+- **映射规则**：Sheet 点位 ID→site.code；照片按目录名/Sheet 关联挂 site；surveyor 名字保留原文（surveyor_name）+ 归属署名 **svc_migration 专用账号**（评审 M6：app_user 内建号，secret key 唯一持有者，role=surveyor 级）
 - **迁移会话**：`SET app.migration='on'` 方可写 status/建 archived 行（GUC 闸旁路仅此一径，02 §6.1）；历史 log 回填 `action='migration'`、`at`=Sheet Added 日期（评审 M7：状态时间线不失真）
 - **照片源目录（评审 L6②）**：只读迁出；具体路径在 M2a 任务单开工时从 `build_showroom_atlas.py` 配置锁定，锁定后写入任务单不再漂移
 - **对账口径**：行数一致 ∧ 每行关键字段拼接 sha1 一致（双表各自算）→ `rows_match:true`；差异输出清单人工裁决后重跑
-- **迁移数据隔离**：全部 `source='migration'`——S4 期可整库清迁移数据重来（唯一允许的批量删除，仅 service key）
+- **迁移数据隔离**：全部 `source='migration'`——S4 期可整库清迁移数据重来（唯一允许的批量删除，仅 secret key）
 - **照片去重**：sha1 全局唯一约束兜底；已存在跳过（幂等）
 
 ## 测试要点

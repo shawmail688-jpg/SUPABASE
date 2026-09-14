@@ -162,7 +162,7 @@
 | ① 账号认证 | 一人一号，**不共用账号**；admin（用户本人）在 Supabase Auth 创建/停用所有人账号。谁提交、谁审批、谁隐藏全程可追溯 |
 | ② 权限控制（v1.3 定案） | Postgres RLS 两类角色：**管理层**（用户+领导账号，同权）= 全量读写 + 审批 + 隐藏/恢复；**调查员** = 仅 INSERT/UPDATE 自己提交的数据、不可 DELETE、**不可改 status**；匿名零权限（纠正现状 anon 可读姿态） |
 | ③ 照片权限 | Storage 私有桶+短时效签名 URL，无公开链接；监控播放地址同为短时效 token（§4.2） |
-| ④ 平台密钥 | `service_key` 与第三方凭证（厂商 appKey/secret、未来的总部凭证）**只存在于服务端**（Edge Function/worker），前端只见 anon key+RLS 兜底 |
+| ④ 平台密钥 | `secret key` 与第三方凭证（厂商 appKey/secret、未来的总部凭证）**只存在于服务端**（Edge Function/worker），前端只见 publishable key+RLS 兜底 |
 | ⑤ 第三方 API 隔离 | 代理层白名单（仅本平台登记设备/仅乌干达店面）+只读+限流+调用留痕。**调查员浏览器永远不直接接触任何第三方系统** |
 
 审计：`audit_log` 表+触发器（who/when/old→new）+ `site_status_log` 状态流水（§8.4）；备份：Supabase 自动快照+PITR，另加每日 pg_dump 本地冷备（双保险），恢复步骤写 runbook。

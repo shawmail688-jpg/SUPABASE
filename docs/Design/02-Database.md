@@ -13,7 +13,7 @@ Last Update：2026-09-03
 |----|------|------|
 | 数据库 | Supabase Pro（Postgres 15+ / PostGIS） | ADR-001 |
 | 迁移工具 | `supabase/migrations/NNN_*.sql` 纯 SQL 文件，按序号重放（`supabase db push` 或 psql） | 无 ORM、无迁移框架；重放=回滚验证 |
-| 访问驱动 | supabase-js（PostgREST 自动 API） | 前端/脚本同栈；service key 仅本机脚本 .env |
+| 访问驱动 | supabase-js（PostgREST 自动 API） | 前端/脚本同栈；secret key 仅本机脚本 .env |
 | 主键策略 | 业务表 uuid `gen_random_uuid()` 且**归属列默认 `auth.uid()`**（客户端可预生成覆盖→离线幂等）；audit_log bigint identity | 评审 M3 |
 | 时间戳 | 投影表（project/app_user/site/survey_result）带 `created_at`+`updated_at`（触发器维护）；append-only 表（photo/fengshui_eval/site_status_log/audit_log/**domain_config**——版本递增、旧行不改，复审 R5）仅 `created_at`/`at` | 评审 L1：updated_at 非全表 |
 | 删除权限 | 迁移 SQL 显式 `REVOKE DELETE ON ALL TABLES FROM anon, authenticated`（Supabase 默认有 GRANT，必须显式回收）+ 无任何 DELETE 策略 | 评审 L2：软删除纪律落到授权层 |
@@ -65,7 +65,7 @@ Last Update：2026-09-03
 
 **建号两步（admin 操作，superuser 路径非客户端 API）**：①Studio Auth 页建 auth.users 行；②SQL 插对应 app_user 行定 role。
 
-> **例外（复审 R7）**：`svc_migration` 机器账号——**无 auth.users 行**（service key 专用，任何人不可用它登录前端），app_user 行随 D2 种子建。
+> **例外（复审 R7）**：`svc_migration` 机器账号——**无 auth.users 行**（secret key 专用，任何人不可用它登录前端），app_user 行随 D2 种子建。
 
 ## 3.4 site（一个 site=一个现实店面/候选对象）
 
@@ -236,11 +236,11 @@ D2 REVOKE DELETE + RLS 策略 + 辅助函数 + 触发器（definer/search_path �
 D3 SQL 用例验证（sql_cases.sql，不通过不进 D4）：
    ① 三角色×操作矩阵（R4）② 状态机合法/非法转换（R2，含 manager 直改 status 被拒——H3 回归用例）
    ③ 触发器断言：首条 submit log、audit old→new（R8）④ 跨项目隔离（R17）⑤ 匿名零权限（N1）
-D4 存量数据导入（service key，本机；**专用账号 svc_migration**（app_user，role=surveyor 级但仅 service 持有）：
+D4 存量数据导入（secret key，本机；**专用账号 svc_migration**（app_user，role=surveyor 级但仅 service 持有）：
    会话 SET app.migration='on' + SET app.actor_uuid=<svc_migration uuid>（实现补充 09-04：service 会话 auth.uid()=null，触发器写 log 的 actor 兜底取此 GUC）→
    site（含 archived 退役点，触发器放行）+ survey_result(source='migration') + fengshui_eval
    + 历史 log 回填：action='migration'、at=Sheet Added 日期、from=null→to=实际 status（评审 M7 时间线不失真）
-   回滚=迁移窗口内按归属清理（评审 M6）：仅 service key、仅 D4 窗口，删除顺序
+   回滚=迁移窗口内按归属清理（评审 M6）：仅 secret key、仅 D4 窗口，删除顺序
    photo→survey_result→fengshui_eval→site_status_log(actor=svc_migration)→site（FK restrict 要求子表先行）
    运行期该路径不存在（app.migration 仅迁移会话设置）
 D5 存量照片上传 Storage+photo 登记（幂等：sha1 已存在跳过；可整体重跑）

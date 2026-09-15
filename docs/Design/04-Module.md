@@ -37,7 +37,7 @@ upload-adapter（新增）
 
 ## 关键设计
 
-- **幂等**：site/survey_result/photo 的 uuid 由表单预生成（`crypto.randomUUID()`）；照片 sha1 内容寻址——重试、重复提交、双写错位均零副作用
+- **幂等与修订**：site/survey_result/photo 的 uuid 由表单预生成；同 uuid 重试零副作用。历史记录 `edit & resend` 预填旧值，但以新 uuid + `supersedes` 追加写入，旧记录不变；稳定 `site_code` 保证改名/改地址后仍归同一店面
 - **压缩**：既有拍照→canvas 压缩（默认档：长边 clamp 1600-2000、JPEG q≈0.8；细节照开关→高质量档，参数 M2a 定档开放问题 #7）；压缩在 worker/主线程本地完成
 - **双写（PRD S4）**：`dual` 模式先发 supabase 再发 appscript，任一失败进各自队列；对账期间新字段只在 supabase 侧（GAS 通道结构冻结）；对账口径与脚本见 M-Mig `reconcile_dualwrite.mjs`
 - **分发**：M2b 沿用单文件分发现状（换靶只是文件内容更新；URL+SW 缓存延后，01 §6.2）
@@ -85,6 +85,7 @@ dashboard/
 - **底图韧性**：不得复制 Atlas 旧有 `tile.openstreetmap.org` 地址；`map` 模块从 `window.MAP_TILE_CONFIG` 读取街道/卫星 URL 与失败阈值，默认街道图连续 3 个瓦片失败即自动切卫星图，并在控制台留可诊断事件（ADR-008）
 - **权限可见性矩阵**（PRD §4.4）：按钮渲染查 app_user.role；RLS/RPC 兜底——两层一致由 selftest 断言（manager 见批准/隐藏不见恢复；admin 见恢复；surveyor 无看板入口）
 - **状态色**：surveying/candidate/selected/archived 四色 token，汇总条与 pin 同源（PRD §4.1）
+- **最新 Survey 投影**：卡片/列表默认采用同一 `site_id` 最新 `surveyed_at` 的租金、面积、联系人与备注；详情页明确区分 CURRENT 与 history
 - **手机视口**：领导视图 E2E 以 375px 宽跑 selftest（N3）
 - **selftest 证据**：无头 Edge dump-dom 出机器证据（既有 pattern），覆盖：登录墙、汇总条筛选、pin→卡片、按钮可见性、恢复入口、CSV 行数
 - **瓦片故障注入证据**：selftest 拦截街道瓦片请求，断言地图无需刷新即出现卫星瓦片；静态扫描断言构建产物不含 `tile.openstreetmap.org`

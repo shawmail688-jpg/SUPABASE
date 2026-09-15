@@ -5,7 +5,7 @@
 # 1. Current Status（当前开发状态）
 
 - Current Feature：v1-launch（阶段一+阶段二首次上线，M1→M3b）
-- Current Stage：规划链全部收官（ApprovalRecord #1-#7）→ **M1 执行阶段**；TASK-001 DONE（Frankfurt）；**TASK-002 DONE（09-14 day-1 五项全 PASS，证据 day1/）**；**TASK-003 DONE（09-14 四项验收全 PASS，证据 evidence-task003/）**；**TASK-004 DONE（09-14 两遍 28/28，证据 evidence-task004/；domain_config v2 已回填，用户复核待补）**；当前=**TASK-005 存量导入 D4+对账**
+- Current Stage：M1 数据底座已完成，进入 **M2b 表单换靶执行阶段**；TASK-001~006 DONE，TASK-007/008/009 尚未完成。
 - Progress：
   - 🟢 M0 立项（13f692d）
   - 🟢 ②Requirement v1.2 / ③Scope v1.0（L1 已批）/ ④PRD-V1 v1.1（L2 已批 Lock，评审 15 条全处置）/ ⑤ADR-001~007 归档
@@ -14,17 +14,21 @@
   - 🟢 TASK-002 前置：域名、Supabase 账号、部门 Organization 与远端 Project 均已完成；Project URL/Ref 已由用户提供并经 DNS/HTTP 只读核验
   - 🟢 CR-001 凭证切新式 key（#6，31 处文档同步 + .env.example）+ CR-002 地图瓦片韧性 ADR-008（#7）均 09-14 批准 Lock
   - 🟢 TASK-002 day-1 五项验证全 PASS（RLS anon 零/401、签名 URL 过期 400、浏览器直传 200、Realtime INSERT 3.9s、file:// CORS 200；踩坑 4 条留档 day1/ 日志）
-  - 🟡 待用户确认：2FA 与备份管理员状态（邮箱仍缺，M2b 前需要）；backup admin 兼 dept@ 转发第二收件人
+  - 🟢 Raymond intake：Silent Night 已按 Sheet 最新资料、Google Maps 坐标和照片入库；Aga Khan Hospital Space 已以第 8 家候选入库并挂照片，因未发现其自己的地图 pin，坐标明确待补
+  - 🟢 CR-004：Survey 金额口径为 USD，历史数值不换算；历史编辑重发采用 append-only `raw.supersedes`；domain_config v3/v4 已部署
+  - 🟡 TASK-008：Supabase 默认靶、可注入公开配置、USD、历史编辑重发已实现；仍缺照片直传、耐久离线队列/401、归档店防御
+  - 🟡 TASK-009：本地浏览器 selftest 44/44、selftest2 13/13；真实账号 E2E 脚本已安全化，需轮换旧测试密码后再跑
+  - 🟡 待用户确认：2FA 与备份管理员状态；backup admin 兼 dept@ 转发第二收件人
 
 # 2. Working Set（当前工作区）
 
 - 文档：docs/SurveyPlatform-Proposal-v1.3.md（权威方案）、docs/Assessment.md（Large 定级）、docs/SurveyPlatform-Quote-v1.md/.html/.pdf（费用明细 QSP-2026-001 r5）、docs/features/v1-launch/ChangeRequest.md（CR-001/002 已批准 Lock）
 - 计划产出：docs/features/v1-launch/、docs/PRD/、docs/Design/、docs/ADR/、tasks/TASK-*
-- 代码：`supabase/migrations/0001_d1_schema.sql` + `0002_d2_rls_functions_rpcs.sql`、`scripts/sql_cases.sql`、`scripts/sql/rollback_d1_d2.sql`（均已入库；RLS 中的数据库角色名不受 CR-001 影响）
+- 代码：`webapp/survey_form.html`、`webapp/build_webapp.py`、`scripts/e2e_form.mjs`；迁移 `0001`~`0005`；Raymond intake SQL 位于 `scripts/sql/`
 
 # 3. Next Step（下一步）
 
-- 完成顺序：规划链已走完 Requirement→Scope→PRD→ADR→架构→任务规划；TASK-001/002/003/004 DONE；**TASK-005 挂起等 Codex 外审 D1-D3**（评审包 docs/features/v1-launch/review/，结论回来过证据核验后放行）
+- 完成顺序：先完成 TASK-007 压缩定档，再补齐 TASK-008 的照片上传、离线队列/401 与归档防御；随后轮换测试账号密码并执行 TASK-009 真实 E2E。双写 TASK-010 需单独实现，当前构建器会拒绝未实现的 `FORM_TARGET=dual`，防止静默降级。
 - 待决决策项（用户动作，阻塞点）：
   - [x] 域名已配置（2026-09-14 用户同步；具体域名不写入快照）
   - [x] Supabase 账号已注册（2026-09-14 用户同步）
@@ -33,10 +37,11 @@
   - [ ] 2FA 与备份管理员状态确认（30 秒核对：Account→Security 开 2FA；组织 Members 邀第二管理员）
   - [x] CR-001 已批准（09-14，#6）；CR-002 已批准 Lock（09-14，#7）
   - [x] `.env` 用户已填（publishable/secret key + Access Token；密钥不进对话、不进 git）
-  - [ ] domain_config v2 用户复核（追加制；如有出入以 v3 修订，不阻塞 TASK-005）
+  - [x] domain_config v3/v4 已按 CR-004 追加部署（历史金额本就是 USD，不换算）
+  - [ ] 轮换曾进入本地 Git 历史的 E2E 测试账号密码，再运行真实账号回归
   - [ ] **次月起 Pro 订阅付款 $25/月**（首月免费验证后）
   - [x] 费用明细 QSP-2026-001 已上报领导（2026-09-14 用户确认）；IT 监控盘点四问（提案阶段遗留，不阻塞本仓）
-- 首个实现任务：**TASK-005 存量导入**（D4：Sheet 双表+JSON→PG，migrate_data.mjs 需按 04-Module 设计新建并走分支→PR）；密钥不进对话、不进 git
+- 当前实现任务：**TASK-007/008/009**；先完成照片压缩/直传与离线可靠性，再用已安全化的 E2E 脚本完成真实账号验收。密钥不进对话、不进 git。
 
 # 4. Important Decisions（重要设计决策）
 

@@ -9,4 +9,5 @@
 4. 恢复入口仅 admin 可见可操作；manager 不可见且 RPC 拒（DOM+RPC 双层断言）
 5. CSV 导出：行数=DB 计数、表头/编码（UTF-8 BOM）断言
 6. 工作视图编辑后 leader 视图刷新可见（两视图同库互映——用户确认口径）
+7. 表格摘要使用每店最新 Survey；详情按 surveyed_at 倒序列出完整历史，并标注 CURRENT/history 与修订来源
 审查结论：（完工时填）

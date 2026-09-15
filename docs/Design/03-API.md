@@ -22,7 +22,7 @@ Last Update：2026-09-03
 | CORS | Supabase 端点默认放行所有 origin（托管域/file:// 均可调）；`file://` 场景可达性列入 **day-1 最小闭环实测清单**（评审 M9②） |
 | 时间 | ISO 8601 UTC |
 | 统一错误 | HTTP 4xx/5xx + `{code, message, details, hint}`；RLS 拒绝=空集（读）或 42501（写）；状态机违规=P0001（触发器/RPC raise，中文可读） |
-| 幂等 | 客户端预生成 uuid + site code upsert + 照片 sha1 内容寻址 + **主键冲突=成功跳过**（评审 L4）→ 重试/离线重放/二次重发零副作用 |
+| 幂等 | 客户端预生成 uuid + 稳定店面 site code + 照片 sha1 内容寻址 + **主键冲突=成功跳过**（评审 L4）→ 同一提交的重试/离线重放零副作用；用户编辑重发是新业务版本，必须使用新 uuid |
 
 # 二、端点设计
 
@@ -64,12 +64,12 @@ Headers: Prefer: resolution=merge-duplicates,return=representation
 ```
 POST /rest/v1/survey_result?on_conflict=id
 Headers: Prefer: resolution=ignore-duplicates
-{ id, site_id, rent, space, contact, surveyor_name, added_date, raw:{...}, source:"form" }
+{ id, site_id, rent, space, contact, surveyor_name, added_date, created_at:<surveyed_at>, raw:{currency:"USD",surveyed_at,supersedes,site_code,...}, source:"form" }
 POST /rest/v1/photo?on_conflict=id     （每张一行；sha1 重复由 unique 约束拒，捕获后视为已登记）
 { id, site_id, storage_path, sha1, kind:"normal"|"detail", taken_at }
 ```
 
-- **离线重放语义（评审 L4）**：同 uuid 重放 → ignore-duplicates 跳过（2xx）=幂等成功，队列条目可清除；**真实二次提交（新 uuid）服务端不去重、允许并存**（PRD「历次全保留」）——重复由工作视图人工辨识，v1 不做自动合并
+- **离线重放与修订语义（评审 L4 + CR-004）**：同 uuid 重放 → ignore-duplicates 跳过（2xx）=幂等成功，队列条目可清除；历史编辑重发生成新 uuid，`raw.supersedes` 指向来源版本，服务端允许并存。相同 `site_id` 的当前投影取最新 `raw.surveyed_at`，不删除旧版本
 - `created_by`/`uploaded_by` 不传，默认 `auth.uid()`（评审 M3）
 
 ### 业务规则
@@ -84,7 +84,7 @@ POST /rest/v1/photo?on_conflict=id     （每张一行；sha1 重复由 unique �
 |------|------|------|
 | 汇总条 | `GET /rest/v1/site?select=status&project_id=eq.<pid>&status=neq.archived` | 客户端 count 分组（≤20 店不分页） |
 | 地图 pin | `GET /rest/v1/site?select=id,code,name,grp,status,lat,lon&project_id=eq.<pid>&status=neq.archived` | 管理层恢复视图另查 archived（仅 admin 入口） |
-| 店面卡/详情 | `GET /rest/v1/site?select=*,survey_result(*),photo(*)&project_id=eq.<pid>&code=eq.<code>` | project_id 必带（复审 R6：code 唯一性=unique(project_id,code)，复现轴防串库）；survey_result 按 created_at desc |
+| 店面卡/详情 | `GET /rest/v1/site?select=*,survey_result(*),photo(*)&project_id=eq.<pid>&code=eq.<code>` | project_id 必带（复审 R6）；survey_result 按 `raw.surveyed_at` desc，缺值回退 created_at；卡片展示首条，详情保留全历史 |
 | 状态时间线 | `GET /rest/v1/site_status_log?site_id=eq.<id>&order=at.desc` | 谁在何时批的/藏的 |
 | CSV 导出 | 同 pin+详情查询 → 客户端拼 CSV | M3b |
 

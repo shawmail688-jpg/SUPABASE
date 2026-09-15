@@ -22,11 +22,10 @@
 - [x] TASK-006 照片上云挂载（09-15 **DONE**：45 张两遍幂等，per-site 5/8/6/4/18/4 与源一致；管线复用为活水通道）
 - [x] 谷歌表格 8 行隐藏（09-15 完成：浏览器直接在 A2:A9 标 HIDDEN，无代码方案，gviz 验证 8/8；GAS v2.7 动作留档备用）
 - [x] 雷蒙照片挂载——Silent Night 已挂（09-15：Gmail API 抓取→目验→入库）
-- [ ] **Aga Khan hospital space（Kampala Rd 对面 Cham Towers）——雷蒙报的新第 8 家候选，待用户决策是否入库**；照片已下载存档 sources/raymond/
-- [ ] TASK-006 照片迁移 D5
+- [x] **Aga Khan Hospital Space 已入库**（09-15：第 8 家候选；邮件来源、Survey 占位版本、照片及关联均已保存；未发现该店自己的地图 pin，坐标保持待补，未借用 Silent Night 坐标）
 - [ ] TASK-007 压缩定档（并行）
-- [ ] TASK-008 表单换靶 M2b
-- [ ] TASK-009 表单 E2E
+- [ ] TASK-008 表单换靶 M2b（进行中：Supabase 默认靶、USD、历史编辑重发已实现；照片上传、离线队列/401、归档防御尚缺）
+- [ ] TASK-009 表单 E2E（进行中：浏览器 selftest 44/44、selftest2 13/13；真实账号回归待测试密码轮换后执行）
 - [ ] TASK-010 双写对账
 - [ ] TASK-011 看板骨架+登录墙
 - [ ] TASK-012 领导视图+Realtime

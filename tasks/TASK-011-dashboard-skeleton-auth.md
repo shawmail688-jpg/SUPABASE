@@ -8,4 +8,5 @@
 3. 骨架 pin/灯箱渲染以 TASK-006 迁入照片+迁入点位跑通一次（数据源已换 api.js）
 4. `#/selftest` 无头 Edge 出 dump 证据：登录墙拦截/登录放行/权限分流
 5. `config.js` 定义统一 `window.MAP_TILE_CONFIG`（streetUrl/satelliteUrl/errorThreshold）；产物不得出现 `tile.openstreetmap.org`，地图连续 3 个主瓦片失败后无需刷新自动切卫星图（ADR-008）
+6. api.js 提供 `latestSurvey(site)`：按 `raw.surveyed_at` 倒序，缺值回退 `created_at`；同店历史不被丢弃
 审查结论：（完工时填）

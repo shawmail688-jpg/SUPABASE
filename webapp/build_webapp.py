@@ -3,10 +3,10 @@
 # 用法：
 #   py build_webapp.py --patch   对 webapp/survey_form.html 应用适配器补丁（幂等，已打则跳过）
 #   py build_webapp.py --inject  从 .env 注入真实 SUPABASE url/publishable key（生成 E2E 用构建）
-# 补丁内容（外审纪律：字段/交互不动，Auth 为唯一显式豁免）：
+# 补丁内容（字段/交互变更已由用户通过 CR-004 明确批准）：
 #   ①SUPA 配置块（BLD 注入区）②登录卡（无会话时显示）③supa 适配器（auth+resolve-or-create+队列）
 #   ④sendToOffice 靶切换 ⑤record/point 预编码 uuid ⑥#/selftest2 supabase 判分
-import io, re, sys
+import io, json, re, sys
 
 FORM = 'webapp/survey_form.html'
 
@@ -41,9 +41,12 @@ function supaAuth() {
   try { return JSON.parse(lsGet("spm2_supa_auth", "") || "null"); } catch (e) { return null; }
 }
 function supaAuthSave(a) { lsSet("spm2_supa_auth", JSON.stringify(a)); }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
 function supaAuthClear() { lsDel("spm2_supa_auth"); }
-function supaHeaders(jwt) {
-  return { apikey: SUPA.key, Authorization: "Bearer " + (jwt || SUPA.key) };
+function supaHeaders(jwt, prefer) {
+  var h = { apikey: SUPA.key, Authorization: "Bearer " + (jwt || SUPA.key), "Content-Type": "application/json" };
+  if (prefer) h.Prefer = prefer;
+  return h;
 }
 function supaSignIn(email, pw, cb) {
   fetch(SUPA.url + "/auth/v1/token?grant_type=password", {
@@ -90,7 +93,7 @@ function supaResolveSite(jwt, pid, code, name, grp) {   // resolve-or-create（c
     .then(function (rows) {
       if (rows.length) return { id: rows[0].id, created: false };
       return fetch(SUPA.url + "/rest/v1/site", {
-        method: "POST", headers: supaHeaders(jwt),
+        method: "POST", headers: supaHeaders(jwt, "return=representation"),
         body: JSON.stringify({ project_id: pid, code: code, name: name, grp: grp || null, status: "surveying" })
       }).then(function (r) { return r.json(); }).then(function (rows2) {
         return { id: rows2[0].id, created: true };
@@ -111,24 +114,27 @@ function supaSend(spId) {   // 三步契约 v1（无照片帧）：site upsert �
     b.owners.forEach(function (o) {
       chain = chain.then(function (acc) {
         var id = o[0], r = o[1];
-        var code = id;                       // FL-xx / SP-xx = site 幂等键
+        var code = r.site_code || fieldSiteCode(id, r); // 同一真实店面沿用稳定 code
         var sname = (r.type === "L") ? r.bld : (r.aname || (byId(id) ? byId(id).name : id));
-        return supaResolveSite(jwt, pid, code, sname, (def = byId(id)) ? def.group : null)
+        var defPt = byId(id);
+        return supaResolveSite(jwt, pid, code, sname, defPt ? defPt.group : null)
           .then(function (site) {
             var sr = {
               id: r.uid || uuid4(), site_id: site.id, source: "form",
-              added_date: today(),
+              added_date: r.added_date || dateFromTs(r.ts), created_at: new Date(r.ts || Date.now()).toISOString(),
               rent: r.refused ? null : (r.rent === "" ? null : parseFloat(r.rent) || null),
               space: r.area === "" ? null : parseFloat(r.area) || null,
               contact: ((r.contact || "") + " " + (r.phone || "")).trim() || null,
-              surveyor_name: (surveyorEl.value || "").trim() || null,
-              raw: { row: resultsRow(id, r), type: r.type, note: r.note || "", photos: r.photos || "none" },
+              surveyor_name: r.surveyor_name || (surveyorEl.value || "").trim() || null,
+              raw: { row: resultsRow(id, r), type: r.type, note: r.note || "", photos: r.photos || "none",
+                currency: recordCurrency(r), surveyed_at: new Date(r.ts || Date.now()).toISOString(),
+                supersedes: r.supersedes || null, site_code: code, form: surveyRaw(r) },
             };
             return fetch(SUPA.url + "/rest/v1/survey_result", {
-              method: "POST", headers: supaHeaders(jwt),
+              method: "POST", headers: supaHeaders(jwt, "resolution=ignore-duplicates,return=minimal"),
               body: JSON.stringify(sr)
             }).then(function (resp) {
-              if (resp.status === 201 || resp.status === 200) { acc.sent++; r.sent = 1; return acc; }
+              if (resp.status === 201 || resp.status === 200 || resp.status === 204) { acc.sent++; r.sent = 1; return acc; }
               acc.fail++; return acc;
             });
           });
@@ -148,9 +154,16 @@ function uuid4() {   // file:// 无 secure context，crypto.randomUUID 不可用
   });
 }
 '''
-must_replace('var WEBAPP_URL = window.WEBAPP_URL || "";',
-             'var WEBAPP_URL = window.WEBAPP_URL || "";\n' + ADAPTER,
-             '② SUPA 适配器注入')
+adapter_marker = '/* ---------- v2.8 supabase adapter (M2b: 双靶抽象，appscript 路径原样保留) ---------- */'
+adapter_start = s.find(adapter_marker)
+adapter_end = s.find('var GROUP_COLORS', adapter_start) if adapter_start >= 0 else -1
+if adapter_start >= 0 and adapter_end > adapter_start:
+    s = s[:adapter_start] + ADAPTER.strip() + '\n\n' + s[adapter_end:]
+    print('② SUPA 适配器规范化 OK')
+else:
+    must_replace('var WEBAPP_URL = window.WEBAPP_URL || "";',
+                 'var WEBAPP_URL = window.WEBAPP_URL || "";\n' + ADAPTER,
+                 '② SUPA 适配器注入')
 
 # ---------- ③ sendToOffice 靶切换 ----------
 must_replace('''function sendToOffice(spId) {
@@ -161,14 +174,19 @@ must_replace('''function sendToOffice(spId) {
              '③ sendToOffice 靶切换')
 
 # ---------- ④ record/point 预编码 uuid（幂等键）----------
-must_replace('''      owners.push([id, r]);
+# CR-004's record-time guard also persists immediately. Treat either form as
+# satisfying this build step so repeated builds cannot stack duplicate guards.
+if re.search(r'if \(!r\.uid\)[^\n]*\n\s*owners\.push\(\[id, r\]\)', s):
+    print('④ record 预编码 uuid: 已应用，跳过')
+else:
+    must_replace('''      owners.push([id, r]);
       if (r.type === "L") showroom.push(showroomRow(r));
       results.push(resultsRow(id, r));   // V / L / A 全进明细表''',
 '''      if (!r.uid) { r.uid = uuid4(); }   // 预编码 uuid：重试/重放幂等键（M2b）
       owners.push([id, r]);
       if (r.type === "L") showroom.push(showroomRow(r));
       results.push(resultsRow(id, r));   // V / L / A 全进明细表''',
-             '④ record 预编码 uuid')
+                 '④ record 预编码 uuid')
 
 # ---------- ⑤ 登录卡（无会话时显示；SPA 外常驻条）----------
 AUTHBAR = '''
@@ -239,6 +257,9 @@ if (location.hash === "#/selftest2") {
       ck2("T-c Authorization Bearer", srCall.length && srCall[0].h.Authorization === "Bearer test.jwt.token");
       ck2("T-d payload 幂等键", srCall.length && srCall[0].b.indexOf('"id"') >= 0 &&
           JSON.parse(srCall[0].b).id.length === 36);
+      var sentPayload = srCall.length ? JSON.parse(srCall[0].b) : {};
+      ck2("T-d2 CR-004 修订元数据", sentPayload.raw && sentPayload.raw.currency === "USD" &&
+          !!sentPayload.raw.surveyed_at && sentPayload.raw.site_code === "SP-11" && !!sentPayload.created_at);
       var rec = recs("SP-11").filter(function (r) { return r.type === "L"; })[0];
       ck2("T-e record uid 预编码", rec && !!rec.uid && rec.uid.length === 36);
       // 无会话 → 队列不发送
@@ -261,6 +282,33 @@ assert anchor2 > 0, 'offline map anchor not found'
 if '#/selftest2' not in s:
     s = s[:anchor2] + ST2 + '\n\n' + s[anchor2:]
     print('⑥ selftest2 注入 OK')
+
+# ---------- ⑦ --inject：只注入可公开的 URL/publishable key ----------
+if '--inject' in sys.argv:
+    env = {}
+    for line in io.open('.env', encoding='utf-8-sig'):
+        line = line.strip()
+        if line and not line.startswith('#') and '=' in line:
+            key, value = line.split('=', 1)
+            env[key.strip()] = value.strip()
+    required = ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY']
+    missing = [key for key in required if not env.get(key)]
+    assert not missing, 'missing .env keys: ' + ', '.join(missing)
+    cfg = {
+        'url': env['SUPABASE_URL'],
+        'key': env['SUPABASE_PUBLISHABLE_KEY'],
+        'target': env.get('FORM_TARGET', 'supabase'),
+        'project_code': 'uganda-showroom',
+    }
+    # Dual-write needs its own durable retry queue and is not yet implemented.
+    # Refuse the value instead of silently treating it as App Script-only.
+    assert cfg['target'] in ('appscript', 'supabase'), 'FORM_TARGET invalid or not implemented'
+    replacement = 'window.SUPABASE_CONFIG=' + json.dumps(cfg, separators=(',', ':')) + ';'
+    s, changed = re.subn(r'window\.SUPABASE_CONFIG=\{.*?\};', replacement, s, count=1)
+    assert changed == 1, 'SUPABASE_CONFIG block not found for --inject'
+    secret = env.get('SUPABASE_SECRET_KEY', '')
+    assert not secret or secret not in s, 'secret key leaked into web artifact'
+    print('⑦ public Supabase config injected OK (secret excluded)')
 
 # ---------- 保存 ----------
 io.open(FORM, 'w', encoding='utf-8', newline='').write(s)

@@ -89,16 +89,18 @@ Last Update：2026-09-03
 |------|------|------|-------------|
 | id | uuid PK | **客户端预生成**（离线幂等） | |
 | site_id | uuid FK→site | | not null on delete restrict |
-| rent | numeric | 租金 | |
+| rent | numeric | 月租，币种由 `raw.currency` 定义；domain_config v3 起固定 USD | |
 | space | numeric | 面积 | |
 | contact | text | 联系人 | |
 | surveyor_name | text | 调查员姓名（原管线语义） | |
 | added_date | date | 调查日期 | |
-| raw | jsonb | 表单全量字段 | not null default '{}' |
+| raw | jsonb | 表单全量字段；v3 含 `currency/surveyed_at/supersedes/site_code` | not null default '{}' |
 | source | text | `form` / `migration` / `appscript` | not null default 'form' |
 | created_by | uuid FK→app_user | | not null **default auth.uid()** |
 | created_at | timestamptz | | |
 | | | **索引** | (site_id, created_at desc) |
+
+**CR-004 当前版本投影**：调查历史永不覆盖。历史金额原本即按 USD 填写，旧界面仅币种标签错误；缺 `raw.currency` 的旧记录视为 USD，不换算数值。网络重试沿用同一 `id` 幂等跳过；从历史记录编辑重发必须生成新 `id`，并以 `raw.supersedes` 指向来源版本。展示层按同一 `site_id` 的 `raw.surveyed_at` 倒序选最新记录（旧数据缺该字段时回退 `created_at`），详情页仍可展开全部版本。
 
 ## 3.6 photo（只存元数据）
 

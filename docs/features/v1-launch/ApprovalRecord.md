@@ -1,6 +1,6 @@
 # 审批记录（ApprovalRecord）
 
-Last Update：2026-09-14
+Last Update：2026-09-15
 
 > 追加型登记册：每次批准/拒绝一条记录。语义见 SE Skill `rules/approval.md`（默认未批准；一句话+留痕）。
 
@@ -13,3 +13,4 @@ Last Update：2026-09-14
 | 5 | 2026-09-04 | 任务规划 TASK-001~018（tasks/ 单 18 份+README 看板/依赖链+docs/TODO.md 镜像；里程碑=阶段一 001~010/阶段二 011~015/运维退役 016~018；用户阻塞点=账号注册/区域拍板/Pro 付款，域名仅 013 前） | L1 | 依赖链闭环检查；验收条件全部可自动化（C6）；PROJECT_CONTEXT/TODO 双镜像同步 | ✅ 用户确认通过；规划阶段收官，进 M1 执行（TASK-001，阻塞=用户注册账号） |
 | 6 | 2026-09-14 | CR-001 Supabase 应用凭证切换新式 key（anon key→publishable key / service key→secret key；env=SUPABASE_PUBLISHABLE_KEY/SUPABASE_SECRET_KEY）。文档同步 31 处替换（CLAUDE/Proposal §7/Design 01-04/ADR-007/TASK-002/013/016）+ .env.example 建档；数据库角色 anon/authenticated 与已入库迁移 SQL 不变 | **L2** | ChangeRequest.md CR-001 影响评估表；grep 零残留验证；权威依据=supabase.com/docs 官方 API keys 页 | ✅ 用户批准；架构四件凭证条款重新 Lock；测试重跑项挂 day-1 完成后补 |
 | 7 | 2026-09-14 | CR-002 三项目地图瓦片韧性（ADR-008 + `window.MAP_TILE_CONFIG` 契约：街道/卫星主备、连续 3 次失败自动降级、禁依赖 OSM 公共瓦片、Pages 发布加故障注入；Design 01/04+TASK-011/012/013 验收已同步） | **L2** | ChangeRequest.md CR-002 影响评估与回滚条款；ADR-008；OSM 403 实证 | ✅ 用户批准 Lock；TASK-011 开工时按新验收执行 |
+| 8 | 2026-09-15 | CR-004 Survey 租金由 UGX 改 USD；历史记录允许编辑后以新 UUID 重发，旧版本保留；同店展示最新版本 | **L2** | ChangeRequest.md CR-004；`domain_config` v3 迁移；表单自测覆盖预填、append-only、稳定 site identity、CURRENT 投影 | ✅ 用户明确批准并要求实施；相关架构条款重新 Lock |

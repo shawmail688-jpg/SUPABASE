@@ -9,4 +9,5 @@
 4. Realtime：另端提交→leader 视图 ≤3s 冒 pin（本地实测记录）
 5. 375px 视口 selftest 全绿（N3）+out dump 证据
 6. 瓦片故障注入：拦截 streetUrl，断言 3 次失败后卫星瓦片实际加载且 pin/卡片仍可操作
+7. 同一 site 连续提交两版不同租金/面积后，卡片与详情摘要采用新版；历史区仍可见旧版及 supersedes 链
 审查结论：（完工时填）

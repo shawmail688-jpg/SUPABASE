@@ -1,6 +1,6 @@
 # 变更请求（Change Request）
 
-Last Update：2026-09-14
+Last Update：2026-09-15
 
 ---
 
@@ -95,6 +95,42 @@ Last Update：2026-09-14
 
 - 决策：✅ **B 正式延期**（用户 2026-09-15：调查员同时负责 showroom 与换电站选址，共用不隔离；R17 改「单项目语义」，跨项目隔离随换电站立项时再设计）
 - 措辞收回：PROJECT_CONTEXT/TODO 中 R17「已覆盖」表述已于 09-15 收回
+
+---
+
+## 变更 CR-004：Survey USD 与历史修订重发
+
+- **日期**：2026-09-15
+- **来源**：用户明确要求雷蒙可修改历史 Survey 的特定信息后重发；同一店面后续不同提交视为更新，呈现采用最新数据；租金口径由 UGX 改为 USD
+- **影响闸门**：架构四件 02/03/04、domain_config、TASK-008/009/011/012/014
+
+### 变更内容与不变量
+
+- 表单租金输入与显示统一为 **USD/month**；新记录在 `raw.currency` 留存 `USD`。
+- 用户补充确认：历史数值本来就是 USD，旧版仅标签写错；缺少 currency 的旧记录按 USD 解释，**不做任何汇率换算**（domain_config v4）。
+- 历史编辑采用 append-only：旧 `survey_result` 不更新，新记录生成新 UUID，并以 `raw.supersedes` 指向来源版本。
+- 同一店面使用稳定 `site_code/site_id`；修改店名或地址后重发仍挂在原店面。
+- 展示层按 `raw.surveyed_at` 最新值选择当前版本，`created_at` 仅作旧数据回退；历史版本继续可查。
+- 相同 UUID 的再次发送仅视为网络重试，使用数据库主键幂等，不产生业务新版本。
+
+### 影响评估
+
+| 影响面 | 详情 |
+|--------|------|
+| 数据 | 不改表结构；新增 `domain_config` v3；版本关系与币种写入 `survey_result.raw` |
+| 表单 | 新增历史记录 `edit & resend`、预填、当前/历史标记；租金字段改 USD；Lead 的店面幂等键不再错误复用搜索点编号 |
+| API | 离线时间作为 `created_at/raw.surveyed_at`；重复 POST 使用同 UUID 幂等；编辑重发使用新 UUID |
+| 看板 | 同一 `site_id` 默认展示最新 Survey，详情页可展开历次记录 |
+| 回滚 | 表单可回退；v3 配置与已生成的修订记录保留，不删除历史 |
+
+### 决策与执行记录
+
+- 决策：✅ approved（用户 2026-09-15 连续指令明确批准上述行为，ApprovalRecord #8）
+- [x] 设计语义与 domain_config v3/v4 建档
+- [x] 表单 USD、append-only 编辑重发、最新版本标记与稳定店面身份已实现
+- [x] 远端 domain_config v3/v4 迁移完成；Silent Night 最新资料及坐标已幂等入库
+- [x] 浏览器本地回归：selftest 44/44、selftest2 13/13，375px 无横向溢出
+- [ ] 真实账号 E2E：脚本已移除硬编码凭证并改为失败非零退出；需先轮换曾进入本地 Git 历史的测试密码
 
 ---
 

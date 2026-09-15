@@ -20,6 +20,7 @@
   - 🟡 TASK-008 IN REVIEW：照片压缩/IndexedDB、Storage 直传、原子 resolver RPC、target 队列、401 恢复、archived 防御与 dual 状态已实现；本地 selftest 44/44、selftest2 33/33
   - 🟡 TASK-009 IN REVIEW：本地浏览器 44/44、33/33，375px 无溢出；真实账号 E2E 脚本已安全化，需轮换旧测试密码后再跑
   - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与非 OSM 瓦片契约已实现；Dashboard selftest 7/7
+  - 🟡 TASK-012/014 IN REVIEW：leader 计数/地图/历史详情/RPC 操作与 work 编辑/CSV 已接上同一 API 契约；Realtime、签名过期重签和 archived admin 窗口留真实 E2E
   - 🟡 待用户确认：2FA 与备份管理员状态；backup admin 兼 dept@ 转发第二收件人
 
 # 2. Working Set（当前工作区）
@@ -30,7 +31,7 @@
 
 # 3. Next Step（下一步）
 
-- 完成顺序：TASK-007 已完成，TASK-008/011 进入 Review；可并行补充 TASK-012/014。先轮换测试账号密码并执行 TASK-009 真实 E2E，再启动 TASK-010 的真实双写对账窗口。
+- 完成顺序：TASK-007 已完成，TASK-008/011/012/014 进入 Review；先轮换测试账号密码并执行 TASK-009 真实 E2E，再启动 TASK-010 双写对账和 TASK-015 看板全链实测。
 - 待决决策项（用户动作，阻塞点）：
   - [x] 域名已配置（2026-09-14 用户同步；具体域名不写入快照）
   - [x] Supabase 账号已注册（2026-09-14 用户同步）

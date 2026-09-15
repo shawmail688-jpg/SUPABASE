@@ -28,9 +28,9 @@
 - [ ] TASK-009 表单 E2E（IN REVIEW：本地 44/44 + 33/33；真实账号回归待测试密码轮换后执行）
 - [ ] TASK-010 双写对账
 - [ ] TASK-011 看板骨架+登录墙（IN REVIEW：文件骨架、Auth/角色分流、latestSurvey、瓦片配置已实现；Dashboard selftest 7/7）
-- [ ] TASK-012 领导视图+Realtime
+- [ ] TASK-012 领导视图+Realtime（IN REVIEW：计数/地图/历史详情/RPC 操作已接入；Realtime/签名重签/archived admin 留真实 E2E）
 - [ ] TASK-013 Pages 部署+域名+实开（**用户动作：域名**）
-- [ ] TASK-014 工作视图
+- [ ] TASK-014 工作视图（IN REVIEW：字段编辑、坐标清空、CSV 导出与最新 Survey 摘要已接入）
 - [ ] TASK-015 selftest 全量+N5 走查
 - [ ] TASK-016 冷备+演练（并行）
 - [ ] TASK-017 S5 GAS 退役

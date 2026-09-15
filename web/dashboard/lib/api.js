@@ -20,11 +20,24 @@
   function projectId(jwt) { return request(jwt, "/project?code=eq." + encodeURIComponent(cfg.project_code) + "&select=id")
     .then(function (rows) { if (!rows || !rows[0]) throw new Error("project unavailable"); return rows[0].id; }); }
   function listSurveys(jwt, siteId) { return request(jwt, "/survey_result?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
+  function listPhotos(jwt, siteId) { return request(jwt, "/photo?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
+  function listStatusLogs(jwt, siteId) { return request(jwt, "/site_status_log?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=at.desc"); }
+  function rpc(jwt, name, body) { return request(jwt, "/rpc/" + name, {method:"POST", body:JSON.stringify(body || {})}); }
+  function updateSite(jwt, id, patch) { return request(jwt, "/site?id=eq." + encodeURIComponent(id), {method:"PATCH", headers:Object.assign(headers(jwt), {Prefer:"return=representation"}), body:JSON.stringify(patch)}); }
+  function signPhoto(jwt, path, expiresIn) { return request(jwt, "/storage/v1/object/sign/photos/" + path.split("/").map(encodeURIComponent).join("/"), {method:"POST", body:JSON.stringify({expiresIn:expiresIn || 300})}); }
+  function listDetailed(jwt, sites) {
+    return Promise.all((sites || []).map(function (site) {
+      return Promise.all([listSurveys(jwt, site.id), listPhotos(jwt, site.id), listStatusLogs(jwt, site.id)])
+        .then(function (parts) { site.survey_result = parts[0] || []; site.photo = parts[1] || []; site.status_log = parts[2] || []; return site; });
+    }));
+  }
   function latestSurvey(site) {
     var rows = (site.survey_result || site.surveys || []).slice();
     rows.sort(function (a,b) { var at = (a.raw && a.raw.surveyed_at) || a.created_at || ""; var bt = (b.raw && b.raw.surveyed_at) || b.created_at || ""; return bt.localeCompare(at); });
     return rows[0] || null;
   }
   window.DashboardAPI = { headers:headers, request:request, signIn:signIn, session:session, saveSession:saveSession,
-    clearSession:clearSession, loadRole:loadRole, projectId:projectId, listSites:listSites, listSurveys:listSurveys, latestSurvey:latestSurvey };
+    clearSession:clearSession, loadRole:loadRole, projectId:projectId, listSites:listSites, listSurveys:listSurveys,
+    listPhotos:listPhotos, listStatusLogs:listStatusLogs, listDetailed:listDetailed, rpc:rpc, updateSite:updateSite,
+    signPhoto:signPhoto, latestSurvey:latestSurvey };
 }());

@@ -31,7 +31,7 @@
 - [ ] TASK-012 领导视图+Realtime（IN REVIEW：计数/地图/历史详情/RPC 操作已接入；Realtime/签名重签/archived admin 留真实 E2E）
 - [ ] TASK-013 Pages 部署+域名+实开（**用户动作：域名**）
 - [ ] TASK-014 工作视图（IN REVIEW：字段编辑、坐标清空、CSV 导出与最新 Survey 摘要已接入）
-- [ ] TASK-015 selftest 全量+N5 走查
+- [ ] TASK-015 selftest 全量+N5 走查（IN REVIEW：full selftest 6/6；真实 RPC/Realtime 与用户视觉确认待账号窗口）
 - [ ] TASK-016 冷备+演练（并行）
 - [ ] TASK-017 S5 GAS 退役
 - [ ] TASK-018 S6 退役+收尾

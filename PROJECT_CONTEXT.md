@@ -21,6 +21,7 @@
   - 🟡 TASK-009 IN REVIEW：本地浏览器 44/44、33/33，375px 无溢出；真实账号 E2E 脚本已安全化，需轮换旧测试密码后再跑
   - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与非 OSM 瓦片契约已实现；Dashboard selftest 7/7
   - 🟡 TASK-012/014 IN REVIEW：leader 计数/地图/历史详情/RPC 操作与 work 编辑/CSV 已接上同一 API 契约；Realtime、签名过期重签和 archived admin 窗口留真实 E2E
+  - 🟡 TASK-015 IN REVIEW：看板角色与操作矩阵本地 full selftest 6/6；375px/真实 Supabase RPC 与 Realtime 留账号窗口
   - 🟡 待用户确认：2FA 与备份管理员状态；backup admin 兼 dept@ 转发第二收件人
 
 # 2. Working Set（当前工作区）

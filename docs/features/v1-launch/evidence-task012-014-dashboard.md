@@ -12,6 +12,7 @@
 ## 本地证据
 
 - Edge headless `#/selftest`: `DASHBOARD SELFTEST 7/7`。
+- Edge headless `#/selftest-full`: `DASHBOARD FULL SELFTEST 6/6`（manager/surveyor/admin 操作矩阵、历史保留、编辑字段、CSV 表头）。
 - 1440px 截图目验：汇总条、地图、最新备注、操作表格在同一屏级联；暖纸色/teal/orange tokens 生效。
 - `node --check`：`web/dashboard/lib/api.js`、`app.js`、`map.js`、`config.js` 全部通过。
 

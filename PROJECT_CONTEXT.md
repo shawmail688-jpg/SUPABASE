@@ -22,7 +22,7 @@
   - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与非 OSM 瓦片契约已实现；Dashboard selftest 7/7
   - 🟡 TASK-012/014 IN REVIEW：leader 计数/地图/历史详情/RPC 操作与 work 编辑/CSV 已接上同一 API 契约；Realtime、签名过期重签和 archived admin 窗口留真实 E2E
   - 🟡 TASK-015 IN REVIEW：看板角色与操作矩阵本地 full selftest 7/7；375px/真实 Supabase RPC 与 Realtime 留账号窗口
-  - 🟡 TASK-013 IN REVIEW：Cloudflare Pages Direct Upload API 已成功（deploy `98e69696`，生产域名 `uganda-house-finder.pages.dev`，线上 `/` 与 `/lib/app.js` HTTP 200，Edge full selftest 7/7）；自定义域名与领导手机实开待用户验收
+  - 🟡 TASK-013 IN REVIEW：Cloudflare Pages Direct Upload API 已成功（最新 deploy `81ead23c`，生产域名 `uganda-house-finder.pages.dev`，线上 `/` 与 `/lib/app.js` HTTP 200，Edge full selftest 7/7；已补生产恢复链接处理）；自定义域名与领导手机实开待用户验收
   - 🟢 CR-005 DONE：archived 改为可见历史归档，新增 hidden 作为拒绝/隐藏唯一状态；远端 0007/0008 已执行并核验 enum/RPC
   - 🟡 待用户确认：2FA 与备份管理员状态；backup admin 兼 dept@ 转发第二收件人
 

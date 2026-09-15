@@ -11,6 +11,6 @@
 审查结论（2026-09-15）：
 
 - Cloudflare Pages Direct Upload 已通过 API 完成，无 Wrangler/新软件安装；项目 `uganda-house-finder` 已建立并复用。
-- 部署 `98e69696-8ca8-4c3d-bb88-f9f802d5b4ea`，提交 `18980f8a0a6c7dfa7fee9aeb1c9fe7385f96d301`，状态 `deploy=success`。
-- 生产域名：[uganda-house-finder.pages.dev](https://uganda-house-finder.pages.dev)；部署 URL：[98e69696.uganda-house-finder.pages.dev](https://98e69696.uganda-house-finder.pages.dev)。`/`、`/lib/app.js`、`/leader.html`、`/work.html` 均 HTTP 200；Edge headless `#/selftest-full` 为 `7/7`。
+- 初始部署 `98e69696-8ca8-4c3d-bb88-f9f802d5b4ea`，随后恢复流程修正版部署 `81ead23c-276c-42e0-862e-15051aac7958`（提交 `cff0257`），两次 `deploy=success`。
+- 生产域名：[uganda-house-finder.pages.dev](https://uganda-house-finder.pages.dev)；最新部署 URL：[81ead23c.uganda-house-finder.pages.dev](https://81ead23c.uganda-house-finder.pages.dev)。`/`、`/lib/app.js`、`/leader.html`、`/work.html` 均 HTTP 200；Edge headless `#/selftest-full` 为 `7/7`。
 - 仍待用户验收：自定义域名 HTTPS、领导手机外网登录/地图/照片/审批、国内可达性及街道/卫星瓦片实测。完成后再将 TASK-013 置 DONE。

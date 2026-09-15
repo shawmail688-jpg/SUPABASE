@@ -1,13 +1,26 @@
 (function () {
   "use strict";
   var cfg = window.DASHBOARD_CONFIG || {};
+  // Keep the project URL as the base for Auth/Storage and explicitly target
+  // the PostgREST endpoint for table/RPC requests.  The dashboard config
+  // stores the project URL (without /rest/v1), so concatenating table paths
+  // directly to cfg.url produces requests to /app_user instead of
+  // /rest/v1/app_user; browsers then report the failed preflight as a
+  // misleading "Failed to fetch" error.
+  var projectBase = String(cfg.url || "").replace(/\/$/, "");
+  var restBase = String(cfg.rest_url || (projectBase + "/rest/v1")).replace(/\/$/, "");
   function headers(jwt) {
     if (!cfg.key || !jwt) throw new Error("dashboard authentication required");
     return { apikey: cfg.key, Authorization: "Bearer " + jwt, "Content-Type": "application/json" };
   }
   function json(resp) { return resp.text().then(function (t) { var d; try { d = t ? JSON.parse(t) : null; } catch (e) { d = t; }
     if (!resp.ok) throw new Error((d && (d.message || d.msg)) || t || ("HTTP " + resp.status)); return d; }); }
-  function request(jwt, path, options) { options = options || {}; options.headers = options.headers || headers(jwt); return fetch(cfg.url + path, options).then(json); }
+  function request(jwt, path, options) {
+    options = options || {};
+    options.headers = options.headers || headers(jwt);
+    var base = path.indexOf("/storage/") === 0 ? projectBase : restBase;
+    return fetch(base + path, options).then(json);
+  }
   function signIn(email, password) { return fetch(cfg.url + "/auth/v1/token?grant_type=password", { method:"POST",
     headers:{ apikey: cfg.key, "Content-Type":"application/json" }, body: JSON.stringify({email:email,password:password}) }).then(json); }
   function session() { try { return JSON.parse(sessionStorage.getItem("dashboard_session") || "null"); } catch (e) { return null; } }

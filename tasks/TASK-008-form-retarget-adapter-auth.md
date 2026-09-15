@@ -5,7 +5,7 @@
 验收条件：
 1. `target:'appscript'` 模式回归：与现网行为一致（对既有测试/自检零回归）
 2. `target:'supabase'` 模式：三步契约 E2E 成功；uuid 预生成；409/主键冲突=成功路径断言；created_by 落 auth.uid()
-3. R3 防呆：archived code 提交→提示「该店已隐藏，联系管理员恢复」，不发 upsert
+3. R3 防呆：archived/hidden code 提交→提示店面不可提交，不发 upsert
 4. 断网提交→入队；回网自动 flush 顺序重放；重复重放零重复行（uuid 断言）；未登录/401 入队不发送
 5. `target:'dual'`：双发成功且两通道各一条；单侧失败入各自队列
 6. 源码走分支→PR→审后合（git 纪律）

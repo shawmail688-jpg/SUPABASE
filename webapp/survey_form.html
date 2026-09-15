@@ -1356,7 +1356,7 @@ function supaResolveSite(jwt, code, name, grp, address) {
       p_site_code: code, p_name: name, p_group: grp || null, p_address: address || null })
   }).then(responseJson).then(function (rows) {
     var site = rows && rows[0]; if (!site) throw new Error("site resolution failed");
-    if (site.site_status === "archived") { var err = new Error("This store is hidden. Contact an administrator to restore it."); err.code = "ARCHIVED"; throw err; }
+    if (site.site_status === "archived" || site.site_status === "hidden") { var err = new Error("This store is hidden or archived. Contact an administrator before submitting."); err.code = "ARCHIVED"; throw err; }
     return { id: site.site_id, status: site.site_status, created: site.created };
   });
 }

@@ -1,0 +1,601 @@
+{
+  "generated_at": "2026-09-15T05:53:51.479336+00:00",
+  "profiles": {
+    "default": {
+      "max_edge": 1800,
+      "quality": 80,
+      "cap_bytes": 1000000,
+      "samples": 24,
+      "median_kb": 340.2,
+      "max_kb": 481.1,
+      "cap_pass": true
+    },
+    "detail": {
+      "max_edge": 2400,
+      "quality": 90,
+      "cap_bytes": 2500000,
+      "samples": 24,
+      "median_kb": 905.8,
+      "max_kb": 1185.4,
+      "cap_pass": true
+    }
+  },
+  "samples": [
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\affayo-building__frontage-autoparts-shops.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 443865,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1079289,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\affayo-building__interior-empty-hall.jpg",
+      "category": "interior/dark",
+      "profiles": {
+        "default": {
+          "original_width": 3072,
+          "original_height": 4096,
+          "output_width": 1350,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 194629,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 3072,
+          "original_height": 4096,
+          "output_width": 1800,
+          "output_height": 2400,
+          "mime": "image/jpeg",
+          "bytes": 491228,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\affayo-building__interior-entrance-street-view.jpg",
+      "category": "interior/dark",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 147913,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 394503,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\affayo-building__street-front-autocity-across.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 350040,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 874890,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\affayo-building__street-view-williex-across.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 492683,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1213833,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__across-china-machine.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 384415,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1012030,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__across-machine-tower.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 441249,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1093234,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__frontage-for-rent.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 3264,
+          "original_height": 2448,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 297110,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 3264,
+          "original_height": 2448,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 672476,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__junction-view.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 463896,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1186499,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__panorama-frontage.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 8208,
+          "original_height": 2272,
+          "output_width": 1800,
+          "output_height": 498,
+          "mime": "image/jpeg",
+          "bytes": 116693,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 8208,
+          "original_height": 2272,
+          "output_width": 2400,
+          "output_height": 664,
+          "mime": "image/jpeg",
+          "bytes": 303692,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__panorama-interior-hall.jpg",
+      "category": "interior/dark",
+      "profiles": {
+        "default": {
+          "original_width": 9360,
+          "original_height": 2320,
+          "output_width": 1800,
+          "output_height": 446,
+          "mime": "image/jpeg",
+          "bytes": 73947,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 9360,
+          "original_height": 2320,
+          "output_width": 2400,
+          "output_height": 595,
+          "mime": "image/jpeg",
+          "bytes": 185848,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__panorama-yard-warehouse.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 8144,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 679,
+          "mime": "image/jpeg",
+          "bytes": 224458,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 8144,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 905,
+          "mime": "image/jpeg",
+          "bytes": 580461,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\be-forward-meik-car-hub__street-frontage.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4032,
+          "original_height": 2400,
+          "output_width": 1800,
+          "output_height": 1071,
+          "mime": "image/jpeg",
+          "bytes": 314253,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4032,
+          "original_height": 2400,
+          "output_width": 2400,
+          "output_height": 1429,
+          "mime": "image/jpeg",
+          "bytes": 709343,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-hisence-showroom-plot-7-ak__frontage-hisense-banner.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 254775,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 614702,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-hisence-showroom-plot-7-ak__interior-stripping-2.jpg",
+      "category": "interior/dark",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 350465,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 929762,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-hisence-showroom-plot-7-ak__interior-stripping.jpg",
+      "category": "interior/dark",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 378749,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 999474,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-hisence-showroom-plot-7-ak__street-chiq-signboard.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 201015,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 495242,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-hisence-showroom-plot-7-ak__street-kia-opposite.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 346716,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 958345,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-hisence-showroom-plot-7-ak__street-traffic-truck.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 405095,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1042323,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-nexa-solar__across-mercantile-renault-trucks.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 421251,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1172949,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-nexa-solar__frontage-nexa-sign.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 264283,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 674899,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-nexa-solar__sidewalk-frontage-view.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 381747,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 1077526,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\former-nexa-solar__street-victoria-motors-opposite.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 342684,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 925358,
+          "within_cap": true
+        }
+      }
+    },
+    {
+      "source": "E:\\项目\\uganda-house-finder\\data\\survey\\photos\\hernely-business-park__courtyard-unloading.jpg",
+      "category": "frontage/signage",
+      "profiles": {
+        "default": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 1800,
+          "output_height": 1350,
+          "mime": "image/jpeg",
+          "bytes": 366277,
+          "within_cap": true
+        },
+        "detail": {
+          "original_width": 4096,
+          "original_height": 3072,
+          "output_width": 2400,
+          "output_height": 1800,
+          "mime": "image/jpeg",
+          "bytes": 933637,
+          "within_cap": true
+        }
+      }
+    }
+  ]
+}

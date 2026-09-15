@@ -155,6 +155,9 @@ function uuid4() {   // file:// 无 secure context，crypto.randomUUID 不可用
 }
 '''
 adapter_marker = '/* ---------- v2.8 supabase adapter (M2b: 双靶抽象，appscript 路径原样保留) ---------- */'
+# Keep the adapter reviewable as ordinary JavaScript while still emitting one
+# self-contained field HTML file.
+ADAPTER = io.open('webapp/survey_sync.js', encoding='utf-8').read()
 adapter_start = s.find(adapter_marker)
 adapter_end = s.find('var GROUP_COLORS', adapter_start) if adapter_start >= 0 else -1
 if adapter_start >= 0 and adapter_end > adapter_start:
@@ -166,12 +169,15 @@ else:
                  '② SUPA 适配器注入')
 
 # ---------- ③ sendToOffice 靶切换 ----------
-must_replace('''function sendToOffice(spId) {
+if 'function appscriptSend(spId)' in s:
+    print('③ sendToOffice 靶切换: 已应用，跳过')
+else:
+    must_replace('''function sendToOffice(spId) {
   if (!WEBAPP_URL) { flag("office link not configured — use Copy"); showExport(spId); return; }''',
 '''function sendToOffice(spId) {
   if (supaOn()) { supaSend(spId); return; }   // M2b：supabase 靶（外审通过后 appscript 退役）
   if (!WEBAPP_URL) { flag("office link not configured — use Copy"); showExport(spId); return; }''',
-             '③ sendToOffice 靶切换')
+                 '③ sendToOffice 靶切换')
 
 # ---------- ④ record/point 预编码 uuid（幂等键）----------
 # CR-004's record-time guard also persists immediately. Treat either form as
@@ -300,9 +306,8 @@ if '--inject' in sys.argv:
         'target': env.get('FORM_TARGET', 'supabase'),
         'project_code': 'uganda-showroom',
     }
-    # Dual-write needs its own durable retry queue and is not yet implemented.
-    # Refuse the value instead of silently treating it as App Script-only.
-    assert cfg['target'] in ('appscript', 'supabase'), 'FORM_TARGET invalid or not implemented'
+    # Each supported value has an explicit adapter path; unknown values fail the build.
+    assert cfg['target'] in ('appscript', 'supabase', 'dual'), 'FORM_TARGET invalid'
     replacement = 'window.SUPABASE_CONFIG=' + json.dumps(cfg, separators=(',', ':')) + ';'
     s, changed = re.subn(r'window\.SUPABASE_CONFIG=\{.*?\};', replacement, s, count=1)
     assert changed == 1, 'SUPABASE_CONFIG block not found for --inject'

@@ -937,14 +937,15 @@ function sel(name, label, list) {
   return '<label>' + esc(label) + '</label><select name="' + name + '">' + opt(list) + "</select>";
 }
 var PHOTO_HTML =
-  '<div class="photos"><b style="font-size:13px;">Photos taken (tick what you shot)</b>' +
+  '<div class="photos"><b style="font-size:13px;">Take or choose photos</b>' +
   '<div class="pt">P1 — stand ACROSS the road: whole frontage AND the road in one photo</div>' +
-  '<label class="check"><input type="checkbox" name="p1" value="P1"> P1 front + road</label>' +
+  '<input type="file" name="photo_p1" accept="image/*" capture="environment">' +
   '<div class="pt">P2 / P3 — stand at the doorway, shoot down the road LEFT, then RIGHT</div>' +
-  '<label class="check"><input type="checkbox" name="p2" value="P2"> P2 left</label>' +
-  '<label class="check"><input type="checkbox" name="p3" value="P3"> P3 right</label>' +
+  '<input type="file" name="photo_p2" accept="image/*" capture="environment">' +
+  '<input type="file" name="photo_p3" accept="image/*" capture="environment">' +
   '<div class="pt">P4 — the OPPOSITE side of the road</div>' +
-  '<label class="check"><input type="checkbox" name="p4" value="P4"> P4 opposite side</label></div>';
+  '<input type="file" name="photo_p4" accept="image/*" capture="environment">' +
+  '<label class="check"><input type="checkbox" name="photo_detail"> Detail-photo quality (larger file)</label></div>';
 
 /* ---------- home view ---------- */
 function groupBadge(p) {   // same group colours as the map markers (GROUP_COLORS, online-send section)
@@ -1090,6 +1091,12 @@ function relatedHtml(p) {
     (leads.length ? '<div class="sub" style="margin-top:8px;">Storefront leads found here: <b>' + leads.length + "</b> — details in records below</div>" : "") +
     "</div>";
 }
+function syncHtml(r) {
+  var states = Object.keys(r.sync || {}).filter(function (t) { return r.sync[t].state !== "sent"; }).map(function (t) {
+    var item = r.sync[t]; return t + ": " + item.state + (item.error ? " (" + item.error + ")" : "");
+  });
+  return states.length ? '<div class="sub">Sync: ' + esc(states.join(" · ")) + "</div>" : "";
+}
 function recHtml(id) {
   var list = recs(id);
   if (!list.length) return '<div class="sub">No records yet for ' + esc(id) + ".</div>";
@@ -1108,7 +1115,7 @@ function recHtml(id) {
       '<span class="tag">' + t + "</span>" + esc(line) +
       (current ? ' <span class="senttag">CURRENT</span>' : ' <span class="sub">history</span>') +
       (r.supersedes ? ' <span class="sub">updated</span>' : "") +
-      (r.sent ? ' <span class="senttag">✓ sent</span>' : "") + "</div>";
+      (r.sent ? ' <span class="senttag">✓ sent</span>' : "") + syncHtml(r) + "</div>";
   }).join("");
 }
 
@@ -1139,7 +1146,8 @@ function prefillEditing(id) {
   if (!form) return;
   Object.keys(r).forEach(function (k) { setFormValue(form, k, r[k]); });
   var refused = form.querySelector('[name="refused"]'); if (refused) refused.checked = !!r.refused;
-  ["p1","p2","p3","p4"].forEach(function (n) { var el = form.querySelector('[name="' + n + '"]'); if (el) el.checked = (r.photos || "").indexOf(n.toUpperCase()) >= 0; });
+  var oldPhotos = r.photos && r.photos !== "none" ? r.photos : "";
+  if (oldPhotos) { var note = document.createElement("div"); note.className = "sub"; note.textContent = "Existing photos remain attached: " + oldPhotos; form.querySelector(".photos").appendChild(note); }
   var submit = form.querySelector('button[type="submit"]'); if (submit) submit.textContent = "Save as updated survey";
   var cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "btn secondary";
   cancel.style.marginTop = "8px"; cancel.textContent = "Cancel edit"; cancel.onclick = function () { cancelEdit(id); };
@@ -1147,32 +1155,40 @@ function prefillEditing(id) {
 }
 function addVerify(e, id) {
   e.preventDefault();
-  var f = e.target, d = fd(f);
+  var f = e.target, d = fd(f), submit = f.querySelector('button[type="submit"]');
   var refused = !!f.querySelector("[name=refused]").checked;
   if (!refused && !d.rent) { document.getElementById("verr").style.display = "block"; return false; }
   var edit = editingRecord && editingRecord.id === id && editingRecord.type === "V" ? editingRecord : null;
-  recs(id).unshift({ type: "V", uid: uuid4(), site_code: edit ? edit.record.site_code : fieldSiteCode(id, {type:"V"}),
-    supersedes: edit ? edit.sourceUid : null, currency: "USD", ts: Date.now(), added_date: today(),
-    surveyor_name: (surveyorEl.value || "").trim(), avail: d.avail, area: d.area, front: d.front || "",
-    glass: d.glass, trafv: d.trafv, trafp: d.trafp, rent: d.rent || "", refused: refused ? 1 : 0,
-    ll: d.ll || "", llphone: d.llphone || "", verdict: d.verdict,
-    photos: checkBoxes(f, ["p1","p2","p3","p4"]).join("") || "none", note: d.note || "" });
-  editingRecord = null; save(); f.reset(); renderSP(id); return false;
+  submit.disabled = true;
+  withCapturedPhotos(f, function (photoRefs) {
+    var r = { type: "V", uid: uuid4(), site_code: edit ? edit.record.site_code : fieldSiteCode(id, {type:"V"}),
+      supersedes: edit ? edit.sourceUid : null, currency: "USD", ts: Date.now(), added_date: today(),
+      surveyor_name: (surveyorEl.value || "").trim(), avail: d.avail, area: d.area, front: d.front || "",
+      glass: d.glass, trafv: d.trafv, trafp: d.trafp, rent: d.rent || "", refused: refused ? 1 : 0,
+      ll: d.ll || "", llphone: d.llphone || "", verdict: d.verdict, photo_refs: photoRefs,
+      photos: photoRefs.map(function (p) { return p.slot; }).join("") || "none", note: d.note || "" };
+    recs(id).unshift(r); queueForTargets(r); editingRecord = null; f.reset(); renderSP(id); flag("survey saved; ready to send");
+  }, function (err) { flag("photo save failed: " + (err.message || err)); submit.disabled = false; });
+  return false;
 }
 function addLead(e, id) {
   e.preventDefault();
-  var f = e.target, d = fd(f);
+  var f = e.target, d = fd(f), submit = f.querySelector('button[type="submit"]');
   var refused = !!f.querySelector("[name=refused]").checked;
   if (!d.bld || !d.road) return false;
   var edit = editingRecord && editingRecord.id === id && editingRecord.type === "L" ? editingRecord : null;
   var candidate = { type: "L", bld: d.bld, road: d.road };
-  recs(id).unshift({ type: "L", uid: uuid4(), site_code: edit ? edit.record.site_code : fieldSiteCode(id, candidate),
-    supersedes: edit ? edit.sourceUid : null, currency: "USD", ts: Date.now(), added_date: today(),
-    surveyor_name: (surveyorEl.value || "").trim(), bld: d.bld, road: d.road, area: d.area,
-    sign: d.sign, rent: d.rent || "", refused: refused ? 1 : 0, contact: d.contact || "",
-    phone: d.phone || "", pin: d.pin || "",
-    photos: checkBoxes(f, ["p1","p2","p3","p4"]).join("") || "none", note: d.note || "" });
-  editingRecord = null; save(); f.reset(); renderSP(id); return false;
+  submit.disabled = true;
+  withCapturedPhotos(f, function (photoRefs) {
+    var r = { type: "L", uid: uuid4(), site_code: edit ? edit.record.site_code : fieldSiteCode(id, candidate),
+      supersedes: edit ? edit.sourceUid : null, currency: "USD", ts: Date.now(), added_date: today(),
+      surveyor_name: (surveyorEl.value || "").trim(), bld: d.bld, road: d.road, area: d.area,
+      sign: d.sign, rent: d.rent || "", refused: refused ? 1 : 0, contact: d.contact || "",
+      phone: d.phone || "", pin: d.pin || "", photo_refs: photoRefs,
+      photos: photoRefs.map(function (p) { return p.slot; }).join("") || "none", note: d.note || "" };
+    recs(id).unshift(r); queueForTargets(r); editingRecord = null; f.reset(); renderSP(id); flag("lead saved; ready to send");
+  }, function (err) { flag("photo save failed: " + (err.message || err)); submit.disabled = false; });
+  return false;
 }
 function addAnchor(id, idx, status) {
   var p = byId(id), a = p.anchors[idx];
@@ -1182,7 +1198,10 @@ function addAnchor(id, idx, status) {
 }
 function delRec(id, i) {
   if (recs(id)[i] && recs(id)[i].sent) { flag("sent history cannot be deleted"); return; }
-  recs(id).splice(i, 1); save(); renderSP(id);
+  var r = recs(id)[i], refs = (r && r.photo_refs) || [];
+  Promise.all(refs.filter(function (p) { return p.id; }).map(function (p) { return photoDelete(p.id); }))
+    .then(function () { recs(id).splice(i, 1); save(); renderSP(id); })
+    .catch(function () { flag("could not remove draft photos — draft kept"); });
 }
 
 /* ---------- export (SPM v2 pipe format) ---------- */
@@ -1244,16 +1263,37 @@ var GEO = window.GEO || {};
 var WEBAPP_URL = window.WEBAPP_URL || "";
 
 /* ---------- v2.8 supabase adapter (M2b: 双靶抽象，appscript 路径原样保留) ---------- */
+/* v2.9 source: durable target states, photo pipeline, 401 replay and archived defence. */
 var SUPA = window.SUPABASE_CONFIG || null;
-function supaOn() { return !!(SUPA && SUPA.url && SUPA.key && SUPA.target === "supabase"); }
-function supaAuth() {
-  try { return JSON.parse(lsGet("spm2_supa_auth", "") || "null"); } catch (e) { return null; }
+var PHOTO_DEFAULT = { maxEdge: 1800, quality: 0.80, capBytes: 1000000, kind: "normal" };
+var PHOTO_DETAIL = { maxEdge: 2400, quality: 0.90, capBytes: 2500000, kind: "detail" };
+var _projId = null, _supaBusy = false, _appBusy = false;
+
+function supaTarget() { return SUPA && SUPA.target ? SUPA.target : "appscript"; }
+function supaOn() { return !!(SUPA && SUPA.url && SUPA.key && (supaTarget() === "supabase" || supaTarget() === "dual")); }
+function targetDone(r, target) { return !!(r.sent || (r.sentTargets && r.sentTargets[target])); }
+function targetState(r, target, state, error) {
+  r.sync = r.sync || {}; r.sentTargets = r.sentTargets || {};
+  r.sync[target] = { state: state, at: Date.now(), error: error || null };
+  if (state === "sent") r.sentTargets[target] = 1;
+  var required = Object.keys(r.sync).filter(function (t) { return t === "appscript" || t === "supabase"; });
+  if (!required.length) required = supaTarget() === "dual" ? ["appscript", "supabase"] : [supaTarget()];
+  r.sent = required.every(function (t) { return !!r.sentTargets[t]; }) ? 1 : 0;
+  save();
 }
+function queueForTargets(r) {
+  var targets = supaTarget() === "dual" ? ["appscript", "supabase"] : [supaTarget()];
+  targets.forEach(function (t) { targetState(r, t, "queued", null); });
+}
+
+function supaAuth() { try { return JSON.parse(lsGet("spm2_supa_auth", "") || "null"); } catch (e) { return null; } }
 function supaAuthSave(a) { lsSet("spm2_supa_auth", JSON.stringify(a)); }
 function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
 function supaAuthClear() { lsDel("spm2_supa_auth"); }
-function supaHeaders(jwt, prefer) {
-  var h = { apikey: SUPA.key, Authorization: "Bearer " + (jwt || SUPA.key), "Content-Type": "application/json" };
+function supaHeaders(jwt, prefer, contentType) {
+  if (!jwt) throw new Error("authenticated access token required");
+  var h = { apikey: SUPA.key, Authorization: "Bearer " + jwt };
+  if (contentType !== false) h["Content-Type"] = contentType || "application/json";
   if (prefer) h.Prefer = prefer;
   return h;
 }
@@ -1266,9 +1306,10 @@ function supaSignIn(email, pw, cb) {
     supaAuthSave({ access: d.access_token, refresh: d.refresh_token, uid: d.user.id,
       email: d.user.email, exp: Date.now() + (d.expires_in || 3600) * 1000 });
     cb({ ok: true, email: d.user.email });
+    setTimeout(function () { flushQueue(); }, 0);
   }).catch(function (e) { cb({ ok: false, error: String(e) }); });
 }
-function supaRefresh(cb) {   // 过期自动续期；失败=登出态（记录留在队列）
+function supaRefresh(cb) {
   var a = supaAuth();
   if (!a || !a.refresh) { cb(null); return; }
   fetch(SUPA.url + "/auth/v1/token?grant_type=refresh_token", {
@@ -1281,83 +1322,228 @@ function supaRefresh(cb) {   // 过期自动续期；失败=登出态（记录�
     cb(d.access_token);
   }).catch(function () { cb(null); });
 }
+function supaRefreshP() { return new Promise(function (resolve) { supaRefresh(resolve); }); }
 function supaJwt() {
   var a = supaAuth();
-  if (!a) return null;
-  if (Date.now() < (a.exp || 0) - 60000) return a.access;
-  return null;   // 过期：调用方走 supaRefresh 后重试
+  return a && Date.now() < (a.exp || 0) - 60000 ? a.access : null;
 }
-var _projId = null;
-function supaProjectId(jwt) {   // project uuid 解析（缓存会话级）
+function supaFetch(jwt, path, options, retried) {
+  options = options || {}; options.headers = options.headers || supaHeaders(jwt);
+  return fetch(SUPA.url + path, options).then(function (resp) {
+    if (resp.status !== 401 || retried) return resp;
+    return supaRefreshP().then(function (fresh) {
+      if (!fresh) return resp;
+      options.headers = Object.assign({}, options.headers, { Authorization: "Bearer " + fresh });
+      return supaFetch(fresh, path, options, true);
+    });
+  });
+}
+function responseJson(resp) {
+  return resp.text().then(function (text) {
+    var data = null; try { data = text ? JSON.parse(text) : null; } catch (e) {}
+    if (!resp.ok) { var err = new Error((data && (data.message || data.msg)) || text || ("HTTP " + resp.status)); err.status = resp.status; throw err; }
+    return data;
+  });
+}
+function supaProjectId(jwt) {
   if (_projId) return Promise.resolve(_projId);
-  return fetch(SUPA.url + "/rest/v1/project?code=eq." + SUPA.project_code + "&select=id",
-    { headers: supaHeaders(jwt) })
-    .then(function (r) { return r.json(); })
-    .then(function (rows) { _projId = rows[0].id; return _projId; });
+  return supaFetch(jwt, "/rest/v1/project?code=eq." + encodeURIComponent(SUPA.project_code) + "&select=id", { headers: supaHeaders(jwt) })
+    .then(responseJson).then(function (rows) { if (!rows || !rows[0]) throw new Error("project unavailable"); _projId = rows[0].id; return _projId; });
 }
-function supaResolveSite(jwt, pid, code, name, grp) {   // resolve-or-create（code=幂等键）
-  return fetch(SUPA.url + "/rest/v1/site?project_id=eq." + pid + "&code=eq." + encodeURIComponent(code) + "&select=id",
-    { headers: supaHeaders(jwt) })
-    .then(function (r) { return r.json(); })
-    .then(function (rows) {
-      if (rows.length) return { id: rows[0].id, created: false };
-      return fetch(SUPA.url + "/rest/v1/site", {
-        method: "POST", headers: supaHeaders(jwt, "return=representation"),
-        body: JSON.stringify({ project_id: pid, code: code, name: name, grp: grp || null, status: "surveying" })
-      }).then(function (r) { return r.json(); }).then(function (rows2) {
-        return { id: rows2[0].id, created: true };
+function supaResolveSite(jwt, code, name, grp, address) {
+  return supaFetch(jwt, "/rest/v1/rpc/resolve_form_site", {
+    method: "POST", headers: supaHeaders(jwt), body: JSON.stringify({ p_project_code: SUPA.project_code,
+      p_site_code: code, p_name: name, p_group: grp || null, p_address: address || null })
+  }).then(responseJson).then(function (rows) {
+    var site = rows && rows[0]; if (!site) throw new Error("site resolution failed");
+    if (site.site_status === "archived") { var err = new Error("This store is hidden. Contact an administrator to restore it."); err.code = "ARCHIVED"; throw err; }
+    return { id: site.site_id, status: site.site_status, created: site.created };
+  });
+}
+
+function photoDb() {
+  return new Promise(function (resolve, reject) {
+    if (!window.indexedDB) { reject(new Error("photo storage unavailable")); return; }
+    var req = indexedDB.open("spm2_photos", 1);
+    req.onupgradeneeded = function () { if (!req.result.objectStoreNames.contains("blobs")) req.result.createObjectStore("blobs"); };
+    req.onsuccess = function () { resolve(req.result); }; req.onerror = function () { reject(req.error); };
+  });
+}
+function photoPut(id, blob) { return photoDb().then(function (db) { return new Promise(function (resolve, reject) {
+  var tx = db.transaction("blobs", "readwrite"); tx.objectStore("blobs").put(blob, id);
+  tx.oncomplete = function () { db.close(); resolve(); }; tx.onerror = function () { db.close(); reject(tx.error); };
+}); }); }
+function photoGet(id) { return photoDb().then(function (db) { return new Promise(function (resolve, reject) {
+  var tx = db.transaction("blobs", "readonly"), req = tx.objectStore("blobs").get(id);
+  req.onsuccess = function () { db.close(); resolve(req.result || null); }; req.onerror = function () { db.close(); reject(req.error); };
+}); }); }
+function photoDelete(id) { return photoDb().then(function (db) { return new Promise(function (resolve, reject) {
+  var tx = db.transaction("blobs", "readwrite"); tx.objectStore("blobs").delete(id);
+  tx.oncomplete = function () { db.close(); resolve(); }; tx.onerror = function () { db.close(); reject(tx.error); };
+}); }); }
+function blobSha1(blob) { return blob.arrayBuffer().then(function (buf) { return crypto.subtle.digest("SHA-1", buf); }).then(function (hash) {
+  return Array.prototype.map.call(new Uint8Array(hash), function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+}); }
+function canvasBlob(canvas, quality) { return new Promise(function (resolve, reject) {
+  canvas.toBlob(function (blob) { blob ? resolve(blob) : reject(new Error("JPEG compression failed")); }, "image/jpeg", quality);
+}); }
+function canvasBlobWithinCap(canvas, cfg, quality, attempt) {
+  return canvasBlob(canvas, quality).then(function (blob) {
+    if (blob.size <= cfg.capBytes) return blob;
+    if (attempt >= 4) throw new Error("compressed photo exceeds profile size limit");
+    return canvasBlobWithinCap(canvas, cfg, Math.max(0.52, quality - 0.08), attempt + 1);
+  });
+}
+function compressDrawable(image, inputWidth, inputHeight, cfg) {
+  var scale = Math.min(1, cfg.maxEdge / Math.max(inputWidth, inputHeight));
+  var width = Math.max(1, Math.round(inputWidth * scale)), height = Math.max(1, Math.round(inputHeight * scale));
+  var canvas = document.createElement("canvas"); canvas.width = width; canvas.height = height;
+  canvas.getContext("2d", { alpha: false }).drawImage(image, 0, 0, width, height);
+  return canvasBlobWithinCap(canvas, { capBytes: cfg.capBytes || (cfg.kind === "detail" ? 2500000 : 1000000) }, cfg.quality, 0)
+    .then(function (blob) { return { blob: blob, width: width, height: height }; });
+}
+function compressPhoto(file, detail) {
+  var cfg = detail ? PHOTO_DETAIL : PHOTO_DEFAULT;
+  return createImageBitmap(file).then(function (image) {
+    return compressDrawable(image, image.width, image.height, cfg).then(function (result) { if (image.close) image.close();
+      return blobSha1(result.blob).then(function (sha1) {
+      var id = uuid4(); return photoPut(id, result.blob).then(function () { return { id: id, sha1: sha1, kind: cfg.kind,
+        mime: "image/jpeg", width: result.width, height: result.height, bytes: result.blob.size, taken_at: new Date().toISOString() }; });
+    }); });
+  });
+}
+function capturePhotos(form) {
+  var detail = !!form.querySelector('[name="photo_detail"]:checked'), selected = [];
+  ["p1","p2","p3","p4"].forEach(function (slot) {
+    var input = form.querySelector('[name="photo_' + slot + '"]');
+    if (input && input.files && input.files[0]) selected.push({ slot: slot.toUpperCase(), file: input.files[0] });
+  });
+  if (supaTarget() === "appscript") return Promise.resolve(selected.map(function (x) { return { slot: x.slot, appscript_only: true }; }));
+  if (selected.length) flag("compressing photos...");
+  var staged = [];
+  return selected.reduce(function (chain, item) { return chain.then(function () {
+    return compressPhoto(item.file, detail).then(function (p) { p.slot = item.slot; staged.push(p); });
+  }); }, Promise.resolve()).then(function () { return staged; }).catch(function (err) {
+    return Promise.all(staged.map(function (p) { return photoDelete(p.id).catch(function () {}); })).then(function () { throw err; });
+  });
+}
+function withCapturedPhotos(form, done, failed) {
+  var hasFile = ["p1","p2","p3","p4"].some(function (slot) {
+    var input = form.querySelector('[name="photo_' + slot + '"]'); return !!(input && input.files && input.files[0]);
+  });
+  if (!hasFile) { done([]); return; }
+  capturePhotos(form).then(done).catch(failed);
+}
+function supaUploadPhoto(jwt, code, meta) {
+  return photoGet(meta.id).then(function (blob) {
+    if (!blob) throw new Error("queued photo is missing on this device");
+    var path = SUPA.project_code + "/" + code + "/" + meta.sha1 + ".jpg"; meta.storage_path = path;
+    return supaFetch(jwt, "/storage/v1/object/photos/" + path, {
+      method: "POST", headers: Object.assign(supaHeaders(jwt, null, false), { "Content-Type": "image/jpeg", "x-upsert": "false" }), body: blob
+    }).then(function (resp) { if (resp.ok || resp.status === 409) return meta; return responseJson(resp); });
+  });
+}
+function supaFindPhotoBySha(jwt, sha1) {
+  return supaFetch(jwt, "/rest/v1/photo?sha1=eq." + sha1 + "&select=id,site_id,survey_result_id,storage_path", { headers: supaHeaders(jwt) })
+    .then(responseJson).then(function (rows) { return rows && rows[0] ? rows[0] : null; });
+}
+function supaPreparePhoto(jwt, siteId, code, meta) {
+  return supaFindPhotoBySha(jwt, meta.sha1).then(function (existing) {
+    if (!existing) return supaUploadPhoto(jwt, code, meta);
+    if (existing.site_id !== siteId) throw new Error("photo content already belongs to another store");
+    meta.remote_existing = true; meta.storage_path = existing.storage_path; return meta;
+  });
+}
+function supaInsertSurvey(jwt, siteId, id, r, code) {
+  var sr = { id: r.uid, site_id: siteId, source: "form", added_date: r.added_date || dateFromTs(r.ts),
+    created_at: new Date(r.ts || Date.now()).toISOString(), rent: r.refused ? null : (r.rent === "" ? null : Number(r.rent)),
+    space: r.area === "" ? null : Number(r.area), contact: ((r.contact || "") + " " + (r.phone || "")).trim() || null,
+    surveyor_name: r.surveyor_name || null, raw: { row: resultsRow(id, r), type: r.type, currency: recordCurrency(r),
+      surveyed_at: new Date(r.ts || Date.now()).toISOString(), supersedes: r.supersedes || null, site_code: code, form: surveyRaw(r) } };
+  return supaFetch(jwt, "/rest/v1/survey_result?on_conflict=id", { method: "POST",
+    headers: supaHeaders(jwt, "resolution=ignore-duplicates,return=minimal"), body: JSON.stringify(sr) })
+    .then(function (resp) { if (resp.ok || resp.status === 409) return; return responseJson(resp); });
+}
+function supaInsertPhotoMeta(jwt, siteId, surveyId, meta) {
+  if (meta.remote_existing) return Promise.resolve();
+  var row = { id: meta.id, site_id: siteId, survey_result_id: surveyId, storage_path: meta.storage_path,
+    sha1: meta.sha1, kind: meta.kind, taken_at: meta.taken_at || null };
+  return supaFetch(jwt, "/rest/v1/photo?on_conflict=id", { method: "POST",
+    headers: supaHeaders(jwt, "resolution=ignore-duplicates,return=minimal"), body: JSON.stringify(row) })
+    .then(function (resp) {
+      if (resp.ok) return;
+      if (resp.status !== 409) return responseJson(resp);
+      return supaFindPhotoBySha(jwt, meta.sha1).then(function (existing) {
+        if (!existing || existing.site_id !== siteId) throw new Error("photo metadata conflict was not safely resolved");
+        meta.remote_existing = true; meta.storage_path = existing.storage_path;
       });
     });
 }
-function supaSend(spId) {   // 三步契约 v1（无照片帧）：site upsert → survey_result → 标 sent
-  var a = supaAuth();
-  if (!a) { flag("sign in to send — records kept"); return; }
-  var jwt = supaJwt();
-  if (!jwt) { supaRefresh(function (t) { if (t) { supaSend(spId); } else { flag("session expired — sign in again; records kept"); } }); return; }
-  var ids = spId ? [spId] : POINTS.map(function (p) { return p.id; });
-  var b = collectUnsent(ids);
-  if (!b.owners.length) { flag("nothing new to send"); return; }
-  flag("sending (supabase)...");
-  supaProjectId(jwt).then(function (pid) {
-    var chain = Promise.resolve({ sent: 0, fail: 0 });
-    b.owners.forEach(function (o) {
-      chain = chain.then(function (acc) {
-        var id = o[0], r = o[1];
-        var code = r.site_code || fieldSiteCode(id, r); // 同一真实店面沿用稳定 code
-        var sname = (r.type === "L") ? r.bld : (r.aname || (byId(id) ? byId(id).name : id));
-        var defPt = byId(id);
-        return supaResolveSite(jwt, pid, code, sname, defPt ? defPt.group : null)
-          .then(function (site) {
-            var sr = {
-              id: r.uid || uuid4(), site_id: site.id, source: "form",
-              added_date: r.added_date || dateFromTs(r.ts), created_at: new Date(r.ts || Date.now()).toISOString(),
-              rent: r.refused ? null : (r.rent === "" ? null : parseFloat(r.rent) || null),
-              space: r.area === "" ? null : parseFloat(r.area) || null,
-              contact: ((r.contact || "") + " " + (r.phone || "")).trim() || null,
-              surveyor_name: r.surveyor_name || (surveyorEl.value || "").trim() || null,
-              raw: { row: resultsRow(id, r), type: r.type, note: r.note || "", photos: r.photos || "none",
-                currency: recordCurrency(r), surveyed_at: new Date(r.ts || Date.now()).toISOString(),
-                supersedes: r.supersedes || null, site_code: code, form: surveyRaw(r) },
-            };
-            return fetch(SUPA.url + "/rest/v1/survey_result", {
-              method: "POST", headers: supaHeaders(jwt, "resolution=ignore-duplicates,return=minimal"),
-              body: JSON.stringify(sr)
-            }).then(function (resp) {
-              if (resp.status === 201 || resp.status === 200 || resp.status === 204) { acc.sent++; r.sent = 1; return acc; }
-              acc.fail++; return acc;
-            });
-          });
-      });
-    });
-    return chain;
-  }).then(function (acc) {
-    save();
-    if (acc.fail) flag(acc.sent ? "partial fail — send again" : "send failed — records kept");
-    else flag("sent ✓ (supabase)");
-    route();
-  }).catch(function (e) { flag("send error: " + e); });
+function pendingOwners(spId, target) {
+  var ids = spId ? [spId] : POINTS.map(function (p) { return p.id; }), out = [];
+  ids.forEach(function (id) { recs(id).forEach(function (r) {
+    var hasSnapshot = r.sync && Object.keys(r.sync).length;
+    if ((!hasSnapshot || r.sync[target]) && !targetDone(r, target)) out.push([id, r]);
+  }); });
+  return out;
 }
-function uuid4() {   // file:// 无 secure context，crypto.randomUUID 不可用时的 v4 兜底
+function sendOneSupabase(jwt, item) {
+  var id = item[0], r = item[1], defPt = byId(id), code = r.site_code || fieldSiteCode(id, r);
+  r.site_code = code; if (!r.uid) r.uid = uuid4(); targetState(r, "supabase", "sending", null);
+  var name = r.type === "L" ? r.bld : (r.aname || (defPt ? defPt.name : id));
+  return supaResolveSite(jwt, code, name, defPt ? defPt.group : null, r.road || (defPt ? defPt.roads : null))
+    .then(function (site) { var photos = r.photo_refs || [];
+      return photos.reduce(function (p, meta) { return p.then(function () { return supaPreparePhoto(jwt, site.id, code, meta); }); }, Promise.resolve())
+        .then(function () { return supaInsertSurvey(jwt, site.id, id, r, code); })
+        .then(function () { return photos.reduce(function (p, meta) { return p.then(function () { return supaInsertPhotoMeta(jwt, site.id, r.uid, meta); }); }, Promise.resolve()); });
+    }).then(function () {
+      targetState(r, "supabase", "sent", null);
+      return Promise.all((r.photo_refs || []).filter(function (p) { return p.id; }).map(function (p) { return photoDelete(p.id); }))
+        .then(function () { r.sync.supabase.cleanup_pending = false; save(); return true; })
+        .catch(function () { r.sync.supabase.cleanup_pending = true; save(); return true; });
+    });
+}
+function supaSend(spId) {
+  if (_supaBusy) return Promise.resolve(false);
+  var a = supaAuth(); if (!a) { pendingOwners(spId, "supabase").forEach(function (o) { targetState(o[1], "supabase", "queued", "sign in required"); }); flag("sign in to send — records queued"); return Promise.resolve(false); }
+  if (navigator.onLine === false) { pendingOwners(spId, "supabase").forEach(function (o) { targetState(o[1], "supabase", "queued", "offline"); }); flag("offline — records queued"); return Promise.resolve(false); }
+  _supaBusy = true;
+  var tokenP = supaJwt() ? Promise.resolve(supaJwt()) : supaRefreshP();
+  return tokenP.then(function (jwt) {
+    if (!jwt) throw new Error("session expired — sign in again");
+    var owners = pendingOwners(spId, "supabase"), result = { sent: 0, fail: 0, archived: 0 };
+    return owners.reduce(function (chain, item) { return chain.then(function () {
+      return sendOneSupabase(jwt, item).then(function () { result.sent++; }).catch(function (err) {
+        result.fail++; if (err.code === "ARCHIVED") result.archived++; targetState(item[1], "supabase", "queued", String(err.message || err));
+      });
+    }); }, Promise.resolve()).then(function () { return result; });
+  }).then(function (result) {
+    if (result.archived) flag("该店已隐藏，联系管理员恢复");
+    else if (result.fail) flag(result.sent ? "partial failure — queued for retry" : "send failed — queued for retry");
+    else flag(result.sent ? "sent ✓ (supabase)" : "nothing new to send");
+    route(); return !result.fail;
+  }).catch(function (err) { flag(String(err.message || err) + " — records queued"); return false; })
+    .then(function (ok) { _supaBusy = false; return ok; }, function (err) { _supaBusy = false; throw err; });
+}
+function hasPendingTarget(target) { return POINTS.some(function (p) { return pendingOwners(p.id, target).length; }); }
+function cleanupSentPhotoBlobs() {
+  POINTS.forEach(function (p) { recs(p.id).forEach(function (r) {
+    if (!r.sentTargets || !r.sentTargets.supabase || !r.photo_refs) return;
+    Promise.all(r.photo_refs.filter(function (m) { return m.id; }).map(function (m) { return photoDelete(m.id); }))
+      .then(function () { if (r.sync && r.sync.supabase) r.sync.supabase.cleanup_pending = false; save(); })
+      .catch(function () { if (r.sync && r.sync.supabase) r.sync.supabase.cleanup_pending = true; save(); });
+  }); });
+}
+function flushQueue() {
+  cleanupSentPhotoBlobs();
+  if (navigator.onLine === false) return Promise.resolve(false);
+  if (hasPendingTarget("appscript") && typeof appscriptSend === "function") appscriptSend(null);
+  if (supaOn() && supaAuth() && hasPendingTarget("supabase")) return supaSend(null);
+  return Promise.resolve(false);
+}
+window.addEventListener("online", function () { flushQueue(); });
+
+function uuid4() {
   return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
     return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
   });
@@ -1389,12 +1575,12 @@ function showroomRow(r) {
     area_code: "", contact_person: ((r.contact || "") + " " + (r.phone || "")).trim(),
     by: r.surveyor_name || (surveyorEl.value || "").trim() };  // 建记录时快照，旧记录回退当前值
 }
-function collectUnsent(ids) {
+function collectUnsent(ids, target) {
   var owners = [], results = [], showroom = [];
   ids.forEach(function (id) {
     var def = byId(id), defPushed = false;
     recs(id).forEach(function (r) {
-      if (r.sent) return;
+      if (targetDone(r, target || "appscript")) return;
       if (def && def.field && !defPushed) {   // NEW-POINT row rides ahead of its first record
         defPushed = true;
         results.push([today(), id, def.roads, def.name, "NEW-POINT", def.task, def.pin || "", "", "", "",
@@ -1408,29 +1594,54 @@ function collectUnsent(ids) {
   });
   return { owners: owners, results: results, showroom: showroom };
 }
-function sendToOffice(spId) {
-  if (supaOn()) { supaSend(spId); return; }   // M2b：supabase 靶（外审通过后 appscript 退役）
-  if (!WEBAPP_URL) { flag("office link not configured — use Copy"); showExport(spId); return; }
+function appscriptSend(spId) {
+  if (_appBusy) return;
   var ids = spId ? [spId] : POINTS.map(function (p) { return p.id; });
-  var b = collectUnsent(ids);
+  var b = collectUnsent(ids, "appscript");
+  if (!WEBAPP_URL) { flag("office link not configured — use Copy"); showExport(spId); return; }
   if (!b.owners.length) { flag("nothing new to send"); return; }
+  if (navigator.onLine === false) { b.owners.forEach(function (o) { targetState(o[1], "appscript", "queued", "offline"); }); flag("offline — records queued"); return; }
+  _appBusy = true;
   flag("sending...");
+  function jobDone(r, name) { return !!(r.sync && r.sync.appscript && r.sync.appscript.jobs && r.sync.appscript.jobs[name]); }
+  function markJob(r, name) { r.sync = r.sync || {}; r.sync.appscript = r.sync.appscript || { state: "sending", at: Date.now() };
+    r.sync.appscript.jobs = r.sync.appscript.jobs || {}; r.sync.appscript.jobs[name] = 1; save(); }
   var jobs = [];
-  if (b.showroom.length) jobs.push({ target: "showroom", rows: b.showroom });
-  if (b.results.length) jobs.push({ target: "results", rows: b.results });
+  var showroomOwners = b.owners.filter(function (o) { return o[1].type === "L" && !jobDone(o[1], "showroom"); });
+  if (showroomOwners.length) jobs.push({ target: "showroom", owners: showroomOwners,
+    rows: showroomOwners.map(function (o) { return showroomRow(o[1]); }) });
+  var resultOwners = b.owners.filter(function (o) { return !jobDone(o[1], "results"); });
+  if (resultOwners.length) {
+    var resultRows = [], pointSeen = {};
+    resultOwners.forEach(function (o) { var id = o[0], r = o[1], def = byId(id);
+      if (def && def.field && !pointSeen[id]) { pointSeen[id] = 1; resultRows.push([today(), id, def.roads, def.name,
+        "NEW-POINT", def.task, def.pin || "", "", "", "", "group=" + def.group + (def.note ? " · " + def.note : "")]); }
+      resultRows.push(resultsRow(id, r));
+    });
+    jobs.push({ target: "results", owners: resultOwners, rows: resultRows });
+  }
   var fail = 0;
   function next(i) {
     if (i >= jobs.length) {
-      if (fail) { flag(fail < jobs.length ? "partial fail — send again" : "send failed — use Copy"); return; }
-      b.owners.forEach(function (o) { o[1].sent = 1; });
-      save(); flag("sent ✓"); route(); return;
+      if (fail) { _appBusy = false; b.owners.forEach(function (o) { targetState(o[1], "appscript", "queued", "appscript send failed"); });
+        flag(fail < jobs.length ? "partial fail — send again" : "send failed — use Copy"); return; }
+      b.owners.forEach(function (o) { var r = o[1], complete = jobDone(r, "results") && (r.type !== "L" || jobDone(r, "showroom"));
+        if (complete) targetState(r, "appscript", "sent", null); });
+      _appBusy = false; save(); flag("sent ✓"); route(); return;
     }
-    fetch(WEBAPP_URL, { method: "POST", body: JSON.stringify(jobs[i]) })  // 无 Content-Type → text/plain 简单请求，免 CORS 预检
+    fetch(WEBAPP_URL, { method: "POST", body: JSON.stringify({ target: jobs[i].target, rows: jobs[i].rows,
+      idempotency_keys: jobs[i].owners.map(function (o) { return o[1].uid; }) }) })  // text/plain 简单请求，免 CORS 预检
       .then(function (resp) { return resp.text(); })
-      .then(function (t) { if (t.indexOf('"ok":true') < 0) fail++; next(i + 1); })
+      .then(function (t) { if (t.indexOf('"ok":true') < 0) fail++; else jobs[i].owners.forEach(function (o) { markJob(o[1], jobs[i].target); }); next(i + 1); })
       .catch(function () { fail++; next(i + 1); });
   }
   next(0);
+}
+function sendToOffice(spId) {
+  var target = supaTarget();
+  if (target === "supabase") { supaSend(spId); return; }
+  if (target === "dual") { supaSend(spId).then(function (ok) { if (ok) appscriptSend(spId); }); return; }
+  appscriptSend(spId);
 }
 
 
@@ -1452,15 +1663,17 @@ if (location.hash === "#/selftest2") {
       try { localStorage.removeItem("spm2_records"); localStorage.removeItem("spm2_points"); } catch (e2) {}
       window.SUPABASE_CONFIG = { url: "https://stub.supabase.co", key: "sb_publishable_test",
         target: "supabase", project_code: "uganda-showroom" };
+      SUPA = window.SUPABASE_CONFIG; _projId = null;
       supaAuthSave({ access: "test.jwt.token", refresh: "r", uid: "aaaaaaaa-0000-0000-0000-000000000003",
         email: "svy1-test@survey.local", exp: Date.now() + 3600000 });
       var calls = [];
       window.fetch = function (u, o) {
         calls.push({ u: u, m: (o && o.method) || "GET", b: (o && o.body) || "", h: (o && o.headers) || {} });
-        if (u.indexOf("/rest/v1/site?") >= 0) return Promise.resolve({ status: 200,
-          json: function () { return Promise.resolve([]); } });
-        return Promise.resolve({ status: 201, json: function () {
-          return Promise.resolve([{ id: "generated" }]); } });
+        var body = "";
+        if (u.indexOf("/rest/v1/rpc/resolve_form_site") >= 0) body = JSON.stringify([{ site_id: "bbbbbbbb-0000-0000-0000-000000000001", site_status: "surveying", created: true }]);
+        else if (u.indexOf("/rest/v1/project?") >= 0) body = JSON.stringify([{ id: "cccccccc-0000-0000-0000-000000000001" }]);
+        return Promise.resolve({ status: body ? 200 : 201, ok: true,
+          text: function () { return Promise.resolve(body); }, json: function () { return Promise.resolve(body ? JSON.parse(body) : {}); } });
       };
       location.hash = "#/sp/SP-11"; route();
       var form = document.querySelector("form");
@@ -1468,10 +1681,10 @@ if (location.hash === "#/selftest2") {
       form.dispatchEvent(new Event("submit", { cancelable: true }));
       supaSend("SP-11");
       setTimeout(function () {
-        var siteCall = calls.filter(function (c) { return c.u.indexOf("/rest/v1/site?") >= 0; });
+        var siteCall = calls.filter(function (c) { return c.u.indexOf("/rest/v1/rpc/resolve_form_site") >= 0; });
         var srCall = calls.filter(function (c) { return c.u.indexOf("/rest/v1/survey_result") >= 0 && c.m === "POST"; });
         var rec = recs("SP-11").filter(function (r) { return r.type === "L"; })[0];
-        ck2("T-a site resolve-or-create call", siteCall.length >= 1, "u=" + (siteCall[0] ? siteCall[0].u.slice(0, 90) : "none"));
+        ck2("T-a atomic site resolver call", siteCall.length >= 1, "u=" + (siteCall[0] ? siteCall[0].u.slice(0, 90) : "none"));
         ck2("T-b survey_result POST", srCall.length >= 1);
         ck2("T-c Authorization Bearer", srCall.length && srCall[0].h.Authorization === "Bearer test.jwt.token");
         ck2("T-d payload idempotency key", srCall.length && srCall[0].b.indexOf('"id"') >= 0 && JSON.parse(srCall[0].b).id.length === 36);
@@ -1481,16 +1694,63 @@ if (location.hash === "#/selftest2") {
         var rec = recs("SP-11")[0];
         ck2("T-e record uid precoded", rec && !!rec.uid && rec.uid.length === 36);
         supaAuthClear();
-        var rec2 = recs("SP-11")[0]; rec2.sent = 0;
+        var rec2 = recs("SP-11")[0]; rec2.sent = 0; rec2.sentTargets = {}; rec2.sync = {};
         var before = calls.length;
         supaSend("SP-11");
         setTimeout(function () {
           ck2("T-f no-session queue-not-send", calls.length === before, "calls=" + calls.length);
-          var pass = out2.filter(function (o) { return o.indexOf("PASS") === 0; }).length;
-          var el = document.createElement("pre"); el.id = "selftest2-result";
-          el.textContent = "SELFTEST2 " + pass + "/" + out2.length + "\n" + out2.join("\n");
-          document.body.appendChild(el);
-          document.title = "SELFTEST2 " + (pass === out2.length ? "ALL_PASS" : "FAIL") + " " + pass + "/" + out2.length;
+          var oldOnline = navigator.onLine;
+          try { Object.defineProperty(navigator, "onLine", { value: false, configurable: true }); } catch (ignore) {}
+          supaAuthSave({ access: "offline.jwt", refresh: "r", exp: Date.now() + 3600000 });
+          var offlineBefore = calls.length; supaSend("SP-11");
+          setTimeout(function () {
+            ck2("T-g offline zero fetch", calls.length === offlineBefore && rec2.sync.supabase.state === "queued");
+            try { Object.defineProperty(navigator, "onLine", { value: true, configurable: true }); } catch (ignore2) {}
+            var retryBusiness = 0, refreshes = 0;
+            supaAuthSave({ access: "stale.jwt", refresh: "refresh-token", exp: Date.now() + 3600000 });
+            window.fetch = function (u) {
+              if (u.indexOf("/auth/v1/token?grant_type=refresh_token") >= 0) {
+                refreshes++; return Promise.resolve({ json: function () { return Promise.resolve({ access_token: "fresh.jwt", refresh_token: "fresh-r", expires_in: 3600, user: { id: "u", email: "e" } }); } });
+              }
+              retryBusiness++;
+              return Promise.resolve(retryBusiness === 1 ? { status: 401, ok: false, text: function () { return Promise.resolve(""); } }
+                : { status: 200, ok: true, text: function () { return Promise.resolve("[]"); } });
+            };
+            supaFetch("stale.jwt", "/rest/v1/project?test=1", { headers: supaHeaders("stale.jwt") }).then(function () {
+              ck2("T-h 401 refresh once and retry", retryBusiness === 2 && refreshes === 1);
+              var archivedCalls = [];
+              window.fetch = function (u, o) { archivedCalls.push({ u: u, m: (o && o.method) || "GET" });
+                return Promise.resolve({ status: 200, ok: true, text: function () { return Promise.resolve(JSON.stringify([{ site_id: "x", site_status: "archived", created: false }])); } }); };
+              return supaResolveSite("fresh.jwt", "ARCHIVED-CODE", "Hidden", "C", null).then(function () {
+                ck2("T-i archived rejected", false);
+              }).catch(function (err) {
+                ck2("T-i archived rejected before insert", err.code === "ARCHIVED" &&
+                  !archivedCalls.some(function (c) { return c.u.indexOf("/rest/v1/site") >= 0; }));
+              });
+            }).then(function () {
+              var canvas = document.createElement("canvas"); canvas.width = 2400; canvas.height = 1200;
+              canvas.getContext("2d").fillRect(0, 0, 2400, 1200);
+              return compressDrawable(canvas, 2400, 1200, PHOTO_DEFAULT);
+            }).then(function (meta) {
+              ck2("T-j compression dimensions and JPEG", Math.max(meta.width, meta.height) === 1800 && meta.blob.type === "image/jpeg" && meta.blob.size < 1000000);
+              SUPA.target = "dual";
+              var dualRec = { sent: 0 }; queueForTargets(dualRec);
+              targetState(dualRec, "appscript", "sent", null);
+              ck2("T-k dual keeps failed side pending", dualRec.sent === 0 && dualRec.sync.supabase.state === "queued");
+              targetState(dualRec, "supabase", "sent", null);
+              ck2("T-l dual completes independently", dualRec.sent === 1 && dualRec.sentTargets.appscript && dualRec.sentTargets.supabase);
+              SUPA.target = "appscript";
+              var snapRec = { sent: 0 }; queueForTargets(snapRec); SUPA.target = "supabase";
+              ck2("T-m queue target snapshot survives config change", !!snapRec.sync.appscript && !snapRec.sync.supabase);
+            }).catch(function (err) { ck2("extended-test-error", false, String(err)); }).then(function () {
+              try { Object.defineProperty(navigator, "onLine", { value: oldOnline, configurable: true }); } catch (ignore3) {}
+              var pass = out2.filter(function (o) { return o.indexOf("PASS") === 0; }).length;
+              var el = document.createElement("pre"); el.id = "selftest2-result";
+              el.textContent = "SELFTEST2 " + pass + "/" + out2.length + "\n" + out2.join("\n");
+              document.body.appendChild(el);
+              document.title = "SELFTEST2 " + (pass === out2.length ? "ALL_PASS" : "FAIL") + " " + pass + "/" + out2.length;
+            });
+          }, 100);
         }, 500);
       }, 500);
     } catch (e) {
@@ -1623,12 +1883,10 @@ function selfTest() {
   form.querySelector("[name=area]").value = "365";
   form.querySelector("[name=rent]").value = "1500";
   form.querySelector("[name=pin]").value = "https://maps.app.goo.gl/abc123";
-  form.querySelector("[name=p1]").checked = true;
-  form.querySelector("[name=p4]").checked = true;
   form.dispatchEvent(new Event("submit", { cancelable: true }));
   ck("lead-record-saved", recs("SP-05").length === 1 &&
     recs("SP-05")[0].pin.indexOf("goo.gl") >= 0);
-  ck("lead-photos-p1p4", recs("SP-05")[0].photos === "P1P4");
+  ck("lead-photos-default-none", recs("SP-05")[0].photos === "none");
   // 2026-09-02 user: area must be typed, not a band dropdown (data accuracy — keep the exact figure)
   ck("lead-area-free-input", !document.querySelector("select[name=area]") &&
     recs("SP-05")[0].area === "365");
@@ -1722,6 +1980,7 @@ function selfTest() {
     document.getElementById("view").innerHTML.indexOf("Field Test Plaza") < 0);
   ck("map-hides-surveyed-sp", !markers["SP-05"] && ptHidden(byId("SP-05")));
   // online send (stubbed fetch — must not really POST)
+  if (SUPA) SUPA.target = "appscript";
   var sentCalls = [];
   window.fetch = function (u, o) { sentCalls.push({ u: u, b: (o && o.body) || "" });
     return Promise.resolve({ text: function () { return Promise.resolve('{"ok":true}'); } }); };

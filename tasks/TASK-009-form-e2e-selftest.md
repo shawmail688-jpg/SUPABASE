@@ -1,5 +1,5 @@
 # TASK-009：表单 E2E 自检（离线重放/幂等/dual 双发）
-状态：TODO（前置：TASK-008）
+状态：IN REVIEW（2026-09-15：本地浏览器回归完成；真实账号链待凭证轮换）
 目标：换靶后的表单建立机器证据自检（沿用 #/selftest + 无头 Edge dump-dom pattern），覆盖换靶关键路径
 输入：docs/Design/04-Module.md M-Form 测试要点；主线 headless Edge selftest pattern（D 盘记忆 headless-edge-selftest-pattern）
 验收条件：
@@ -7,4 +7,4 @@
 2. 自检可重复跑（同环境连跑两遍全绿）
 3. 结果附任务单审查结论
 4. CR-004 回归：USD 文案零 UGX；编辑预填；新旧 uuid 不同且 supersedes 正确；旧记录仍在；最新版本标记为 CURRENT；相同 site code
-审查结论：（完工时填）
+审查结论：本地机器回归 PASS：`#/selftest` 44/44，`#/selftest2` 32/32（含照片压缩、离线零请求、401 单次刷新重试、archived RPC 前置阻断、dual 独立状态）；375px 无横向溢出。真实账号、Storage/PG/Sheet 全链尚未执行，原因是本机未配置隔离 E2E 账号且旧测试凭证需先轮换。

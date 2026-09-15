@@ -35,7 +35,7 @@ Last Update：2026-09-03
 
 ## 2.2 表单提交（M2b 换靶核心契约）
 
-> 前置：表单持用户 JWT（M-Form auth 模块）；调查员经 `GET /rest/v1/site?code=eq.<code>&status=neq.archived` 解析存量点的 site_id（评审 H1 处置：读=非 archived 全量）；本机新建点直接用预生成 uuid。code 解析为空时**先查 archived**（`status=eq.archived`）：命中 → 提示「该店已隐藏，联系管理员恢复」，**禁止落入新建路径**（复审 R3：否则 upsert 撞唯一约束转 UPDATE 被 RLS 拒，提交无可读地永久失败）。**补充（09-04 预写 SQL 时发现）**：surveyor 经 RLS 本就看不到 archived 行，其侧该查询同样为空——故 adapter 对 site upsert 的 **42501 错误统一映射为「该店已隐藏或无权操作」**提示（manager/admin 侧则能直接命中 archived 行）；SQL 用例 T22 固化此行为。
+> 前置：表单持用户 JWT（M-Form auth 模块）；site 统一由 `resolve_form_site` SECURITY DEFINER RPC 原子解析或创建。RPC 只向 active authenticated 用户开放，并显式返回 archived 状态，解决 surveyor 受 RLS 隐藏 archived 行时无法前置防呆的问题。
 
 三步顺序调用（任一步失败整体可重试——幂等）：
 
@@ -47,17 +47,15 @@ Headers: Authorization: Bearer <JWT>; Content-Type: image/jpeg
 201 → 成功；409（已存在）→ 视为成功（内容寻址幂等）；其他 4xx/5xx → 离线队列重试
 ```
 
-### ② site upsert（幂等建点）
+### ② site resolver RPC（幂等建点）
 
 ```
-POST /rest/v1/site?on_conflict=project_id,code
-Headers: Prefer: resolution=merge-duplicates,return=representation
-[{ id:<预生成uuid>, project_id, code, name, grp, address, lat, lon }]
+POST /rest/v1/rpc/resolve_form_site
+{ p_project_code, p_site_code, p_name, p_group, p_address }
 ```
 
-- **真实语义（评审 H2 纠正）**：merge-duplicates = `ON CONFLICT DO UPDATE SET col=EXCLUDED.col`——**payload 里的显式 null 会覆盖既有值**（PostgREST 无「null 跳过」内置语义）
-- 保护机制：site BEFORE UPDATE 触发器对**文本列（grp/address）**做 `NEW.col=COALESCE(NEW.col,OLD.col)`（02 §6.1③）——**null 到达 DB 层被还原为旧值**，清空须发空字符串 `""`（工作视图编辑同理）；**lat/lon 不设 COALESCE（复审 R2）：显式 null=清空坐标**（改「未知」），表单/工作视图对坐标列始终携带当前值
-- 新点：触发器保证 status='surveying' + 首条 site_status_log(action='submit')；`created_by` 不传，落库默认 `auth.uid()`（评审 M3）
+- 既有点返回 `{site_id,site_status,created:false}`；archived 必须立即停止后续步骤
+- 新点由 RPC 在唯一约束下并发安全创建，返回 `{site_id,site_status:'surveying',created:true}`；`created_by=auth.uid()`
 
 ### ③ 调查结果 + 照片元数据（主键冲突=成功）
 

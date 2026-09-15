@@ -23,9 +23,9 @@
 - [x] 谷歌表格 8 行隐藏（09-15 完成：浏览器直接在 A2:A9 标 HIDDEN，无代码方案，gviz 验证 8/8；GAS v2.7 动作留档备用）
 - [x] 雷蒙照片挂载——Silent Night 已挂（09-15：Gmail API 抓取→目验→入库）
 - [x] **Aga Khan Hospital Space 已入库**（09-15：第 8 家候选；邮件来源、Survey 占位版本、照片及关联均已保存；未发现该店自己的地图 pin，坐标保持待补，未借用 Silent Night 坐标）
-- [ ] TASK-007 压缩定档（并行）
-- [ ] TASK-008 表单换靶 M2b（进行中：Supabase 默认靶、USD、历史编辑重发已实现；照片上传、离线队列/401、归档防御尚缺）
-- [ ] TASK-009 表单 E2E（进行中：浏览器 selftest 44/44、selftest2 13/13；真实账号回归待测试密码轮换后执行）
+- [x] TASK-007 压缩定档（09-15：24 张真实样本；默认 1800px/q0.80/1MB，细节 2400px/q0.90/2.5MB；两档体积及目验全 PASS）
+- [ ] TASK-008 表单换靶 M2b（IN REVIEW：照片压缩/直传、target 队列、401、archived RPC、dual 状态已实现；selftest 44/44、selftest2 32/32）
+- [ ] TASK-009 表单 E2E（IN REVIEW：本地 44/44 + 32/32；真实账号回归待测试密码轮换后执行）
 - [ ] TASK-010 双写对账
 - [ ] TASK-011 看板骨架+登录墙
 - [ ] TASK-012 领导视图+Realtime

@@ -38,7 +38,7 @@ upload-adapter（新增）
 ## 关键设计
 
 - **幂等与修订**：site/survey_result/photo 的 uuid 由表单预生成；同 uuid 重试零副作用。历史记录 `edit & resend` 预填旧值，但以新 uuid + `supersedes` 追加写入，旧记录不变；稳定 `site_code` 保证改名/改地址后仍归同一店面
-- **压缩**：既有拍照→canvas 压缩（默认档：长边 clamp 1600-2000、JPEG q≈0.8；细节照开关→高质量档，参数 M2a 定档开放问题 #7）；压缩在 worker/主线程本地完成
+- **压缩**：拍照/选图→canvas 压缩；TASK-007 已定档为默认 1800px/q0.80/1MB、细节 2400px/q0.90/2.5MB，超限有界降质；压缩 Blob 与队列保存在 IndexedDB
 - **双写（PRD S4）**：`dual` 模式先发 supabase 再发 appscript，任一失败进各自队列；对账期间新字段只在 supabase 侧（GAS 通道结构冻结）；对账口径与脚本见 M-Mig `reconcile_dualwrite.mjs`
 - **分发**：M2b 沿用单文件分发现状（换靶只是文件内容更新；URL+SW 缓存延后，01 §6.2）
 

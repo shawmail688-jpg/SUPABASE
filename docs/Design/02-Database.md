@@ -79,7 +79,7 @@ Last Update：2026-09-03
 | address | text | 地址 | |
 | lat / lon | double precision | 坐标 | |
 | geog | geography(point,4326) | 生成列（lat/lon 非空时）；**day-1 验证项**：部分 PostGIS 版本 `::geography` cast 非 IMMUTABLE 会拒建——失败则降级为触发器维护列（评审 L5） | GIST 索引（V1 看板 bbox 过滤即可） |
-| status | site_status | `surveying`/`candidate`/`selected`/`archived`/`operating`(预留) | not null default 'surveying'；**任何客户端直改被触发器 GUC 闸拒绝（§6.1）** |
+| status | site_status | `surveying`/`candidate`/`selected`/`archived`/`hidden`/`operating`(预留) | not null default 'surveying'；**任何客户端直改被触发器 GUC 闸拒绝（§6.1）** |
 | created_by | uuid FK→app_user | 首个提交者 | not null **default auth.uid()**（评审 M3） |
 | created_at / updated_at | timestamptz | 行级裁决依据 | |
 
@@ -186,9 +186,9 @@ audit_log 独立（table_name+row_id 松耦合）
 |----|--------|--------|--------|--------|
 | project / domain_config | 全部 authenticated | —（种子走 SQL） | admin | — |
 | app_user | authenticated | —（建号走 Studio+SQL，§3.3） | 本人(display_name) / admin(role, is_active) | — |
-| site | **authenticated 全量，但默认排除 archived**（`status≠'archived'`）；manager/admin 含 archived（恢复视图） | authenticated（status 强制 surveying，触发器兜底） | manager：全量（**status 列除外**——直改被 GUC 闸拒，§6.1）；surveyor：**仅 created_by=self 行**的基础字段（评审 M1）；清空字段发空串（COALESCE 闸见 §6.1） | **REVOKE+无策略** |
+| site | **authenticated 全量，但默认排除 hidden**（`status≠'hidden'`）；archived 仍可见，manager/admin 另可见 hidden | authenticated（status 强制 surveying，触发器兜底） | manager：全量（**status 列除外**——直改被 GUC 闸拒，§6.1）；surveyor：**仅 created_by=self 行**的基础字段（评审 M1）；清空字段发空串（COALESCE 闸见 §6.1） | **REVOKE+无策略** |
 | survey_result | manager：全量；surveyor：created_by=self | `with check (created_by = auth.uid())`；on_conflict(id) ignore-duplicates 幂等 | surveyor 仅自己且 source='form' | — |
-| photo | 同 site 可见性（surveyor 随 H1 放宽后=非 archived site 全量） | `uploaded_by = auth.uid()` | — | — |
+| photo | 同 site 可见性（surveyor 随 H1 放宽后=非 hidden site 全量） | `uploaded_by = auth.uid()` | — | — |
 | site_status_log | manager：全量；surveyor：自己 site 的 | **仅触发器/RPC 内部**（security definer；触发器是唯一 RLS 豁免点，评审 M2） | — | — |
 | fengshui_eval | manager：全量；surveyor：自己 site 的 | authenticated | — | — |
 | external_ids | manager | manager | manager | — |
@@ -213,8 +213,8 @@ audit_log 独立（table_name+row_id 松耦合）
 | RPC | 角色 | 事务体 |
 |-----|------|--------|
 | `approve_site(p_site_id, p_to, p_note)` | is_manager | 校验 p_to ∈ ('candidate','selected') ∧ 转换合法（surveying→candidate / candidate→selected）→ insert log(action=approve_*) → update site.status（GUC 已置，触发器放行） |
-| `hide_site(p_site_id, p_note)` | is_manager | from ∈ (surveying,candidate,selected) → log(hide) → status='archived' |
-| `restore_site(p_site_id, p_note)` | **is_admin** | target = 最后一条 to_status='archived' 的 log.from_status（无则 'surveying'）→ log(restore) → status=target |
+| `hide_site(p_site_id, p_note)` | is_manager | from ∈ (surveying,candidate,selected,archived) → log(hide) → status='hidden' |
+| `restore_site(p_site_id, p_note)` | **is_admin** | target = 最后一条 to_status='hidden' 的 log.from_status（无则 'surveying'）→ log(restore) → status=target |
 
 **surveying 的产生不走 RPC**：调查员 insert site（default 'surveying'）+ 触发器写首条 log（action='submit'）。
 

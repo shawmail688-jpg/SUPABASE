@@ -1,6 +1,6 @@
 # TASK-012：领导视图 leader.html（M3a 主体：汇总条/地图/卡片/Realtime）
 状态：IN REVIEW（2026-09-15：计数/地图/卡片/历史详情/RPC 操作已接入；Realtime 与真实 Supabase 窗口留 TASK-015）
-目标：手机优先三层（汇总条/地图+卡片/详情）+审批按钮（批准/隐藏）+Realtime 调查提交冒 pin+签名 URL lazy 调阅
+目标：手机优先三层（汇总条/地图+卡片/详情）+审批按钮（批准/隐藏）+Realtime 调查提交冒 pin+签名 URL lazy 调阅；archived 保留地图，hidden 才隐藏
 输入：docs/Design/04-Module.md M-Dash；docs/Design/03-API.md §2.3/§2.4/§2.5/§2.6；PRD §4.1 状态色/R14
 验收条件：
 1. 汇总条四态计数与 DB count 一致（对拍断言）；区域筛选生效

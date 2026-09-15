@@ -84,11 +84,11 @@ Supabase DB ─────┤                                  ├─ 管理层
 |------|------|
 | 表清单 | project / domain_config / app_user / site / survey_result / photo / site_status_log / external_ids / audit_log / fengshui_eval；**device 不建**（随 M5） |
 | site≠survey | 一个 site 可挂多次 survey_result，历次全保留永不覆盖 |
-| 四态 | surveying → candidate → selected → archived；operating 枚举预留不启用 |
+| 状态 | surveying → candidate → selected → archived；`hidden` 为拒绝/隐藏态，operating 枚举预留不启用 |
 | 提交即调查中 | 调查员首次提交某 site → 系统自动置 surveying（系统判的） |
 | 批准链 | surveying→candidate、candidate→selected **仅管理层**；调查员永远碰不到 candidate |
-| 隐藏 | surveying/candidate/selected → archived = 否决（管理层）；数据一条不删，默认列表全滤掉 |
-| 恢复 | archived → 原状态，**仅 admin**；「原状态」取该 site **最后一条 to_status='archived' 的 site_status_log 行的 from_status**（无则回 surveying） |
+| 隐藏 | surveying/candidate/selected/archived → hidden = 否决（管理层）；数据一条不删，默认列表过滤 hidden |
+| 恢复 | hidden → 原状态，**仅 admin**；「原状态」取该 site **最后一条 to_status='hidden' 的 site_status_log 行的 from_status**（无则回 surveying） |
 | 留痕 | 每次状态变更写 site_status_log（who/when/from/to/action/note）；关键表变更触发 audit_log（old→new） |
 | 软删除 | 全库无物理 DELETE 授权（RLS 层拒绝），任何删除路径走 status |
 | 角色 | **管理层**=用户+领导同权（全量读写+批准+隐藏）；**恢复=仅 admin**（与 R2/Proposal §8.4 一致；R4 原文「隐藏/恢复」为简写，勘误对齐）；**调查员**=仅 INSERT/UPDATE 自己的数据；**anon=零** |
@@ -99,7 +99,7 @@ Supabase DB ─────┤                                  ├─ 管理层
 ```
 调查员提交 ──→ 调查中 ──管理层批准──→ 候选 ──管理层批准──→ 已选
   (surveying)    │                  │                  │
-                 └────── 隐藏（archived，可恢复，仅 admin 恢复）──┘
+                 └────── 隐藏（hidden，可恢复，仅 admin 恢复）──┘
                  在营（operating）：枚举预留，暂不启用
 ```
 

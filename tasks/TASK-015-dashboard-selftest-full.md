@@ -1,5 +1,5 @@
 # TASK-015：看板 selftest 全量 + N5 视觉走查（M3b 验收）
-状态：IN REVIEW（2026-09-15：本地角色/操作矩阵 full selftest 6/6，桌面视觉走查通过）
+状态：IN REVIEW（2026-09-15：本地角色/操作矩阵 full selftest 7/7，桌面视觉走查通过）
 目标：三角色×操作矩阵 selftest 全绿 + N5 视觉质量走查（用户标准：超出 Atlas T22 水准）
 输入：docs/Design/04-Module.md M-Dash 关键设计/测试要点；PRD §4.4 权限矩阵；N5
 验收条件：

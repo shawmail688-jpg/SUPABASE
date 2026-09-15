@@ -1,6 +1,6 @@
 # TASK-014：工作视图 work.html（M3b：表格/编辑/时间线/恢复/CSV）
 状态：IN REVIEW（2026-09-15：站点字段编辑、经纬度 null 清空、最新 Survey 摘要、CSV 已接入）
-目标：桌面工作视图：店面表格（名称/区域/状态/最近更新/调查次数）+详情字段全量编辑+调查时间线+归档恢复入口（仅 admin）+CSV 导出
+目标：桌面工作视图：店面表格（名称/区域/状态/最近更新/调查次数）+详情字段全量编辑+调查时间线+hidden 恢复入口（仅 admin）+CSV 导出；archived 保持可见
 输入：PRD R15/§4.1（两视图同库互映）；docs/Design/03-API.md §2.3/§2.5；docs/Design/02-Database.md §6.1③（COALESCE 闸：文本列清空发空串、lat/lon 显式 null）
 验收条件：
 1. 表格列与排序/筛选可用；行数=DB 非 archived 计数（对拍）

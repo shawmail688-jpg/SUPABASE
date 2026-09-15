@@ -34,14 +34,32 @@
     .then(function (rows) { if (!rows || !rows[0]) throw new Error("project unavailable"); return rows[0].id; }); }
   function listSurveys(jwt, siteId) { return request(jwt, "/survey_result?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
   function listPhotos(jwt, siteId) { return request(jwt, "/photo?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
+  function listFengshui(jwt, siteId) { return request(jwt, "/fengshui_eval?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
   function listStatusLogs(jwt, siteId) { return request(jwt, "/site_status_log?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=at.desc"); }
   function rpc(jwt, name, body) { return request(jwt, "/rpc/" + name, {method:"POST", body:JSON.stringify(body || {})}); }
   function updateSite(jwt, id, patch) { return request(jwt, "/site?id=eq." + encodeURIComponent(id), {method:"PATCH", headers:Object.assign(headers(jwt), {Prefer:"return=representation"}), body:JSON.stringify(patch)}); }
   function signPhoto(jwt, path, expiresIn) { return request(jwt, "/storage/v1/object/sign/photos/" + path.split("/").map(encodeURIComponent).join("/"), {method:"POST", body:JSON.stringify({expiresIn:expiresIn || 300})}); }
+  function signPhotoUrl(jwt, path, expiresIn) {
+    return signPhoto(jwt, path, expiresIn).then(function (data) {
+      var url = data && (data.signedURL || data.signedUrl || data.signed_url);
+      if (!url) throw new Error("photo link unavailable");
+      if (/^https?:\/\//i.test(url)) return url;
+      if (url.indexOf("/storage/v1/") === 0) return projectBase + url;
+      return projectBase + "/storage/v1" + (url.charAt(0) === "/" ? url : "/" + url);
+    });
+  }
+  function attachCoverPhotos(jwt, sites) {
+    return Promise.all((sites || []).map(function (site) {
+      var photo = site.photo && site.photo[0];
+      if (!photo || !photo.storage_path) return site;
+      return signPhotoUrl(jwt, photo.storage_path, 900).then(function (url) { site.cover_photo_url = url; return site; })
+        .catch(function () { site.cover_photo_url = ""; return site; });
+    }));
+  }
   function listDetailed(jwt, sites) {
     return Promise.all((sites || []).map(function (site) {
-      return Promise.all([listSurveys(jwt, site.id), listPhotos(jwt, site.id), listStatusLogs(jwt, site.id)])
-        .then(function (parts) { site.survey_result = parts[0] || []; site.photo = parts[1] || []; site.status_log = parts[2] || []; return site; });
+      return Promise.all([listSurveys(jwt, site.id), listPhotos(jwt, site.id), listStatusLogs(jwt, site.id), listFengshui(jwt, site.id)])
+        .then(function (parts) { site.survey_result = parts[0] || []; site.photo = parts[1] || []; site.status_log = parts[2] || []; site.fengshui_eval = parts[3] || []; site.fengshui = site.fengshui_eval[0] && site.fengshui_eval[0].raw || null; return site; });
     }));
   }
   function latestSurvey(site) {
@@ -52,5 +70,5 @@
   window.DashboardAPI = { headers:headers, request:request, signIn:signIn, session:session, saveSession:saveSession,
     clearSession:clearSession, loadRole:loadRole, projectId:projectId, listSites:listSites, listSurveys:listSurveys,
     listPhotos:listPhotos, listStatusLogs:listStatusLogs, listDetailed:listDetailed, rpc:rpc, updateSite:updateSite,
-    signPhoto:signPhoto, latestSurvey:latestSurvey };
+    listFengshui:listFengshui, signPhoto:signPhoto, signPhotoUrl:signPhotoUrl, attachCoverPhotos:attachCoverPhotos, latestSurvey:latestSurvey };
 }());

@@ -77,6 +77,7 @@
       });
       marker.bindPopup(options.popup ? options.popup(site) : '<strong>' + esc(site.name) + '</strong>', { maxWidth: 320, minWidth: 230 });
       marker.bindTooltip(esc(site.name), { direction: "top", offset: [0, -28], className: "atlas-tooltip" });
+      marker.on("popupopen", function (event) { if (options.popupReady) options.popupReady(event.popup.getElement(), site); });
       marker.addTo(map);
       markers[site.id] = { marker: marker, point: point };
       bounds.push(point);

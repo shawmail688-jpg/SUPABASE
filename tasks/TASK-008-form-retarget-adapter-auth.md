@@ -10,4 +10,4 @@
 5. `target:'dual'`：双发成功且两通道各一条；单侧失败入各自队列
 6. 源码走分支→PR→审后合（git 纪律）
 7. 租金输入/展示为 USD/month；历史 L/V 记录可预填编辑并以新 uuid 重发，`supersedes` 指向旧 uuid，旧记录保留；同店稳定 site code 不因字段修改漂移
-审查结论：本地实现审查待最终放行。已实现真实照片输入、两档 Canvas JPEG 压缩、SHA-1、IndexedDB Blob、Storage→resolver RPC→survey→photo metadata、按 target 持久状态、断网/登录/回网 flush、401 单次 refresh、archived 前置阻断及 dual 独立完成状态；浏览器 selftest 44/44、selftest2 32/32，375px 无横向溢出。真实账号全链留 TASK-009。
+审查结论：本地实现审查待最终放行。已实现真实照片输入、两档 Canvas JPEG 压缩、SHA-1、IndexedDB Blob、Storage→resolver RPC→survey→photo metadata、按 target 持久状态、断网/登录/回网 flush、401 单次 refresh、archived 前置阻断及 dual 独立完成状态；浏览器 selftest 44/44、selftest2 33/33，375px 无横向溢出。真实账号全链留 TASK-009。

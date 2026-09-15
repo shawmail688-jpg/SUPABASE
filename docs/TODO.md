@@ -24,10 +24,10 @@
 - [x] 雷蒙照片挂载——Silent Night 已挂（09-15：Gmail API 抓取→目验→入库）
 - [x] **Aga Khan Hospital Space 已入库**（09-15：第 8 家候选；邮件来源、Survey 占位版本、照片及关联均已保存；未发现该店自己的地图 pin，坐标保持待补，未借用 Silent Night 坐标）
 - [x] TASK-007 压缩定档（09-15：24 张真实样本；默认 1800px/q0.80/1MB，细节 2400px/q0.90/2.5MB；两档体积及目验全 PASS）
-- [ ] TASK-008 表单换靶 M2b（IN REVIEW：照片压缩/直传、target 队列、401、archived RPC、dual 状态已实现；selftest 44/44、selftest2 32/32）
-- [ ] TASK-009 表单 E2E（IN REVIEW：本地 44/44 + 32/32；真实账号回归待测试密码轮换后执行）
+- [ ] TASK-008 表单换靶 M2b（IN REVIEW：照片压缩/直传、target 队列、401、archived RPC、dual 状态已实现；selftest 44/44、selftest2 33/33）
+- [ ] TASK-009 表单 E2E（IN REVIEW：本地 44/44 + 33/33；真实账号回归待测试密码轮换后执行）
 - [ ] TASK-010 双写对账
-- [ ] TASK-011 看板骨架+登录墙
+- [ ] TASK-011 看板骨架+登录墙（IN REVIEW：文件骨架、Auth/角色分流、latestSurvey、瓦片配置已实现；Dashboard selftest 7/7）
 - [ ] TASK-012 领导视图+Realtime
 - [ ] TASK-013 Pages 部署+域名+实开（**用户动作：域名**）
 - [ ] TASK-014 工作视图

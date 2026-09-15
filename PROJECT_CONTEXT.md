@@ -17,8 +17,9 @@
   - 🟢 Raymond intake：Silent Night 已按 Sheet 最新资料、Google Maps 坐标和照片入库；Aga Khan Hospital Space 已以第 8 家候选入库并挂照片，因未发现其自己的地图 pin，坐标明确待补
   - 🟢 CR-004：Survey 金额口径为 USD，历史数值不换算；历史编辑重发采用 append-only `raw.supersedes`；domain_config v3/v4 已部署
   - 🟢 TASK-007：24 张真实照片完成压缩定档；默认 1800px/q0.80/1MB，细节 2400px/q0.90/2.5MB
-  - 🟡 TASK-008 IN REVIEW：照片压缩/IndexedDB、Storage 直传、原子 resolver RPC、target 队列、401 恢复、archived 防御与 dual 状态已实现；本地 selftest 44/44、selftest2 32/32
-  - 🟡 TASK-009 IN REVIEW：本地浏览器 44/44、32/32，375px 无溢出；真实账号 E2E 脚本已安全化，需轮换旧测试密码后再跑
+  - 🟡 TASK-008 IN REVIEW：照片压缩/IndexedDB、Storage 直传、原子 resolver RPC、target 队列、401 恢复、archived 防御与 dual 状态已实现；本地 selftest 44/44、selftest2 33/33
+  - 🟡 TASK-009 IN REVIEW：本地浏览器 44/44、33/33，375px 无溢出；真实账号 E2E 脚本已安全化，需轮换旧测试密码后再跑
+  - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与非 OSM 瓦片契约已实现；Dashboard selftest 7/7
   - 🟡 待用户确认：2FA 与备份管理员状态；backup admin 兼 dept@ 转发第二收件人
 
 # 2. Working Set（当前工作区）
@@ -29,7 +30,7 @@
 
 # 3. Next Step（下一步）
 
-- 完成顺序：TASK-007 已完成，TASK-008 进入 Review；随后轮换测试账号密码并执行 TASK-009 真实 E2E，再启动 TASK-010 的真实双写对账窗口。
+- 完成顺序：TASK-007 已完成，TASK-008/011 进入 Review；可并行补充 TASK-012/014。先轮换测试账号密码并执行 TASK-009 真实 E2E，再启动 TASK-010 的真实双写对账窗口。
 - 待决决策项（用户动作，阻塞点）：
   - [x] 域名已配置（2026-09-14 用户同步；具体域名不写入快照）
   - [x] Supabase 账号已注册（2026-09-14 用户同步）

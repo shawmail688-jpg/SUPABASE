@@ -82,6 +82,7 @@ dashboard/
 ## 关键设计
 
 - **骨架复用映射**：pin 渲染/弹窗卡/照片灯箱/去重/destack 逻辑零改；只把「数据源（静态 JSON/Sheet 拉取）」换成 api.js；风水卡渲染保留（fengshui_eval 迁移后数据源同换）
+- **照片展示去重**：`photo.sha1`/`storage_path` 先做精确去重；历史迁移中经视觉复核确认的不同压缩版本由 `PHOTO_DEDUP_CONFIG.excludedSha1` 排除展示。底库与 Storage 原件不删，未来上传继续由全局 SHA-1 唯一约束拦截精确重复。
 - **底图韧性**：按用户最终裁定恢复 Atlas 旧有 OpenStreetMap Standard 视觉；`map` 模块从 `window.MAP_TILE_CONFIG` 读取 OSM/Esri 街道/Esri 卫星 URL 与失败阈值，默认 OSM 连续 3 个瓦片失败即自动切 Esri 街道图，并在控制台留可诊断事件（ADR-008）
 - **权限可见性矩阵**（PRD §4.4）：按钮渲染查 app_user.role；RLS/RPC 兜底——两层一致由 selftest 断言（manager 见批准/隐藏不见恢复；admin 见恢复；surveyor 无看板入口）
 - **状态色**：surveying/candidate/selected/archived 四色 token，汇总条与 pin 同源（PRD §4.1）

@@ -10,4 +10,4 @@
 5. 375px 视口 selftest 全绿（N3）+out dump 证据
 6. 瓦片故障注入：拦截默认 osmUrl，断言 3 次失败后 Esri 街道瓦片实际加载且 pin/卡片仍可操作
 7. 同一 site 连续提交两版不同租金/面积后，卡片与详情摘要采用新版；历史区仍可见旧版及 supersedes 链
-审查结论：本地 Review PASS。leader 使用最新 Survey 作为摘要并保留历史；真实 Leaflet 地图按坐标落 pin，按用户最终裁定恢复旧版 OpenStreetMap Standard 为默认，Esri 街道图和卫星图双备用，桌面画布增至 640px，并支持列表定位；地图弹窗和详情显示私有 Storage 照片，支持灯箱翻页及签名 URL 失效重签；已读取 Supabase 的 `fengshui_eval` 并沿用旧 Atlas 的结论、加分、flags 和折叠详情小卡片。`hidden` 不进入地图，`archived` 继续保留。GAS 中 6 个既有 Location Pin 已回填 Supabase，当前 7 个真实店面可落图。manager/admin 操作经 RPC，surveyor 无看板入口。Realtime ≤3s 及 archived admin 真实权限断言待账号窗口。
+审查结论：本地 Review PASS。leader 使用最新 Survey 作为摘要并保留历史；真实 Leaflet 地图按坐标落 pin，按用户最终裁定恢复旧版 OpenStreetMap Standard 为默认，Esri 街道图和卫星图双备用，桌面画布增至 640px，并支持列表定位；地图弹窗和详情显示私有 Storage 照片，支持灯箱翻页及签名 URL 失效重签；47 张既有照片中 5 张历史近重复图经视觉复核后仅在展示层排除，页面显示 42 张唯一画面，底库原件保留；已读取 Supabase 的 `fengshui_eval` 并沿用旧 Atlas 的结论、加分、flags 和折叠详情小卡片。`hidden` 不进入地图，`archived` 继续保留。GAS 中 6 个既有 Location Pin 已回填 Supabase，当前 7 个真实店面可落图。manager/admin 操作经 RPC，surveyor 无看板入口。Realtime ≤3s 及 archived admin 真实权限断言待账号窗口。

@@ -34,6 +34,18 @@
     .then(function (rows) { if (!rows || !rows[0]) throw new Error("project unavailable"); return rows[0].id; }); }
   function listSurveys(jwt, siteId) { return request(jwt, "/survey_result?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
   function listPhotos(jwt, siteId) { return request(jwt, "/photo?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
+  function dedupePhotos(photos) {
+    var excluded = ((window.PHOTO_DEDUP_CONFIG || {}).excludedSha1 || []).reduce(function (set, hash) { set[String(hash).toLowerCase()] = true; return set; }, {});
+    var seen = {};
+    return (photos || []).filter(function (photo) {
+      var sha1 = String(photo && photo.sha1 || "").toLowerCase();
+      var path = String(photo && photo.storage_path || "").toLowerCase();
+      var key = sha1 || path;
+      if (!key || excluded[sha1] || seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+  }
   function listFengshui(jwt, siteId) { return request(jwt, "/fengshui_eval?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }
   function listStatusLogs(jwt, siteId) { return request(jwt, "/site_status_log?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=at.desc"); }
   function rpc(jwt, name, body) { return request(jwt, "/rpc/" + name, {method:"POST", body:JSON.stringify(body || {})}); }
@@ -59,7 +71,7 @@
   function listDetailed(jwt, sites) {
     return Promise.all((sites || []).map(function (site) {
       return Promise.all([listSurveys(jwt, site.id), listPhotos(jwt, site.id), listStatusLogs(jwt, site.id), listFengshui(jwt, site.id)])
-        .then(function (parts) { site.survey_result = parts[0] || []; site.photo = parts[1] || []; site.status_log = parts[2] || []; site.fengshui_eval = parts[3] || []; site.fengshui = site.fengshui_eval[0] && site.fengshui_eval[0].raw || null; return site; });
+        .then(function (parts) { site.survey_result = parts[0] || []; site.photo = dedupePhotos(parts[1] || []); site.status_log = parts[2] || []; site.fengshui_eval = parts[3] || []; site.fengshui = site.fengshui_eval[0] && site.fengshui_eval[0].raw || null; return site; });
     }));
   }
   function latestSurvey(site) {
@@ -70,5 +82,6 @@
   window.DashboardAPI = { headers:headers, request:request, signIn:signIn, session:session, saveSession:saveSession,
     clearSession:clearSession, loadRole:loadRole, projectId:projectId, listSites:listSites, listSurveys:listSurveys,
     listPhotos:listPhotos, listStatusLogs:listStatusLogs, listDetailed:listDetailed, rpc:rpc, updateSite:updateSite,
-    listFengshui:listFengshui, signPhoto:signPhoto, signPhotoUrl:signPhotoUrl, attachCoverPhotos:attachCoverPhotos, latestSurvey:latestSurvey };
+    listFengshui:listFengshui, signPhoto:signPhoto, signPhotoUrl:signPhotoUrl, attachCoverPhotos:attachCoverPhotos,
+    dedupePhotos:dedupePhotos, latestSurvey:latestSurvey };
 }());

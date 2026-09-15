@@ -32,7 +32,7 @@
 - [ ] TASK-013 Pages 部署+域名+实开（**用户动作：域名**）
 - [ ] TASK-014 工作视图（IN REVIEW：字段编辑、坐标清空、CSV 导出与最新 Survey 摘要已接入）
 - [ ] TASK-015 selftest 全量+N5 走查（IN REVIEW：full selftest 7/7；真实 RPC/Realtime 与用户视觉确认待账号窗口）
-- [ ] CR-005 状态语义调整（IN REVIEW：archived 保留地图、hidden 统一拒绝/隐藏；迁移 0007 待远端重放）
+- [ ] CR-005 状态语义调整（IN REVIEW：archived 保留地图、hidden 统一拒绝/隐藏；迁移 0007/0008 待远端重放）
 - [ ] TASK-016 冷备+演练（并行）
 - [ ] TASK-017 S5 GAS 退役
 - [ ] TASK-018 S6 退役+收尾

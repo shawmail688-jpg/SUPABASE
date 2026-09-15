@@ -31,7 +31,7 @@
 | TASK-010 | 双写对账脚本（S4 闸门材料） | TODO |
 | TASK-011 | 看板骨架移植+登录墙 | TODO |
 | TASK-012 | 领导视图+Realtime | TODO |
-| TASK-013 | Cloudflare Pages 部署+域名+领导实开【域名】 | TODO |
+| TASK-013 | Cloudflare Pages 部署+域名+领导实开【域名】 | IN REVIEW（Pages API 已部署；域名/手机实开待验收） |
 | TASK-014 | 工作视图（编辑/时间线/恢复/CSV） | TODO |
 | TASK-015 | 看板 selftest 全量+N5 视觉走查 | TODO |
 | TASK-016 | 冷备计划任务+恢复演练 | TODO |

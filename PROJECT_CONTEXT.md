@@ -22,6 +22,7 @@
   - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与非 OSM 瓦片契约已实现；Dashboard selftest 7/7
   - 🟡 TASK-012/014 IN REVIEW：leader 计数/地图/历史详情/RPC 操作与 work 编辑/CSV 已接上同一 API 契约；Realtime、签名过期重签和 archived admin 窗口留真实 E2E
   - 🟡 TASK-015 IN REVIEW：看板角色与操作矩阵本地 full selftest 7/7；375px/真实 Supabase RPC 与 Realtime 留账号窗口
+  - 🟡 TASK-013 IN REVIEW：Cloudflare Pages Direct Upload API 已成功（deploy `98e69696`，生产域名 `uganda-house-finder.pages.dev`，线上 `/` 与 `/lib/app.js` HTTP 200，Edge full selftest 7/7）；自定义域名与领导手机实开待用户验收
   - 🟢 CR-005 DONE：archived 改为可见历史归档，新增 hidden 作为拒绝/隐藏唯一状态；远端 0007/0008 已执行并核验 enum/RPC
   - 🟡 待用户确认：2FA 与备份管理员状态；backup admin 兼 dept@ 转发第二收件人
 
@@ -33,7 +34,7 @@
 
 # 3. Next Step（下一步）
 
-- 完成顺序：TASK-007 已完成，TASK-008/011/012/014 进入 Review；先轮换测试账号密码并执行 TASK-009 真实 E2E，再启动 TASK-010 双写对账和 TASK-015 看板全链实测。
+- 完成顺序：TASK-007 已完成，TASK-008/011/012/013/014/015 进入 Review；下一步轮换测试账号密码并执行 TASK-009 真实 E2E，同时完成 TASK-013 自定义域名/手机实开验收，再启动 TASK-010 双写对账。
 - 待决决策项（用户动作，阻塞点）：
   - [x] 域名已配置（2026-09-14 用户同步；具体域名不写入快照）
   - [x] Supabase 账号已注册（2026-09-14 用户同步）

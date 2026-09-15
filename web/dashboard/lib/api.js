@@ -15,8 +15,8 @@
   function clearSession() { sessionStorage.removeItem("dashboard_session"); }
   function loadRole(jwt, uid) { return request(jwt, "/app_user?id=eq." + encodeURIComponent(uid) + "&select=id,display_name,role,is_active")
     .then(function (rows) { if (!rows || !rows[0] || !rows[0].is_active) throw new Error("active user profile unavailable"); return rows[0]; }); }
-  function listSites(jwt) { return request(jwt, "/site?project_id=eq." + encodeURIComponent(window.__PROJECT_ID || "") +
-    "&status=neq.archived&select=id,code,name,grp,address,lat,lon,status,updated_at&order=updated_at.desc"); }
+  function listSites(jwt, includeArchived) { return request(jwt, "/site?project_id=eq." + encodeURIComponent(window.__PROJECT_ID || "") +
+    (includeArchived ? "" : "&status=neq.archived") + "&select=id,code,name,grp,address,lat,lon,status,updated_at&order=updated_at.desc"); }
   function projectId(jwt) { return request(jwt, "/project?code=eq." + encodeURIComponent(cfg.project_code) + "&select=id")
     .then(function (rows) { if (!rows || !rows[0]) throw new Error("project unavailable"); return rows[0].id; }); }
   function listSurveys(jwt, siteId) { return request(jwt, "/survey_result?site_id=eq." + encodeURIComponent(siteId) + "&select=*&order=created_at.desc"); }

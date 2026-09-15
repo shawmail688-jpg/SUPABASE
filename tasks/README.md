@@ -30,7 +30,7 @@
 | TASK-009 | 表单 E2E 自检 | TODO |
 | TASK-010 | 双写对账脚本（S4 闸门材料） | TODO |
 | TASK-011 | 看板骨架移植+登录墙 | IN REVIEW（骨架/登录墙/角色分流/真实 Leaflet 地图已接入；selftest 11/11） |
-| TASK-012 | 领导视图+Realtime | IN REVIEW（Storefront Atlas 已接真实坐标、照片灯箱与风水卡；hidden 隐藏、archived 保留） |
+| TASK-012 | 领导视图+Realtime | IN REVIEW（Storefront Atlas 默认旧版 OSM Standard、Esri 双备用与大画布，已接真实坐标、照片灯箱与风水卡；hidden 隐藏、archived 保留） |
 | TASK-013 | Cloudflare Pages 部署+域名+领导实开【域名】 | IN REVIEW（自定义域名与单链接三角色已上线；待真实账户手机实开） |
 | TASK-014 | 工作视图（编辑/时间线/恢复/CSV） | TODO |
 | TASK-015 | 看板 selftest 全量+N5 视觉走查 | IN REVIEW（core 11/11、full 8/8；本地桌面视觉走查通过） |

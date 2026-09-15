@@ -82,13 +82,13 @@ dashboard/
 ## 关键设计
 
 - **骨架复用映射**：pin 渲染/弹窗卡/照片灯箱/去重/destack 逻辑零改；只把「数据源（静态 JSON/Sheet 拉取）」换成 api.js；风水卡渲染保留（fengshui_eval 迁移后数据源同换）
-- **底图韧性**：不得复制 Atlas 旧有 `tile.openstreetmap.org` 地址；`map` 模块从 `window.MAP_TILE_CONFIG` 读取街道/卫星 URL 与失败阈值，默认街道图连续 3 个瓦片失败即自动切卫星图，并在控制台留可诊断事件（ADR-008）
+- **底图韧性**：按用户最终裁定恢复 Atlas 旧有 OpenStreetMap Standard 视觉；`map` 模块从 `window.MAP_TILE_CONFIG` 读取 OSM/Esri 街道/Esri 卫星 URL 与失败阈值，默认 OSM 连续 3 个瓦片失败即自动切 Esri 街道图，并在控制台留可诊断事件（ADR-008）
 - **权限可见性矩阵**（PRD §4.4）：按钮渲染查 app_user.role；RLS/RPC 兜底——两层一致由 selftest 断言（manager 见批准/隐藏不见恢复；admin 见恢复；surveyor 无看板入口）
 - **状态色**：surveying/candidate/selected/archived 四色 token，汇总条与 pin 同源（PRD §4.1）
 - **最新 Survey 投影**：卡片/列表默认采用同一 `site_id` 最新 `surveyed_at` 的租金、面积、联系人与备注；详情页明确区分 CURRENT 与 history
 - **手机视口**：领导视图 E2E 以 375px 宽跑 selftest（N3）
 - **selftest 证据**：无头 Edge dump-dom 出机器证据（既有 pattern），覆盖：登录墙、汇总条筛选、pin→卡片、按钮可见性、恢复入口、CSV 行数
-- **瓦片故障注入证据**：selftest 拦截街道瓦片请求，断言地图无需刷新即出现卫星瓦片；静态扫描断言构建产物不含 `tile.openstreetmap.org`
+- **瓦片故障注入证据**：selftest 拦截 OSM 瓦片请求，断言地图无需刷新即切到 Esri 街道图；静态扫描断言精确 OSM URL、可见署名、Referer 策略与 Esri 双备用均存在
 
 ## 测试要点
 

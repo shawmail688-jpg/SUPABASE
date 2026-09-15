@@ -19,8 +19,8 @@
   - 🟢 TASK-007：24 张真实照片完成压缩定档；默认 1800px/q0.80/1MB，细节 2400px/q0.90/2.5MB
   - 🟡 TASK-008 IN REVIEW：照片压缩/IndexedDB、Storage 直传、原子 resolver RPC、target 队列、401 恢复、archived 防御与 dual 状态已实现；本地 selftest 44/44、selftest2 33/33
   - 🟡 TASK-009 IN REVIEW：本地浏览器 44/44、33/33，375px 无溢出；真实账号 E2E 脚本已安全化，需轮换旧测试密码后再跑
-  - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与非 OSM 瓦片契约已实现；Dashboard selftest 11/11（含 null 坐标防假 Pin、照片与风水卡渲染）
-  - 🟡 TASK-012/014 IN REVIEW：leader 已由伪地图升级为 Leaflet 店面 Atlas（真实坐标、街道/卫星切换、列表飞行定位、照片弹窗/灯箱、风水摘要卡、同钉错开）；GAS 6 家可见店面的既有 Pin 坐标已补写 Supabase，archived 保留、hidden 排除；work 编辑/CSV 已接同一 API 契约
+  - 🟡 TASK-011 IN REVIEW：`web/dashboard/` 骨架、Auth 登录墙、角色分流、latestSurvey、公开配置注入与三层瓦片故障切换契约已实现；Dashboard selftest 11/11（含 null 坐标防假 Pin、照片与风水卡渲染）
+  - 🟡 TASK-012/014 IN REVIEW：leader 已由伪地图升级为 Leaflet 店面 Atlas（旧版 OSM Standard 默认、Esri 街道/卫星双备用、640px 大画布、真实坐标、列表飞行定位、照片弹窗/灯箱、风水摘要卡、同钉错开）；GAS 6 家可见店面的既有 Pin 坐标已补写 Supabase，archived 保留、hidden 排除；work 编辑/CSV 已接同一 API 契约
   - 🟡 TASK-015 IN REVIEW：看板角色、操作矩阵与地图可见性本地 full selftest 8/8；375px/真实 Supabase RPC 与 Realtime 留账号窗口
   - 🟡 TASK-013 IN REVIEW：Cloudflare Pages 已上线自定义域名 `ugandastartimes.com`；统一入口包（`3543611`）将 surveyor 自动分流到 `/survey.html`、manager/admin 留看板并交接同一 Auth 会话；线上 HTTPS 三路径 200，Dashboard 7/7、Survey 44/44+33/33；真实账户手机操作/瓦片实开待用户验收
   - 🟢 CR-005 DONE：archived 改为可见历史归档，新增 hidden 作为拒绝/隐藏唯一状态；远端 0007/0008 已执行并核验 enum/RPC

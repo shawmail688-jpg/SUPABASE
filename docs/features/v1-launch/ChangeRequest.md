@@ -57,9 +57,9 @@ Last Update：2026-09-15
 
 ### 变更内容与影响
 
-**改什么**：禁止未来看板复制 `tile.openstreetmap.org`，新增统一 `window.MAP_TILE_CONFIG` 契约；默认街道/卫星主备与连续 3 次失败自动降级；Pages 发布加故障注入。
+**改什么**：新增统一 `window.MAP_TILE_CONFIG` 契约。最初因预览链 403 排除 OSM；2026-09-15 用户最终裁定恢复旧版 OSM Standard 为生产默认，同时保留 Esri 街道/卫星双备用与连续 3 次失败自动降级；Pages 发布加故障注入。
 
-**为什么**：OSM 公共标准瓦片要求有效 Referer、无 SLA 且可无通知封锁；本地 HTML/预览链已实际出现 403。
+**为什么**：用户确认 OSM Standard 正是需要保留的原版视觉。生产域名可发送有效 Referer；其无 SLA 风险由 Esri 双备用承接，本地 HTML/预览器不作为生产判据。
 
 | 影响面 | 详情 |
 |--------|------|

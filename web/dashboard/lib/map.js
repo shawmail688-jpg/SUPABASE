@@ -1,7 +1,7 @@
 (function () {
   "use strict";
   var cfg = window.MAP_TILE_CONFIG || {};
-  var errors = 0, mode = "street", active = null;
+  var errors = 0, mode = cfg.defaultMode || "osm", active = null;
   var STATUS_COLOR = {
     surveying: "#df6c3a",
     candidate: "#e9b949",
@@ -10,9 +10,9 @@
     operating: "#087f77"
   };
 
-  function recordError() { errors += 1; if (errors >= (cfg.errorThreshold || 3)) mode = "satellite"; return mode; }
-  function current() { return mode === "satellite" ? cfg.satelliteUrl : cfg.streetUrl; }
-  function reset() { errors = 0; mode = "street"; }
+  function recordError(nextMode) { errors += 1; if (errors >= (cfg.errorThreshold || 3)) { mode = nextMode || "street"; errors = 0; } return mode; }
+  function current() { return mode === "osm" ? cfg.osmUrl : (mode === "satellite" ? cfg.satelliteUrl : cfg.streetUrl); }
+  function reset() { errors = 0; mode = cfg.defaultMode || "osm"; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"})[c]; }); }
   function validPoint(site) {
     if (!site || site.status === "hidden" || site.lat == null || site.lon == null || String(site.lat).trim() === "" || String(site.lon).trim() === "") return false;
@@ -20,14 +20,15 @@
     return Number.isFinite(lat) && Number.isFinite(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180;
   }
 
-  function installFallback(map, layer, nextLayer, label) {
+  function installFallback(map, layer, nextLayer, label, nextMode) {
     var failures = 0, switched = false;
-    layer.on("tileload", function () { failures = 0; });
+    layer.on("tileload", function () { failures = 0; errors = 0; });
     layer.on("tileerror", function () {
+      if (!map.hasLayer(layer)) return;
       failures += 1;
-      if (switched || failures < (cfg.errorThreshold || 3) || !map.hasLayer(layer)) return;
+      recordError(nextMode);
+      if (switched || failures < (cfg.errorThreshold || 3)) return;
       switched = true;
-      recordError();
       map.removeLayer(layer);
       nextLayer.addTo(map);
       console.warn("Basemap unavailable; switched to " + label + ".");
@@ -58,12 +59,17 @@
     }
 
     reset();
-    var map = L.map(container, { minZoom: 11, maxZoom: 19, zoomControl: true });
+    var map = L.map(container, { minZoom: 9, maxZoom: 19, zoomControl: true });
+    var osm = L.tileLayer(cfg.osmUrl, { maxZoom: 19, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' });
     var streets = L.tileLayer(cfg.streetUrl, { maxZoom: 19, attribution: "Tiles &copy; Esri" });
     var satellite = L.tileLayer(cfg.satelliteUrl, { maxZoom: 19, attribution: "Tiles &copy; Esri, Maxar, Earthstar Geographics" });
-    streets.addTo(map);
-    L.control.layers({ Streets: streets, Satellite: satellite }, {}, { collapsed: false, position: "topright" }).addTo(map);
-    installFallback(map, streets, satellite, "satellite");
+    var defaultMode = cfg.defaultMode || "osm";
+    if (defaultMode === "satellite") satellite.addTo(map); else if (defaultMode === "street") streets.addTo(map); else osm.addTo(map);
+    L.control.layers({ OpenStreetMap: osm, Streets: streets, Satellite: satellite }, {}, { collapsed: false, position: "topright" }).addTo(map);
+    map.on("baselayerchange", function (event) { mode = event.layer === osm ? "osm" : (event.layer === satellite ? "satellite" : "street"); errors = 0; });
+    installFallback(map, osm, streets, "Esri streets", "street");
+    installFallback(map, streets, satellite, "satellite", "satellite");
+    installFallback(map, satellite, streets, "streets", "street");
 
     var markers = {}, bounds = [], occupied = {};
     mapped.forEach(function (site) {
@@ -83,8 +89,8 @@
       bounds.push(point);
     });
 
-    if (bounds.length === 1) map.setView(bounds[0], 16);
-    else map.fitBounds(L.latLngBounds(bounds), { padding: [42, 42], maxZoom: 16 });
+    if (bounds.length === 1) map.setView(bounds[0], 15);
+    else map.fitBounds(L.latLngBounds(bounds), { padding: [34, 34], maxZoom: 15 });
 
     container.addEventListener("click", function (event) {
       var button = event.target.closest && event.target.closest("[data-map-detail]");

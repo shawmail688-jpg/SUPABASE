@@ -27,11 +27,11 @@
 - [ ] TASK-008 表单换靶 M2b（IN REVIEW：照片压缩/直传、target 队列、401、archived RPC、dual 状态已实现；selftest 44/44、selftest2 33/33）
 - [ ] TASK-009 表单 E2E（IN REVIEW：本地 44/44 + 33/33；真实账号回归待测试密码轮换后执行）
 - [ ] TASK-010 双写对账
-- [ ] TASK-011 看板骨架+登录墙（IN REVIEW：文件骨架、Auth/角色分流、latestSurvey、瓦片配置已实现；Dashboard selftest 7/7）
-- [ ] TASK-012 领导视图+Realtime（IN REVIEW：计数/地图/历史详情/RPC 操作已接入；Realtime/签名重签/archived admin 留真实 E2E）
+- [ ] TASK-011 看板骨架+登录墙（IN REVIEW：文件骨架、Auth/角色分流、latestSurvey、Leaflet 地图与瓦片切换已实现；Dashboard selftest 9/9，含 null 坐标防假 Pin）
+- [ ] TASK-012 领导视图+Realtime（IN REVIEW：真实坐标 Atlas、店面索引/飞行定位/弹窗、同钉错开、hidden 排除与 archived 保留已实现；GAS 6 家可见店面坐标已补写 Supabase；Realtime/签名重签/archived admin 留真实 E2E）
 - [ ] TASK-013 Pages 部署+域名+实开（IN REVIEW：`ugandastartimes.com` 与单链接三角色分流已上线；HTTPS 200、Dashboard 7/7、Survey 44/44+33/33；待真实账户手机实开）
 - [ ] TASK-014 工作视图（IN REVIEW：字段编辑、坐标清空、CSV 导出与最新 Survey 摘要已接入）
-- [ ] TASK-015 selftest 全量+N5 走查（IN REVIEW：full selftest 7/7；真实 RPC/Realtime 与用户视觉确认待账号窗口）
+- [ ] TASK-015 selftest 全量+N5 走查（IN REVIEW：full selftest 8/8；真实 RPC/Realtime 与用户视觉确认待账号窗口）
 - [x] CR-005 状态语义调整（09-15：archived 保留地图、hidden 统一拒绝/隐藏；远端 0007/0008 已执行并核验）
 - [ ] TASK-016 冷备+演练（并行）
 - [ ] TASK-017 S5 GAS 退役

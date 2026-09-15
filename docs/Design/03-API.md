@@ -82,7 +82,7 @@ POST /rest/v1/photo?on_conflict=id     （每张一行；sha1 重复由 unique �
 |------|------|------|
 | 汇总条 | `GET /rest/v1/site?select=status&project_id=eq.<pid>&status=neq.hidden` | 客户端 count 分组（≤20 店不分页）；archived 仍计数 |
 | 地图 pin | `GET /rest/v1/site?select=id,code,name,grp,status,lat,lon&project_id=eq.<pid>&status=neq.hidden` | hidden 过滤；archived 保留地图 pin |
-| 店面卡/详情 | `GET /rest/v1/site?select=*,survey_result(*),photo(*)&project_id=eq.<pid>&code=eq.<code>` | project_id 必带（复审 R6）；survey_result 按 `raw.surveyed_at` desc，缺值回退 created_at；卡片展示首条，详情保留全历史 |
+| 店面卡/详情 | `GET /rest/v1/site?select=*,survey_result(*),photo(*)&project_id=eq.<pid>&code=eq.<code>` | project_id 必带（复审 R6）；survey_result 按 `raw.surveyed_at` desc，缺值回退 created_at；卡片展示首条，详情保留全历史；`rent_sync` 作为最新租金投影版本，原始租金来源与历史行保留 |
 | 状态时间线 | `GET /rest/v1/site_status_log?site_id=eq.<id>&order=at.desc` | 谁在何时批的/藏的 |
 | CSV 导出 | 同 pin+详情查询 → 客户端拼 CSV | M3b |
 

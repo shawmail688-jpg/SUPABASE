@@ -29,6 +29,7 @@
 - [ ] TASK-010 双写对账
 - [ ] TASK-011 看板骨架+登录墙（IN REVIEW：文件骨架、Auth/角色分流、latestSurvey、Leaflet 地图与瓦片切换已实现；Dashboard selftest 12/12，含 null 坐标防假 Pin、照片展示去重与风水卡渲染）
 - [ ] TASK-012 领导视图+Realtime（IN REVIEW：真实坐标 Atlas、旧版 OSM Standard 默认+Esri 双备用+640px 大画布、去重照片/灯箱、风水摘要卡、索引/飞行定位/弹窗、同钉错开、hidden 排除与 archived 保留已实现；47 张既有照片展示为 42 张唯一画面，原记录未删；GAS 6 家可见店面坐标已补写 Supabase；Realtime/archived admin 留真实 E2E）
+- [x] 租金同步（2026-09-15）：来源表中的 9/1600/1600 USD 已写入最新 `survey_result.rent` 投影，Silent Night 3960 已核验；历史版本保留
 - [ ] TASK-013 Pages 部署+域名+实开（IN REVIEW：`ugandastartimes.com` 与单链接三角色分流已上线；HTTPS 200、Dashboard 7/7、Survey 44/44+33/33；待真实账户手机实开）
 - [ ] TASK-014 工作视图（IN REVIEW：字段编辑、坐标清空、CSV 导出与最新 Survey 摘要已接入）
 - [ ] TASK-015 selftest 全量+N5 走查（IN REVIEW：core 11/11、full 8/8；真实 RPC/Realtime 与用户视觉确认待账号窗口）

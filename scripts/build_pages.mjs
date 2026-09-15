@@ -1,12 +1,15 @@
 /** Build the single-entry Cloudflare Pages bundle. */
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
+import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dashboard = path.join(root, 'web', 'dashboard');
 const survey = path.join(root, 'webapp', 'survey_form.html');
 const output = path.join(root, 'dist', 'pages');
+const zipOutput = path.join(root, 'dist', 'uganda-house-finder-pages.zip');
 
 function readEnv() {
   const values = {};
@@ -56,6 +59,32 @@ function assertNoSecret(env) {
   }
 }
 
+function fingerprintDashboardAssets() {
+  const indexFile = path.join(output, 'index.html');
+  const assets = ['lib/tokens.css', 'lib/config.js', 'lib/map.js', 'lib/api.js', 'lib/app.js'];
+  let html = fs.readFileSync(indexFile, 'utf8');
+  for (const asset of assets) {
+    const digest = crypto.createHash('sha256').update(fs.readFileSync(path.join(output, asset))).digest('hex').slice(0, 12);
+    html = html.replaceAll(asset, `${asset}?v=${digest}`);
+  }
+  fs.writeFileSync(indexFile, html);
+}
+
+function packageZip() {
+  fs.rmSync(zipOutput, { force: true });
+  let result;
+  if (process.platform === 'win32') {
+    const sourceGlob = `${output.replaceAll("'", "''")}\\*`;
+    const destination = zipOutput.replaceAll("'", "''");
+    result = spawnSync('powershell.exe', ['-NoProfile', '-Command', `Compress-Archive -Path '${sourceGlob}' -DestinationPath '${destination}' -Force`], { encoding: 'utf8' });
+  } else {
+    result = spawnSync('zip', ['-qr', zipOutput, '.'], { cwd: output, encoding: 'utf8' });
+  }
+  if (result.status !== 0 || !fs.existsSync(zipOutput)) {
+    throw new Error(`Pages ZIP packaging failed: ${result.stderr || result.stdout || `exit ${result.status}`}`);
+  }
+}
+
 const env = readEnv();
 const missing = ['SUPABASE_URL', 'SUPABASE_PUBLISHABLE_KEY'].filter((key) => !env[key]);
 if (missing.length) throw new Error(`missing .env keys: ${missing.join(', ')}`);
@@ -66,8 +95,11 @@ fs.cpSync(dashboard, output, { recursive: true });
 fs.copyFileSync(survey, path.join(output, 'survey.html'));
 injectDashboardConfig(env);
 injectSurveyConfig(env);
+fingerprintDashboardAssets();
 assertNoSecret(env);
+packageZip();
 
 console.log('PAGES_BUNDLE=PASS');
 console.log('ENTRY=/');
 console.log('SURVEY=/survey.html');
+console.log(`ZIP=${zipOutput}`);

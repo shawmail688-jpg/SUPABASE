@@ -23,4 +23,14 @@
 Edge headless #/selftest-full: DASHBOARD FULL SELFTEST 7/7
 ```
 
-剩余验收：自定义域名 HTTPS、领导手机外网登录/地图/照片/审批、国内可达性、街道/卫星瓦片与故障注入。完成这些用户窗口后，TASK-013 才能置 DONE。
+初始部署时剩余验收：自定义域名 HTTPS、领导手机外网登录/地图/照片/审批、国内可达性、街道/卫星瓦片与故障注入。
+
+## 自定义域名与统一入口增量（2026-09-15）
+
+- 用户在 Cloudflare Pages 控制台完成 `ugandastartimes.com` 绑定及 Direct Upload。
+- 发布提交：`3543611`；发布包由 `node scripts/build_pages.mjs` 生成，根目录同时包含 Dashboard 与 `survey.html`。
+- HTTPS 机器验证：`/` 200（771 bytes）、`/survey.html` 200（6,224,608 bytes）、`/lib/app.js` 200（21,283 bytes）。
+- 线上角色分流代码存在：`surveyor` 登录后 `location.replace("survey.html")`，刷新令牌和过期时间随会话交接；manager/admin 留在 Dashboard。
+- 线上 Edge headless：Dashboard full `7/7`、Survey `44/44`、Survey2 `33/33`，全部 PASS。
+
+剩余验收已收窄为真实账户手机操作、照片/审批、国内可达性和瓦片实开。

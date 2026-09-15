@@ -13,4 +13,5 @@
 - Cloudflare Pages Direct Upload 已通过 API 完成，无 Wrangler/新软件安装；项目 `uganda-house-finder` 已建立并复用。
 - 初始部署 `98e69696-8ca8-4c3d-bb88-f9f802d5b4ea`，随后恢复流程修正版部署 `81ead23c-276c-42e0-862e-15051aac7958`（提交 `cff0257`），两次 `deploy=success`。
 - 生产域名：[uganda-house-finder.pages.dev](https://uganda-house-finder.pages.dev)；最新部署 URL：[81ead23c.uganda-house-finder.pages.dev](https://81ead23c.uganda-house-finder.pages.dev)。`/`、`/lib/app.js`、`/leader.html`、`/work.html` 均 HTTP 200；Edge headless `#/selftest-full` 为 `7/7`。
-- 仍待用户验收：自定义域名 HTTPS、领导手机外网登录/地图/照片/审批、国内可达性及街道/卫星瓦片实测。完成后再将 TASK-013 置 DONE。
+- 2026-09-15 自定义域名 [ugandastartimes.com](https://ugandastartimes.com) 已由用户完成绑定并上传统一入口包（提交 `3543611`）：`/`、`/survey.html`、`/lib/app.js` 均 HTTPS 200；线上 Dashboard full selftest `7/7`、Survey selftest `44/44`、Survey selftest2 `33/33`。根入口按 `app_user.role` 分流：surveyor→`/survey.html`，manager/admin→看板，并交接同一登录会话。
+- 仍待用户验收：真实账户外网登录/地图/照片/审批、国内可达性及街道/卫星瓦片实测。完成后再将 TASK-013 置 DONE。
